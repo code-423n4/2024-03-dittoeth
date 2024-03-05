@@ -59,14 +59,14 @@ Some of the checklists in this doc are for **C4 (🐺)** and some of them are fo
 ---
 
 # DittoETH audit details
-- Total Prize Pool: $60400 in USDC
-  - HM awards: $41250 in USDC
-  - Analysis awards: $2500 in USDC
-  - QA awards: $1250 in USDC
-  - Bot Race awards: $1250 in USDC
-  - Gas awards: $3750 in USDC
-  - Judge awards: $6000 in USDC
-  - Lookout awards: XXX XXX USDC (Notion: Sum of Pre-sort fee + Pre-sort early bonus)
+- Total Prize Pool: $60,400 in USDC
+  - HM awards: $41,250 in USDC
+  - Analysis awards: $2,500 in USDC
+  - QA awards: $1,250 in USDC
+  - Bot Race awards: $1,250 in USDC
+  - Gas awards: $3,750 in USDC
+  - Judge awards: $6,000 in USDC
+  - Lookout awards: $3,900 USDC 
   - Scout awards: $500 in USDC
  
 - Join [C4 Discord](https://discord.gg/code4rena) to register
@@ -140,21 +140,21 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 [ ⭐️ SPONSORS: please confirm/edit the information below. ]
 
 ```
-- If you have a public code repo, please share it here:  
-- How many contracts are in scope?:   
-- Total SLoC for these contracts?:  
-- How many external imports are there?:  
-- How many separate interfaces and struct definitions are there for the contracts within scope?:  
-- Does most of your code generally use composition or inheritance?:   
-- How many external calls?:   
-- What is the overall line coverage percentage provided by your tests?:
-- Is this an upgrade of an existing system?:
-- Check all that apply (e.g. timelock, NFT, AMM, ERC20, rollups, etc.): 
-- Is there a need to understand a separate part of the codebase / get context in order to audit this part of the protocol?:   
+- If you have a public code repo, please share it here:  https://github.com/Cyfrin/2023-09-ditto
+- How many contracts are in scope?: 12  
+- Total SLoC for these contracts?:  1600
+- How many external imports are there?: 8 
+- How many separate interfaces and struct definitions are there for the contracts within scope?:  Every contract has a generated interface from a script given use of Diamond. 8 Structs are in contracts/libraries/DataTypes.sol in STypes (Storage Types): Order, ShortRecord, NFT, Asset, Vault, AssetUser, VaultUser, Bridge
+- Does most of your code generally use composition or inheritance?:   Inheritance
+- How many external calls?:   40
+- What is the overall line coverage percentage provided by your tests?: 98
+- Is this an upgrade of an existing system?: True
+- Check all that apply (e.g. timelock, NFT, AMM, ERC20, rollups, etc.): ERC-20 Token
+- Is there a need to understand a separate part of the codebase / get context in order to audit this part of the protocol?: False  
 - Please describe required context:   
-- Does it use an oracle?:  
+- Does it use an oracle?:  Chainlink ETH/USD and Uniswap stETH and RETH
 - Describe any novel or unique curve logic or mathematical models your code uses: 
-- Is this either a fork of or an alternate implementation of another project?:   
+- Is this either a fork of or an alternate implementation of another project?:  False 
 - Does it use a side-chain?:
 - Describe any specific areas you would like addressed:
 ```
