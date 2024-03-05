@@ -59,14 +59,14 @@ Some of the checklists in this doc are for **C4 (🐺)** and some of them are fo
 ---
 
 # DittoETH audit details
-- Total Prize Pool: $60,400 in USDC
+- Total Prize Pool: $60,500 in USDC
   - HM awards: $41,250 in USDC
   - Analysis awards: $2,500 in USDC
   - QA awards: $1,250 in USDC
   - Bot Race awards: $1,250 in USDC
   - Gas awards: $3,750 in USDC
   - Judge awards: $6,000 in USDC
-  - Lookout awards: $3,900 USDC 
+  - Lookout awards: $4,000 USDC 
   - Scout awards: $500 in USDC
  
 - Join [C4 Discord](https://discord.gg/code4rena) to register
