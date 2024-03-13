@@ -138,7 +138,7 @@ contract ERC721Facet is Modifiers, IERC721 {
 
         if (to == address(0)) revert Errors.ERC721InvalidReceiver(address(0));
 
-        //@dev If NFT does not exist, ERC721NonexistentToken() will trigger
+        // @dev If NFT does not exist, ERC721NonexistentToken() will trigger
         LibSRTransfer.transferShortRecord(from, to, uint40(tokenId));
 
         delete s.getApproved[tokenId];
@@ -234,7 +234,7 @@ contract ERC721Facet is Modifiers, IERC721 {
 
         STypes.Order storage shortOrder = s.shorts[asset][shortOrderId];
 
-        //@dev this is for transferShortRecord
+        // @dev this is for transferShortRecord
         if (short.status == SR.PartialFill) {
             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != msg.sender) revert Errors.InvalidShortOrder();
         } else {
@@ -253,7 +253,7 @@ contract ERC721Facet is Modifiers, IERC721 {
 
         short.tokenId = tokenId;
 
-        //@dev never decreases
+        // @dev never decreases
         s.tokenIdCounter += 1;
     }
 

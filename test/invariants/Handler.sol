@@ -103,14 +103,14 @@ contract Handler is ConstantsTest {
 
     //MODIFIERS
     modifier advanceTime() {
-        //@dev 12 seconds to replicate how often a block gets added on average
+        // @dev 12 seconds to replicate how often a block gets added on average
         skip_ghost(12 seconds);
         vm.roll(block.number + 1);
         // Issues with block.timestamp so have to track manually...
         _;
     }
 
-    //@dev change price by +/- .5% randomly
+    // @dev change price by +/- .5% randomly
     modifier advancePrice(uint8 addressSeed) {
         uint256 oracleTime = diamond.getOracleTimeT(asset);
         uint256 currentOraclePrice = diamond.getOraclePriceT(asset);
@@ -125,7 +125,7 @@ contract Handler is ConstantsTest {
         }
 
         int256 newOraclePriceInv = int256(newOraclePrice.inv());
-        //@dev Don't change saved oracle data, just chainlink!
+        // @dev Don't change saved oracle data, just chainlink!
         ethAggregator.setRoundData(
             92233720368547778907 wei,
             newOraclePriceInv / C.BASE_ORACLE_DECIMALS,
@@ -306,7 +306,7 @@ contract Handler is ConstantsTest {
     {
         // bound inputs
         price = boundU80(price, DEFAULT_PRICE / 2, DEFAULT_PRICE * 2);
-        //@dev setting lower bound to 500 ether to allow some cases of under minShortErc from happening
+        // @dev setting lower bound to 500 ether to allow some cases of under minShortErc from happening
         amount = boundU88(amount, 500 ether, DEFAULT_AMOUNT * 10);
         // amount = boundU88(amount, DEFAULT_AMOUNT, DEFAULT_AMOUNT * 10);
 
@@ -450,7 +450,7 @@ contract Handler is ConstantsTest {
 
         //bound inputs
         index = bound(index, 1, shortRecords.length);
-        //@dev sometimes the short collateral will not be enough to exit short bc price will be too high
+        // @dev sometimes the short collateral will not be enough to exit short bc price will be too high
         price = boundU80(price, diamond.getOraclePriceT(asset).div(1.1 ether), diamond.getOraclePriceT(asset).mul(1.1 ether));
 
         STypes.ShortRecord memory shortRecord = shortRecords[index - 1];
@@ -484,7 +484,7 @@ contract Handler is ConstantsTest {
         ghost_oraclePrice = diamond.getOraclePriceT(asset);
     }
 
-    //@dev Do not include this in invariant files that check systemwide dethTotal or ercDebt. FundLimitOrders will break
+    // @dev Do not include this in invariant files that check systemwide dethTotal or ercDebt. FundLimitOrders will break
     function mintNFT(uint80 price, uint88 amount, uint256 index, uint8 addressSeed)
         public
         advanceTime
@@ -580,12 +580,12 @@ contract Handler is ConstantsTest {
             return;
         }
 
-        //@dev reduce price to liquidation levels
+        // @dev reduce price to liquidation levels
         int256 preLiquidationPrice = int256(diamond.getOraclePriceT(asset).inv());
         s_ob.setETH(750 ether);
         console.log("setETH(750 ether);");
 
-        //@dev randomly choose between erc vs wallet approach
+        // @dev randomly choose between erc vs wallet approach
         if (addressSeed % 2 == 0) {
             if (diamond.getAssetUserStruct(asset, liquidator).ercEscrowed < shortRecord.ercDebt) {
                 s_ob.setETH(preLiquidationPrice);
@@ -655,7 +655,7 @@ contract Handler is ConstantsTest {
             }
         }
 
-        //@dev reset price back to original levels
+        // @dev reset price back to original levels
         s_ob.setETH(preLiquidationPrice);
 
         updateShorters();
@@ -728,7 +728,7 @@ contract Handler is ConstantsTest {
 
         int256 preLiquidationPrice = int256(diamond.getOraclePriceT(asset).inv());
 
-        //@dev create ask for liquidation
+        // @dev create ask for liquidation
         console.log(
             string.concat(
                 "fundLimitAskOpt(",
@@ -741,7 +741,7 @@ contract Handler is ConstantsTest {
             )
         );
 
-        //@dev reduce price to liquidation levels
+        // @dev reduce price to liquidation levels
         console.log("setETH(1500 ether);");
         s_ob.setETH(1500 ether);
 
@@ -750,7 +750,7 @@ contract Handler is ConstantsTest {
 
         //for some reason, the skip and liquidate are not working together
         skip_ghost(10 hours + 1 hours);
-        //@dev reset time to prevent stale oracle data, use slightly different price so startingShortId gets updated
+        // @dev reset time to prevent stale oracle data, use slightly different price so startingShortId gets updated
         s_ob.setETHChainlinkOnly(1499 ether);
         // Update starting short since ETH price artificially set
         uint16[] memory shortHintArray = new uint16[](1);
@@ -767,7 +767,7 @@ contract Handler is ConstantsTest {
 
         console.log(string.concat("fillEth = ", vm.toString(fillEth)));
 
-        //@dev reset price back to original levels
+        // @dev reset price back to original levels
         s_ob.setETH(preLiquidationPrice);
         updateShorters();
         updateErcHolders();
@@ -1114,7 +1114,7 @@ contract Handler is ConstantsTest {
         // bound inputs
         index = bound(index, 1, shortRecords.length);
         STypes.ShortRecord memory shortRecord = shortRecords[index - 1];
-        //@dev bounding this to prevent reducing CR too low
+        // @dev bounding this to prevent reducing CR too low
         amount = boundU88(amount, shortRecord.collateral / 10, shortRecord.collateral / 6);
 
         console.log(string.concat("diamond.decreaseCollateral(asset,", vm.toString(shortRecord.id), ",", vm.toString(amount), ");"));

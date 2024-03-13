@@ -37,7 +37,7 @@ contract OracleTest is OBFixture {
         assertEq(testFacet.getOracleTimeT(asset), 3600); //updated
     }
 
-    //@dev triggering forcedBid, which has a fifteen minute update
+    // @dev triggering forcedBid, which has a fifteen minute update
     function test_OraclePriceUpdateFifteenMinutesExitShort() public {
         //initial check
         assertEq(testFacet.getOracleTimeT(asset), 0);
@@ -55,7 +55,7 @@ contract OracleTest is OBFixture {
         assertEq(testFacet.getOracleTimeT(asset), 15 minutes); //updated
     }
 
-    //@dev triggering forcedBid, which has a fifteen minute update
+    // @dev triggering forcedBid, which has a fifteen minute update
     function test_OraclePriceUpdateFifteenMinutesLiquidation() public {
         //initial check
         assertEq(testFacet.getOracleTimeT(asset), 0);
@@ -69,7 +69,7 @@ contract OracleTest is OBFixture {
         //use fundLimitAsk to provide seller for Liquidation and to update the 10 hr time skip
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT.mulU88(2 ether), receiver); //ask for liquidation
 
-        //@dev 1 second already skipped in OBFixture
+        // @dev 1 second already skipped in OBFixture
         skip(15 minutes - 1 seconds);
         diamond.liquidate(asset, sender, C.SHORT_STARTING_ID, shortHintArrayStorage, 0);
         assertEq(testFacet.getOracleTimeT(asset), 15 minutes); //updated
@@ -78,20 +78,20 @@ contract OracleTest is OBFixture {
     //HELPERS
     bool public constant SHORT = true;
     bool public constant BID = false;
-    //@dev > or < .5%
+    // @dev > or < .5%
     int256 public constant GT_THRESHOLD = 4010 ether;
     int256 public constant LT_THRESHOLD = 3990 ether;
 
     function matchOrderAndUpdateOracle(bool firstOrder, int256 ethPrice) public {
-        //@dev match at price higher than .5% of SAVED oracle
+        // @dev match at price higher than .5% of SAVED oracle
         uint80 oraclePrice5pctHigherTheshold = DEFAULT_PRICE.mulU80(1.005 ether);
 
-        //@dev create order to be matched
+        // @dev create order to be matched
         if (firstOrder) {
             fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         }
-        //@dev bid price must be gt short price to match.
-        //@dev make bid price gt 1.05x the saved Oracle to force oracle update
+        // @dev bid price must be gt short price to match.
+        // @dev make bid price gt 1.05x the saved Oracle to force oracle update
         else {
             fundLimitBidOpt(oraclePrice5pctHigherTheshold + 1 wei, DEFAULT_AMOUNT, receiver);
         }
@@ -101,7 +101,7 @@ contract OracleTest is OBFixture {
         } else {
             checkSavedOracleTimeAndPrice({oracleTime: 0, oraclePrice: DEFAULT_PRICE});
         }
-        //@dev mock block time progression. Already skipped 1 second in OBFixture
+        // @dev mock block time progression. Already skipped 1 second in OBFixture
         skip(2 minutes - 1 seconds);
 
         //Update roundData without setting saved oracle
@@ -111,14 +111,14 @@ contract OracleTest is OBFixture {
 
         uint256 newOracleSpotPrice = uint256(ethPrice).inv();
 
-        //@dev update on match from incomingBid
+        // @dev update on match from incomingBid
         if (firstOrder) {
             fundLimitBidOpt(oraclePrice5pctHigherTheshold + 1 wei, DEFAULT_AMOUNT, receiver);
         } else {
             fundLimitShortOpt(oraclePrice5pctHigherTheshold + 1 wei, DEFAULT_AMOUNT, sender);
         }
 
-        //@dev oracleTime and price should have updated
+        // @dev oracleTime and price should have updated
         checkSavedOracleTimeAndPrice({oracleTime: 2 minutes, oraclePrice: newOracleSpotPrice});
     }
 

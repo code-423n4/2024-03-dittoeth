@@ -132,7 +132,7 @@ contract ShortRecordFacet is Modifiers {
 
             SR currentStatus = currentShort.status;
 
-            //@dev Take latest time when combining shorts (prevent flash loan)
+            // @dev Take latest time when combining shorts (prevent flash loan)
             if (currentShort.updatedAt > c.shortUpdatedAt) {
                 c.shortUpdatedAt = currentShort.updatedAt;
             }
@@ -147,14 +147,14 @@ contract ShortRecordFacet is Modifiers {
             }
 
             if (currentShort.tokenId != 0) {
-                //@dev First short should have NFT to prevent need for re-mint
+                // @dev First short should have NFT to prevent need for re-mint
                 if (firstShort.tokenId == 0) revert Errors.FirstShortMustBeNFT();
             }
 
             // Cancel this short and combine with short in ids[0]
             LibShortRecord.deleteShortRecord(c.asset, msg.sender, _id);
 
-            //@dev partialFill shorts must be cancelled in combineShorts regardless of SR/short Order debt levels
+            // @dev partialFill shorts must be cancelled in combineShorts regardless of SR/short Order debt levels
             LibSRMin.checkCancelShortOrder(c.asset, currentStatus, shortOrderIds[i], ids[i], msg.sender);
         }
 

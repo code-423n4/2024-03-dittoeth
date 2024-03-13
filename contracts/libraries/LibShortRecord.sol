@@ -318,7 +318,7 @@ library LibShortRecord {
     }
 
     function burnNFT(uint256 tokenId) internal {
-        //@dev No need to check downcast tokenId because it is handled in function that calls burnNFT
+        // @dev No need to check downcast tokenId because it is handled in function that calls burnNFT
         AppStorage storage s = appStorage();
         STypes.NFT storage nft = s.nftMapping[tokenId];
         if (nft.owner == address(0)) revert Errors.NotMinted();

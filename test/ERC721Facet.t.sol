@@ -80,7 +80,7 @@ contract ERC721Test is OBFixture {
         assertEq(diamond.balanceOf(sender), 1);
         assertEq(diamond.ownerOf(1), sender);
 
-        //@dev give extra an initial short to test that shortRecordId changes appropriately when
+        // @dev give extra an initial short to test that shortRecordId changes appropriately when
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
     }
@@ -102,7 +102,7 @@ contract ERC721Test is OBFixture {
         assertEq(diamond.balanceOf(sender), 1);
         assertEq(diamond.ownerOf(1), sender);
 
-        //@dev give extra an initial short to test that shortRecordId changes appropriately when
+        // @dev give extra an initial short to test that shortRecordId changes appropriately when
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
     }
@@ -122,7 +122,7 @@ contract ERC721Test is OBFixture {
         STypes.NFT memory nft = diamond.getNFT(1);
         assertEq(nft.owner, extra);
         assertEq(nft.assetId, diamond.getAssetNormalizedStruct(asset).assetId);
-        //@dev id = 3 because extra already has shortRecordId = C.SHORT_STARTING_ID (2)
+        // @dev id = 3 because extra already has shortRecordId = C.SHORT_STARTING_ID (2)
         assertEq(nft.shortRecordId, C.SHORT_STARTING_ID + 1);
 
         assertEq(diamond.getShortRecord(asset, sender, C.SHORT_STARTING_ID).tokenId, 0);
@@ -209,7 +209,7 @@ contract ERC721Test is OBFixture {
     function test_Revert_TransferFrom_OriginalShortRecordCancelled() public {
         createShortAndMintNFT();
 
-        //@dev exit short so the minted NFT points to a "cancelled" short
+        // @dev exit short so the minted NFT points to a "cancelled" short
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         exitShort(C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE, sender);
 
@@ -232,8 +232,8 @@ contract ERC721Test is OBFixture {
     function test_Revert_TransferFrom_RecipientHasTooManySRs() public {
         createShortAndMintNFT();
 
-        //@dev make C.SHORT_MAX_ID - 1 unfilled shortOrders for recipient
-        //@dev -1 because createShortAndMintNFT already created 1 SR for extra
+        // @dev make C.SHORT_MAX_ID - 1 unfilled shortOrders for recipient
+        // @dev -1 because createShortAndMintNFT already created 1 SR for extra
         for (uint256 i = C.SHORT_STARTING_ID; i < C.SHORT_MAX_ID - 1; i++) {
             fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
             fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
@@ -248,8 +248,8 @@ contract ERC721Test is OBFixture {
     function test_Revert_TransferFrom_RecipientHasTooManySRs_UnfilledShortOrdersMaxed() public {
         createShortAndMintNFT();
 
-        //@dev make C.SHORT_MAX_ID - 1 unfilled shortOrders for recipient
-        //@dev -1 because createShortAndMintNFT already created 1 SR for extra
+        // @dev make C.SHORT_MAX_ID - 1 unfilled shortOrders for recipient
+        // @dev -1 because createShortAndMintNFT already created 1 SR for extra
         for (uint256 i = C.SHORT_STARTING_ID; i < C.SHORT_MAX_ID - 1; i++) {
             fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
         }
@@ -279,7 +279,7 @@ contract ERC721Test is OBFixture {
 
     //Combine Short
     function test_Revert_CombineShort_FirstShortMustBeNFT() public {
-        //@dev first short has nft, second does not
+        // @dev first short has nft, second does not
         createShortAndMintNFT();
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -433,7 +433,7 @@ contract ERC721Test is OBFixture {
 
     //CombineShort
     function test_CombineShort_TwoShortsTwoNFTs() public {
-        //@dev both shorts have nfts
+        // @dev both shorts have nfts
         createShortAndMintNFT();
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -454,7 +454,7 @@ contract ERC721Test is OBFixture {
     }
 
     function test_CombineShort_TwoShortsOneNFT() public {
-        //@dev first short has nft, second does not
+        // @dev first short has nft, second does not
         createShortAndMintNFT();
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -643,7 +643,7 @@ contract ERC721Test is OBFixture {
         vm.prank(sender);
         diamond.transferFrom(sender, extra, 1);
 
-        //@dev sender's short order was cancelled prior to xfer
+        // @dev sender's short order was cancelled prior to xfer
         uint88 ercAmount = DEFAULT_AMOUNT / 2;
         uint88 ethInShortOrder =
             DEFAULT_PRICE.mulU88(DEFAULT_AMOUNT - ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);

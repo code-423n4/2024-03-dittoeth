@@ -39,9 +39,6 @@ contract GasCreateOBTest is GasHelper {
         a.primaryLiquidationCR = 300; // 300 -> 3 ether
         a.secondaryLiquidationCR = 200; // 200 -> 2 ether
         a.forcedBidPriceBuffer = 120; // 12 -> 1.2 ether
-        a.resetLiquidationTime = 14; // 14 -> 14 hours
-        a.secondLiquidationTime = 10; // 10 -> 10 hours
-        a.firstLiquidationTime = 8; // 8 -> 8 hours
         a.penaltyCR = 110; // 110 -> 1.1 ether
         a.tappFeePct = 25; // 25 -> .025 ether
         a.callerFeePct = 5; // 5 -> .005 ether

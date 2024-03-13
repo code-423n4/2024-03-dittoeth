@@ -34,8 +34,8 @@ contract GasTWAPTest is GasHelper {
     }
 
     function test_gas_Uniswap_TWAP() public {
-        //@dev make a situation where chainlink's price is off by 50%
-        //@dev increase spot price without saving it
+        // @dev make a situation where chainlink's price is off by 50%
+        // @dev increase spot price without saving it
         ethAggregator.setRoundData(
             92233720368547778906 wei, 1000 ether, block.timestamp - 1 wei, block.timestamp - 1 wei, 92233720368547778906 wei
         );
@@ -52,8 +52,8 @@ contract GasTWAPTest is GasHelper {
         uint16[] memory shortHintArray = createShortHintArrayGas({shortHint: ZERO});
         MTypes.OrderHint[] memory orderHintArray = createOrderHintArrayGas();
         address _asset = asset;
-        //@dev make a situation where chainlink's price is off by 50%
-        //@dev increase spot price without saving it
+        // @dev make a situation where chainlink's price is off by 50%
+        // @dev increase spot price without saving it
         ethAggregator.setRoundData(
             92233720368547778906 wei, 1000 ether, block.timestamp - 1 wei, block.timestamp - 1 wei, 92233720368547778906 wei
         );

@@ -80,7 +80,7 @@ contract ShortOrdersTest is OBFixture {
         });
     }
 
-    //@dev no matching because price is out of range
+    // @dev no matching because price is out of range
     function test_ShortPriceGreaterThanBidPrice() public {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE + 1 wei, DEFAULT_AMOUNT * 2, sender);
@@ -532,7 +532,7 @@ contract ShortOrdersTest is OBFixture {
         shortOrderIds[0] = 0;
         shortOrderIds[1] = 101;
 
-        //@dev Short Record Delete Event sends because short record exited as well as the attached short order
+        // @dev Short Record Delete Event sends because short record exited as well as the attached short order
         vm.expectEmit(_diamond);
         emit Events.DeleteShortRecord(asset, sender, C.SHORT_STARTING_ID + 1);
         vm.prank(sender);
@@ -542,7 +542,7 @@ contract ShortOrdersTest is OBFixture {
         assertTrue(short.status == SR.Closed);
 
         //The Short Record ID is now available for reuse
-        //@dev the short was auto cancelled
+        // @dev the short was auto cancelled
         short = getShortRecord(sender, C.HEAD);
         assertEq(short.prevId, C.SHORT_STARTING_ID + 1);
         assertEq(short.nextId, C.SHORT_STARTING_ID);
@@ -551,7 +551,7 @@ contract ShortOrdersTest is OBFixture {
     //Testing max orderId
     function test_CanStillMatchOrderWhenShortOrderIdIsMaxed() public {
         vm.prank(owner);
-        //@dev 65535 is max value
+        // @dev 65535 is max value
         testFacet.setOrderIdT(asset, 65534);
 
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
@@ -563,12 +563,12 @@ contract ShortOrdersTest is OBFixture {
         vm.expectRevert(stdError.arithmeticError);
         diamond.createLimitShort(asset, HIGHER_PRICE, DEFAULT_AMOUNT, orderHintArray, shortHintArrayStorage, initialCR);
 
-        //@dev Can still match since orderId isn't used invoked until it needs to be added on ob
+        // @dev Can still match since orderId isn't used invoked until it needs to be added on ob
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         assertEq(diamond.getAssetNormalizedStruct(asset).orderId, 65535);
     }
 
-    //@dev Scenario: There are eligible asks to be matched, one eligible short with lowest price, one ineligibleShort
+    // @dev Scenario: There are eligible asks to be matched, one eligible short with lowest price, one ineligibleShort
     function test_MatchOnlyEligibleSells() public {
         fundLimitShortOpt(DEFAULT_PRICE - 1 wei, DEFAULT_AMOUNT, sender); //won't be matched
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -577,7 +577,7 @@ contract ShortOrdersTest is OBFixture {
         assertEq(getShorts().length, 2);
         assertEq(getAsks().length, 2);
 
-        //@dev ignores the short under oracle price
+        // @dev ignores the short under oracle price
         fundLimitBidOpt(DEFAULT_PRICE * 2, DEFAULT_AMOUNT * 4, receiver);
         assertEq(getShorts().length, 1);
         assertEq(getAsks().length, 0);

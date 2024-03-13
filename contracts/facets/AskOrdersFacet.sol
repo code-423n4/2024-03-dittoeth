@@ -46,7 +46,7 @@ contract AskOrdersFacet is Modifiers {
         incomingAsk.orderType = isMarketOrder ? O.MarketAsk : O.LimitAsk;
         incomingAsk.creationTime = LibOrders.getOffsetTime();
 
-        //@dev asks don't need to be concerned with shortHintId
+        // @dev asks don't need to be concerned with shortHintId
         LibOrders.sellMatchAlgo(asset, incomingAsk, orderHintArray, minAskEth);
     }
 

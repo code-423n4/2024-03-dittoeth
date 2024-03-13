@@ -45,9 +45,6 @@ contract MultiAssetOrdersTest is OBFixture {
         a.primaryLiquidationCR = 300; // 300 -> 3 ether
         a.secondaryLiquidationCR = 200; // 200 -> 2 ether
         a.forcedBidPriceBuffer = 120; // 120 -> 1.2 ether
-        a.resetLiquidationTime = 14; // 14 -> 14 hours
-        a.secondLiquidationTime = 10; // 10 -> 10 hours
-        a.firstLiquidationTime = 8; // 8 -> 8 hours
         a.penaltyCR = 120; // 120 -> 1.2 ether
         a.tappFeePct = 30; // 30 -> .03 ether
         a.callerFeePct = 6; // 10 -> .006 ether
@@ -78,7 +75,7 @@ contract MultiAssetOrdersTest is OBFixture {
         uint88 cgld_amount = DEFAULT_AMOUNT_CGLD;
         depositEth(sender, cgld_amount.mulU88(cgld_price).mulU88(diamond.getAssetNormalizedStruct(_cgld).initialCR));
         uint16 gldInitialCR = diamond.getAssetStruct(_cgld).initialCR;
-        //@dev calling before createLimitShort to prevent conflict with vm.prank()
+        // @dev calling before createLimitShort to prevent conflict with vm.prank()
         orderHintArray = diamond.getHintArray(asset, DEFAULT_PRICE_CGLD, O.LimitShort, 1);
         vm.prank(sender);
         diamond.createLimitShort(
@@ -124,9 +121,6 @@ contract MultiAssetOrdersTest is OBFixture {
         assertEq(diamond.getAssetStruct(asset).penaltyCR, 110);
         assertEq(diamond.getAssetStruct(asset).tappFeePct, 25);
         assertEq(diamond.getAssetStruct(asset).callerFeePct, 5);
-        assertEq(diamond.getAssetStruct(asset).resetLiquidationTime, 16);
-        assertEq(diamond.getAssetStruct(asset).secondLiquidationTime, 12);
-        assertEq(diamond.getAssetStruct(asset).firstLiquidationTime, 10);
         assertEq(diamond.getAssetStruct(asset).recoveryCR, 150);
         assertEq(diamond.getAssetStruct(asset).dittoTargetCR, 60);
 
@@ -137,9 +131,6 @@ contract MultiAssetOrdersTest is OBFixture {
         assertEq(diamond.getAssetNormalizedStruct(asset).penaltyCR, 1.1 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).tappFeePct, 0.025 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).callerFeePct, 0.005 ether);
-        assertEq(diamond.getAssetNormalizedStruct(asset).resetLiquidationTime, 16 hours);
-        assertEq(diamond.getAssetNormalizedStruct(asset).secondLiquidationTime, 12 hours);
-        assertEq(diamond.getAssetNormalizedStruct(asset).firstLiquidationTime, 10 hours);
         assertEq(diamond.getAssetNormalizedStruct(asset).recoveryCR, 1.5 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).dittoTargetCR, 6.0 ether);
 
@@ -150,9 +141,6 @@ contract MultiAssetOrdersTest is OBFixture {
         assertEq(diamond.getAssetStruct(_cgld).penaltyCR, 120);
         assertEq(diamond.getAssetStruct(_cgld).tappFeePct, 30);
         assertEq(diamond.getAssetStruct(_cgld).callerFeePct, 6);
-        assertEq(diamond.getAssetStruct(_cgld).resetLiquidationTime, 14);
-        assertEq(diamond.getAssetStruct(_cgld).secondLiquidationTime, 10);
-        assertEq(diamond.getAssetStruct(_cgld).firstLiquidationTime, 8);
         assertEq(diamond.getAssetStruct(_cgld).recoveryCR, 140);
         assertEq(diamond.getAssetStruct(_cgld).dittoTargetCR, 19);
 
@@ -163,9 +151,6 @@ contract MultiAssetOrdersTest is OBFixture {
         assertEq(diamond.getAssetNormalizedStruct(_cgld).penaltyCR, 1.2 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).tappFeePct, 0.03 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).callerFeePct, 0.006 ether);
-        assertEq(diamond.getAssetNormalizedStruct(_cgld).resetLiquidationTime, 14 hours);
-        assertEq(diamond.getAssetNormalizedStruct(_cgld).secondLiquidationTime, 10 hours);
-        assertEq(diamond.getAssetNormalizedStruct(_cgld).firstLiquidationTime, 8 hours);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).recoveryCR, 1.4 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).dittoTargetCR, 1.9 ether);
     }
@@ -187,9 +172,6 @@ contract MultiAssetOrdersTest is OBFixture {
         a.primaryLiquidationCR = 300; // 300 -> 3 ether
         a.secondaryLiquidationCR = 200; // 200 -> 2 ether
         a.forcedBidPriceBuffer = 120; // 120 -> 1.2 ether
-        a.resetLiquidationTime = 14; // 14 -> 14 hours
-        a.secondLiquidationTime = 10; // 10 -> 10 hours
-        a.firstLiquidationTime = 8; // 8 -> 8 hours
         a.penaltyCR = 120; // 120 -> 1.2 ether
         a.tappFeePct = 30; // 30 -> .03 ether
         a.callerFeePct = 6; // 10 -> .006 ether

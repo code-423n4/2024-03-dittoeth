@@ -135,7 +135,7 @@ library LibOrders {
             hintId = findOrderHintId(s.shorts, asset, orderHintArray);
         }
 
-        //@dev: Only need to set this when placing incomingShort onto market
+        // @dev: Only need to set this when placing incomingShort onto market
         addOrder(s.shorts, asset, order, hintId);
         updateStartingShortIdViaShort(asset, order);
         uint256 vault = s.asset[asset].vault;
@@ -234,7 +234,7 @@ library LibOrders {
         returns (int256 direction)
     {
         AppStorage storage s = appStorage();
-        //@dev: TAIL can't be prevId because it will always be last item in list
+        // @dev: TAIL can't be prevId because it will always be last item in list
         bool check1 = s.bids[asset][_prevId].price >= _newPrice || _prevId == C.HEAD;
         bool check2 = _newPrice > s.bids[asset][_nextId].price || _nextId == C.TAIL;
 
@@ -264,7 +264,7 @@ library LibOrders {
         uint256 _newPrice,
         uint16 _nextId
     ) private view returns (int256 direction) {
-        //@dev: TAIL can't be prevId because it will always be last item in list
+        // @dev: TAIL can't be prevId because it will always be last item in list
         bool check1 = orders[asset][_prevId].price <= _newPrice || _prevId == C.HEAD;
 
         bool check2 = _newPrice < orders[asset][_nextId].price || _nextId == C.TAIL;
@@ -504,18 +504,18 @@ library LibOrders {
 
         if (b.matchedShortId != 0) {
             if (!b.isMovingBack && !b.isMovingFwd) {
-                //@dev Handles only matching one thing
-                //@dev If does not get fully matched, b.matchedShortId == 0 and therefore not hit this block
+                // @dev Handles only matching one thing
+                // @dev If does not get fully matched, b.matchedShortId == 0 and therefore not hit this block
                 _updateOrders(s.shorts, asset, b.prevShortId, b.matchedShortId);
             } else if (!b.isMovingBack && b.isMovingFwd) {
-                //@dev Handles moving forward only
+                // @dev Handles moving forward only
                 _updateOrders(s.shorts, asset, b.firstShortIdBelowOracle, b.matchedShortId);
             } else if (b.isMovingBack && !b.isMovingFwd) {
                 //@handles moving backwards only.
                 _updateOrders(s.shorts, asset, b.prevShortId, b.shortHintId);
             } else if (b.isMovingBack && b.isMovingFwd) {
                 uint16 id = b.prevShortId == b.firstShortIdBelowOracle ? b.shortHintId : b.matchedShortId;
-                //@dev Handle going backward and forward
+                // @dev Handle going backward and forward
                 _updateOrders(s.shorts, asset, b.firstShortIdBelowOracle, id);
             }
         }
@@ -638,7 +638,7 @@ library LibOrders {
             matchIncomingAsk(asset, incomingOrder, matchTotal);
         }
 
-        //@dev match price is based on the order that was already on orderbook
+        // @dev match price is based on the order that was already on orderbook
         LibOrders.handlePriceDiscount(asset, matchTotal.lastMatchPrice);
     }
 
@@ -779,7 +779,7 @@ library LibOrders {
         }
     }
 
-    //@dev Update on match if order matches and price diff between order price and oracle > chainlink threshold (i.e. eth .5%)
+    // @dev Update on match if order matches and price diff between order price and oracle > chainlink threshold (i.e. eth .5%)
     function updateOracleAndStartingShortViaThreshold(
         address asset,
         uint256 savedPrice,
@@ -787,7 +787,7 @@ library LibOrders {
         uint16[] memory shortHintArray
     ) internal {
         bool orderPriceGtThreshold;
-        //@dev handle .5% deviations in either directions
+        // @dev handle .5% deviations in either directions
         if (incomingOrder.price >= savedPrice) {
             orderPriceGtThreshold = (incomingOrder.price - savedPrice).div(savedPrice) > 0.005 ether;
         } else {
@@ -799,7 +799,7 @@ library LibOrders {
         }
     }
 
-    //@dev Possible for this function to never get called if updateOracleAndStartingShortViaThreshold() gets called often enough
+    // @dev Possible for this function to never get called if updateOracleAndStartingShortViaThreshold() gets called often enough
     function updateOracleAndStartingShortViaTimeBidOnly(address asset, uint16[] memory shortHintArray) internal {
         uint256 timeDiff = getOffsetTime() - LibOracle.getTime(asset);
         if (timeDiff >= 15 minutes) {
@@ -843,7 +843,7 @@ library LibOrders {
         }
 
         if (anyOrderHintPrevMatched) {
-            //@dev If hint was prev matched, assume that hint was close to HEAD and therefore is reasonable to use HEAD
+            // @dev If hint was prev matched, assume that hint was close to HEAD and therefore is reasonable to use HEAD
             return C.HEAD;
         }
 
@@ -896,8 +896,8 @@ library LibOrders {
         STypes.ShortRecord storage shortRecord = s.shortRecords[asset][shorter][shortRecordId];
 
         if (shortRecord.status == SR.Closed) {
-            //@dev creating shortOrder automatically creates a closed shortRecord which also sets a shortRecordId
-            //@dev cancelling an unmatched order needs to also handle/recycle the shortRecordId
+            // @dev creating shortOrder automatically creates a closed shortRecord which also sets a shortRecordId
+            // @dev cancelling an unmatched order needs to also handle/recycle the shortRecordId
             LibShortRecord.deleteShortRecord(asset, shorter, shortRecordId);
         } else {
             uint88 minShortErc = uint88(LibAsset.minShortErc(asset));
@@ -925,10 +925,10 @@ library LibOrders {
                     Asset.dethCollateral += collateralDiff;
                     Asset.ercDebt += debtDiff;
 
-                    //@dev update the eth refund amount
+                    // @dev update the eth refund amount
                     eth -= collateralDiff;
                 }
-                //@dev virtually mint the increased debt
+                // @dev virtually mint the increased debt
                 s.assetUser[asset][shorter].ercEscrowed += debtDiff;
             } else {
                 shortRecord.status = SR.FullyFilled;
@@ -951,7 +951,7 @@ library LibOrders {
         cancelOrder(s.shorts, asset, id);
     }
 
-    //@dev approximates the match price compared to the oracle price and accounts for any discount by increasing dethTithePercent
+    // @dev approximates the match price compared to the oracle price and accounts for any discount by increasing dethTithePercent
     function handlePriceDiscount(address asset, uint80 price) internal {
         AppStorage storage s = appStorage();
         uint256 vault = s.asset[asset].vault;
@@ -959,26 +959,26 @@ library LibOrders {
         uint256 savedPrice = LibOracle.getPrice(asset);
         bool isDiscounted = savedPrice > price.mul(1.01 ether);
 
-        //@dev tithe is increased only if discount is greater than 1%
+        // @dev tithe is increased only if discount is greater than 1%
         if (isDiscounted) {
-            //@dev bound the new tithe amount between 25% and 100%
+            // @dev bound the new tithe amount between 25% and 100%
             uint256 discountPct = max(0.01 ether, min(((savedPrice - price).div(savedPrice)), 0.04 ether));
 
-            //@dev Vault.dethTitheMod is added onto Vault.dethTithePercent to get tithe amount
+            // @dev Vault.dethTitheMod is added onto Vault.dethTithePercent to get tithe amount
             Vault.dethTitheMod = (C.MAX_TITHE - Vault.dethTithePercent).mulU16(discountPct.div(0.04 ether));
         } else {
             // @dev dethTitheMod is only set when setTithe is called.
             bool titheWasChanged = Vault.dethTitheMod != C.INITIAL_TITHE_MOD;
 
             if (titheWasChanged) {
-                //@dev change back to original tithe percent
+                // @dev change back to original tithe percent
                 Vault.dethTitheMod = C.INITIAL_TITHE_MOD;
             } else {
                 return;
             }
         }
 
-        //@dev exists because of ShortOrderFacet contract size
+        // @dev exists because of ShortOrderFacet contract size
         IDiamond(payable(address(this)))._updateYieldDiamond(vault);
     }
 

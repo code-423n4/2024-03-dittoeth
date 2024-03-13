@@ -29,7 +29,7 @@ contract InvariantsMinShortErc is Test {
 
     bytes4[] public selectors;
 
-    //@dev Used for one test: statefulFuzz_allOrderIdsUnique
+    // @dev Used for one test: statefulFuzz_allOrderIdsUnique
     mapping(uint16 id => uint256 cnt) orderIdMapping;
 
     function setUp() public virtual {
@@ -42,7 +42,7 @@ contract InvariantsMinShortErc is Test {
 
         s_handler = new Handler(ob);
 
-        //@dev duplicate the selector to increase the distribution of certain handler calls
+        // @dev duplicate the selector to increase the distribution of certain handler calls
         selectors = [
             // Bridge
             Handler.deposit.selector,
@@ -79,7 +79,7 @@ contract InvariantsMinShortErc is Test {
             if (shortRecords.length > 0) {
                 for (uint256 j = 0; j < shortRecords.length; j++) {
                     STypes.ShortRecord memory shortRecord = shortRecords[j];
-                    //@dev check that all shorts under minShortErc is partialFill;
+                    // @dev check that all shorts under minShortErc is partialFill;
                     if (shortRecord.ercDebt < diamond.getMinShortErc(asset)) {
                         // vm.writeLine(
                         //     "./test/invariants/inputs",
@@ -100,7 +100,7 @@ contract InvariantsMinShortErc is Test {
                         //get all the short orders
                         for (uint256 k = 0; k < diamond.getShorts(asset).length; k++) {
                             currentShort = diamond.getShorts(asset)[k];
-                            //@dev check that all shorts under minShortErc has a corresponding shortOrder on ob;
+                            // @dev check that all shorts under minShortErc has a corresponding shortOrder on ob;
                             if (currentShort.shortRecordId == shortRecord.id) {
                                 counter++;
                                 // vm.writeLine(

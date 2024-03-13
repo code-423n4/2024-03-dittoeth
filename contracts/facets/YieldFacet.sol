@@ -42,7 +42,7 @@ contract YieldFacet is Modifiers {
         emit Events.UpdateYield(vault);
     }
 
-    //@dev exists because of ShortOrderFacet contract size
+    // @dev exists because of ShortOrderFacet contract size
     function _updateYieldDiamond(uint256 vault) external onlyDiamond {
         vault.updateYield();
         emit Events.UpdateYield(vault);

@@ -80,7 +80,7 @@ contract GasCombineShortTest is GasShortFixture {
         startMeasuringGas("ShortRecord-CombineShortx10of100");
         diamond.combineShorts(_asset, ids, shortOrderIds);
         stopMeasuringGas();
-        //@dev started with 100, combined 10 into 1
+        // @dev started with 100, combined 10 into 1
         assertEq(ob.getShortRecordCount(sender), 91);
     }
 
@@ -238,7 +238,7 @@ contract GasShortMintNFT is GasShortFixture {
         bridgeCreditReth = diamond.getVaultUserStruct(VAULT.ONE, sender).bridgeCreditReth;
         bridgeCreditSteth = diamond.getVaultUserStruct(VAULT.ONE, sender).bridgeCreditSteth;
 
-        //@Dev give extra a short and nft to set slot > 0
+        // @dev give extra a short and nft to set slot > 0
         ob.fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
         ob.fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         vm.prank(extra);

@@ -107,9 +107,6 @@ contract DeployHelper is Test {
         IDiamond.setPrimaryLiquidationCR.selector,
         IDiamond.setSecondaryLiquidationCR.selector,
         IDiamond.setForcedBidPriceBuffer.selector,
-        IDiamond.setResetLiquidationTime.selector,
-        IDiamond.setSecondLiquidationTime.selector,
-        IDiamond.setFirstLiquidationTime.selector,
         IDiamond.setPenaltyCR.selector,
         IDiamond.setTappFeePct.selector,
         IDiamond.setCallerFeePct.selector,
@@ -568,9 +565,6 @@ contract DeployHelper is Test {
         a.primaryLiquidationCR = 150; // 150 -> 1.5 ether
         a.secondaryLiquidationCR = 140; // 140 -> 1.4 ether
         a.forcedBidPriceBuffer = 110; // 110 -> 1.1 ether
-        a.resetLiquidationTime = 12; // 12 -> 12 hours
-        a.secondLiquidationTime = 8; // 8 -> 8 hours
-        a.firstLiquidationTime = 6; // 6 -> 6 hours
         a.penaltyCR = 110; // 110 -> 1.1 ether
         a.tappFeePct = 25; //25 -> .025 ether
         a.callerFeePct = 5; //5 -> .005 ether
@@ -610,9 +604,6 @@ contract DeployHelper is Test {
             assertEq(a.minShortErc, assetStruct.minShortErc);
             assertEq(a.oracle, assetStruct.oracle);
             assertEq(VAULT.ONE, assetStruct.vault);
-            assertEq(a.resetLiquidationTime, assetStruct.resetLiquidationTime);
-            assertEq(a.secondLiquidationTime, assetStruct.secondLiquidationTime);
-            assertEq(a.firstLiquidationTime, assetStruct.firstLiquidationTime);
             assertEq(a.primaryLiquidationCR, assetStruct.primaryLiquidationCR);
             assertEq(a.secondaryLiquidationCR, assetStruct.secondaryLiquidationCR);
             assertEq(a.penaltyCR, assetStruct.penaltyCR);

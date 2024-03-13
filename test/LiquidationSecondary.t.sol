@@ -26,14 +26,14 @@ contract SecondaryLiquidationTest is LiquidationHelper {
     ////////////////C Ratio scenario testing////////////////
 
     /*
-      //@dev: scenarios for below
+      // @dev: scenarios for below
         secondary
         Scenario 1: cratio < 1.5 and cratio > 1.1 (Caller gets ercDebtAtOracle. Shorter gets remaining collateral)
         Scenario 2: cratio <= 1.1 and cratio > 1 (Caller gets ercDebtAtOracle. Tapp gets remaining collateral. Shorter gets nothing)
         Scenario 3: cratio < 1 (Caller gets all collateral, but is haircut since cratio under 1. Shorter gets nothing)
     */
 
-    //@dev helper function for setting cratio and minting, as well as the actual liquidation
+    // @dev helper function for setting cratio and minting, as well as the actual liquidation
     function secondaryLiquidateScenarioSetUp(SecondaryScenarios scenario, SecondaryType secondaryType, address caller)
         public
         returns (uint256, uint256)
@@ -93,7 +93,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
         uint256 ercDebtAtOraclePrice,
         uint256 remainingCollateral
     ) public {
-        //@dev: caller gives up ercEscrowed for collateral
+        // @dev: caller gives up ercEscrowed for collateral
         if (scenario == SecondaryScenarios.CRatioBetween110And150) {
             if (secondaryType == SecondaryType.LiquidateErcEscrowed) {
                 if (caller == receiver) {
@@ -119,7 +119,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
                 }
             }
         }
-        //@dev caller gives up ercEscrowed for collateral. Tapp gets remaining collateral instead of shorter gets nothing back
+        // @dev caller gives up ercEscrowed for collateral. Tapp gets remaining collateral instead of shorter gets nothing back
         else if (scenario == SecondaryScenarios.CRatioBetween100And110) {
             if (secondaryType == SecondaryType.LiquidateErcEscrowed) {
                 if (caller == receiver) {
@@ -143,7 +143,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
                 }
             }
         }
-        //@dev caller gives up ercEscrowed for collateral (haircut)
+        // @dev caller gives up ercEscrowed for collateral (haircut)
         else if (scenario == SecondaryScenarios.CRatioBelow100) {
             if (secondaryType == SecondaryType.LiquidateErcEscrowed) {
                 if (caller == receiver) {
@@ -306,7 +306,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
     }
 
     // Secondary Liquidate Scenario Testing
-    //@dev: Scenario 1: ratio < 1.5 and cratio > 1.1
+    // @dev: Scenario 1: ratio < 1.5 and cratio > 1.1
     //liquidateErcEscrowed
     function test_SecondaryLiquidateScenario1ErcEscrowed() public {
         LiquidateShortSecondary({
@@ -381,7 +381,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 2: cratio <= 1.1 and cratio > 1
+    // @dev: Scenario 2: cratio <= 1.1 and cratio > 1
     //liquidateErcEscrowed
     function test_SecondaryLiquidateScenario2ErcEscrowed() public {
         LiquidateShortSecondary({
@@ -455,7 +455,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev:Scenario 3: cratio < 1
+    // @dev:Scenario 3: cratio < 1
     //liquidateErcEscrowed
     function test_SecondaryLiquidateScenario3ErcEscrowed() public {
         LiquidateShortSecondary({
@@ -531,7 +531,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
     }
 
     // Secondary Partial Liquidate Scenario Testing
-    //@dev: Scenario 2: cratio <= 1.1 and cratio > 1
+    // @dev: Scenario 2: cratio <= 1.1 and cratio > 1
     // function test_SecondaryLiquidatePartialScenario2ErcEscrowed() public {
     //     LiquidateShortSecondaryPartial({
     //         scenario: SecondaryScenarios.CRatioBetween100And110,
@@ -614,7 +614,7 @@ contract SecondaryLiquidationTest is LiquidationHelper {
     // }
 
     // Secondary Partial Then Full Liquidate Scenario Testing
-    //@dev: Scenario 2: cratio <= 1.1 and cratio > 1
+    // @dev: Scenario 2: cratio <= 1.1 and cratio > 1
     // function test_SecondaryLiquidatePartialThenFullScenario2ErcEscrowed() public {
     //     testSecondaryLiquidatePartialScenario2ErcEscrowed();
 

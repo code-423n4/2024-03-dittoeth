@@ -20,7 +20,7 @@ library LibSRTransfer {
         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
 
-        //@dev shortOrderId is already validated in mintNFT
+        // @dev shortOrderId is already validated in mintNFT
         if (short.status == SR.PartialFill) {
             LibOrders.cancelShort(asset, nft.shortOrderId);
         }

@@ -99,12 +99,12 @@ contract LiquidationHelper is OBFixture {
         r.ercEscrowed = DEFAULT_AMOUNT; //from first bid and short match
         assertStruct(receiver, r);
 
-        //@dev need to set ethPrice. If created after, the short might get skipped over.
+        // @dev need to set ethPrice. If created after, the short might get skipped over.
         _setETH(ethPrice);
         uint80 askPrice = uint80(diamond.getOracleAssetPrice(asset));
         fundLimitShortOpt(askPrice, askAmount, extra);
 
-        //@dev confirming short id to use in liquidate()
+        // @dev confirming short id to use in liquidate()
         STypes.Order[] memory shorts = getShorts();
         assertEq(shorts[0].id, 101);
 
@@ -188,7 +188,7 @@ contract LiquidationHelper is OBFixture {
 
         LiquidationStruct memory m = simulateLiquidation(r, s, ethPrice, receiver, sender, 0);
 
-        //@dev tapp ethEscrowed differs depending on if it was used to pay for forcedBid
+        // @dev tapp ethEscrowed differs depending on if it was used to pay for forcedBid
         if (buyer) {
             assertEq(diamond.getVaultUserStruct(VAULT.ONE, tapp).ethEscrowed, FUNDED_TAPP + m.tappFee);
         } else {

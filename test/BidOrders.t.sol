@@ -914,7 +914,7 @@ contract BidOrdersTest is OBFixture {
     //Testing max orderId
     function test_CanStillMatchOrderWhenBidOrderIdIsMaxed() public {
         vm.prank(owner);
-        //@dev 65535 is max value
+        // @dev 65535 is max value
         testFacet.setOrderIdT(asset, 65534);
 
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -926,7 +926,7 @@ contract BidOrdersTest is OBFixture {
         vm.expectRevert(stdError.arithmeticError);
         diamond.createBid(asset, LOWER_PRICE, DEFAULT_AMOUNT, C.LIMIT_ORDER, orderHintArray, shortHintArrayStorage);
 
-        //@dev Can still match since orderId isn't used invoked until it needs to be added on ob
+        // @dev Can still match since orderId isn't used invoked until it needs to be added on ob
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         assertEq(diamond.getAssetNormalizedStruct(asset).orderId, 65535);
     }
@@ -982,7 +982,7 @@ contract BidOrdersTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, C.HEAD).nextId, C.HEAD);
     }
 
-    //@dev scenario: HEAD S1 S2 HINT S3 S4
+    // @dev scenario: HEAD S1 S2 HINT S3 S4
     function test_MoveBackThenFwd() public {
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, makeAddr("1")); //100
         fundLimitShortOpt(DEFAULT_PRICE + 1 wei, DEFAULT_AMOUNT, makeAddr("2")); //101

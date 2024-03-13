@@ -74,7 +74,7 @@ contract YieldTest is OBFixture {
     }
 
     function distributeYield(address _addr) internal returns (uint256 reward) {
-        //@dev skip bc yield can only be distributed after certain time
+        // @dev skip bc yield can only be distributed after certain time
         skip(yieldEligibleTime);
         address[] memory assets = new address[](1);
         assets[0] = asset;
@@ -603,7 +603,7 @@ contract YieldTest is OBFixture {
         fundLimitAsk(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
         _setETH(800 ether); // c-ratio = 1.2
         vm.startPrank(extra);
-        //@dev skip time to get yield
+        // @dev skip time to get yield
         skip(C.YIELD_DELAY_SECONDS + 1);
         vm.stopPrank();
         liquidate(extra2, C.SHORT_STARTING_ID, extra); // normlaize gas for remaining liquidations
@@ -897,7 +897,7 @@ contract YieldTest is OBFixture {
     }
 
     function test_CanYieldDistributeManyShorts() public {
-        //@dev force the createLimitShort and createBid to default to internal loop
+        // @dev force the createLimitShort and createBid to default to internal loop
         MTypes.OrderHint[] memory orderHintArray;
         for (uint160 i; i < users.length - 1; i++) {
             for (uint160 num = 1; num <= 50; num++) {
@@ -954,7 +954,7 @@ contract YieldTest is OBFixture {
         address[] memory assets = new address[](1);
         assets[0] = asset;
         skip(yieldEligibleTime);
-        //@dev setETH to prevent stale oracle revert
+        // @dev setETH to prevent stale oracle revert
         setETH(4000 ether);
         //combine shorts to reset the updatedAt
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -1145,7 +1145,7 @@ contract YieldTest is OBFixture {
         checkTappDidNotReceiveYield();
     }
 
-    //@dev shorter liquidated by primary liquidation will always get yield via disburse
+    // @dev shorter liquidated by primary liquidation will always get yield via disburse
     function test_CantDisburseCollateralBeforeDelayIntervalPrimaryLiquidateShorterGetsYield() public {
         (uint256 collateral,) = setUpShortAndCheckInitialEscrowed();
 
@@ -1155,7 +1155,7 @@ contract YieldTest is OBFixture {
 
         fundLimitAsk(DEFAULT_PRICE, DEFAULT_AMOUNT, extra);
         setETH(2666 ether);
-        //@dev skip time to get yield
+        // @dev skip time to get yield
         skip(C.YIELD_DELAY_SECONDS + 1);
         vm.prank(extra);
         (uint256 gas, uint256 ethFilled) = diamond.liquidate(asset, sender, C.SHORT_STARTING_ID, shortHintArrayStorage, 0);

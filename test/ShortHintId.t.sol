@@ -77,7 +77,7 @@ contract ShortHintIdTest is OBFixture {
     function test_CreateIncomingShortWhenShortOrdersIsEmpty1() public {
         assertEq(getShorts().length, 0);
 
-        //@dev Shorts under oracle price should not become startingShortId
+        // @dev Shorts under oracle price should not become startingShortId
         fundLimitShortOpt(DEFAULT_PRICE - 1 wei, DEFAULT_AMOUNT, sender);
         assertEq(diamond.getAssetStruct(asset).startingShortId, 1);
 
@@ -186,7 +186,7 @@ contract ShortHintIdTest is OBFixture {
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender); //103
         assertEq(diamond.getAssetStruct(asset).startingShortId, 103);
 
-        //@dev Need to change state manually to properly test this
+        // @dev Need to change state manually to properly test this
         testFacet.setStartingShortId(asset, 100);
         assertEq(diamond.getAssetStruct(asset).startingShortId, 100);
 
@@ -206,7 +206,7 @@ contract ShortHintIdTest is OBFixture {
         skip(1 hours);
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
 
-        //@dev matched with ask, not short. Nevertheless updated short Id
+        // @dev matched with ask, not short. Nevertheless updated short Id
         assertEq(diamond.getAssetStruct(asset).startingShortId, 100);
     }
 
@@ -491,7 +491,7 @@ contract ShortHintIdTest is OBFixture {
         );
     }
 
-    //@dev Starts at 101. Fills 101, 102, 103, 104, 105. Some bid leftover
+    // @dev Starts at 101. Fills 101, 102, 103, 104, 105. Some bid leftover
     function test_Scenario1_MovingFwd_bidErcGtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 101;
@@ -512,7 +512,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 102).prevId, 101);
     }
 
-    //@dev Starts at 101. Fills 101, 102, 103, 104, 105
+    // @dev Starts at 101. Fills 101, 102, 103, 104, 105
     function test_Scenario2_MovingFwd_bidErcEqSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 101;
@@ -531,7 +531,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 102).prevId, 101);
     }
 
-    //@dev Starts at 101. Fills 101, 102. Partially fills 103
+    // @dev Starts at 101. Fills 101, 102. Partially fills 103
     function test_Scenario3_MovingFwd_bidErcLtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 101;
@@ -553,7 +553,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 102).prevId, 101);
     }
 
-    //@dev Starts at (105-1)=104. Fills 104, 103, 102, 101, 105. Some bid leftover
+    // @dev Starts at (105-1)=104. Fills 104, 103, 102, 101, 105. Some bid leftover
     function test_Scenario4_MovingBack_bidErcGtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 105;
@@ -575,7 +575,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 103).prevId, 104);
     }
 
-    //@dev Starts at (105-1)=104. Fills 104, 103, 102, 101.
+    // @dev Starts at (105-1)=104. Fills 104, 103, 102, 101.
     function test_Scenario5_MovingBack_bidErcEqSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 105;
@@ -594,7 +594,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 103).prevId, 104);
     }
 
-    //@dev Starts at (105-1)=104. Fills 104, 103. Partially fills 102
+    // @dev Starts at (105-1)=104. Fills 104, 103. Partially fills 102
     function test_Scenario6_MovingBack_bidErcLtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 105;
@@ -616,7 +616,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 103).prevId, 104);
     }
 
-    //@dev Starts at (104-1)=103. Fills 103, 102, 101, 104, 105. Some bid leftover
+    // @dev Starts at (104-1)=103. Fills 103, 102, 101, 104, 105. Some bid leftover
     function test_Scenario7_MovingBackThenFwd_bidErcGtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 104;
@@ -638,7 +638,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 102).prevId, 103);
     }
 
-    //@dev Starts at (104-1)=103. Fills 103, 102, 101, 104, 105.
+    // @dev Starts at (104-1)=103. Fills 103, 102, 101, 104, 105.
     function test_Scenario8_MovingBackThenFwd_bidErcEqSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 104;
@@ -657,7 +657,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 102).prevId, 103);
     }
 
-    //@dev Starts at (104-1)=103. Fills 103, 102. Partially fills 101
+    // @dev Starts at (104-1)=103. Fills 103, 102. Partially fills 101
     function test_Scenario9_MovingBackThenFwd_bidErcLtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 104;
@@ -679,7 +679,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getShortOrder(asset, 102).prevId, 103);
     }
 
-    //@dev Starts at (104-1)=103. Fills 103. Partially Fills 102
+    // @dev Starts at (104-1)=103. Fills 103. Partially Fills 102
     function test_Scenario10_MatchOnlyOne_bidErcGtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 104;
@@ -699,7 +699,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getAssetStruct(asset).startingShortId, 102);
     }
 
-    //@dev Starts at (104-1)=103. Fills 103.
+    // @dev Starts at (104-1)=103. Fills 103.
     function test_Scenario11_MatchOnlyOne_bidErcEqSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 104;
@@ -717,7 +717,7 @@ contract ShortHintIdTest is OBFixture {
         assertEq(diamond.getAssetStruct(asset).startingShortId, 102);
     }
 
-    //@dev Starts at (104-1)=103. Partially Fills 103.
+    // @dev Starts at (104-1)=103. Partially Fills 103.
     function test_Scenario12_MatchOnlyOne_bidErcLtSellErc() public {
         uint16[] memory shortHintArray = new uint16[](1);
         shortHintArray[0] = 104;

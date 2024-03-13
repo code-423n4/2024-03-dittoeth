@@ -26,7 +26,7 @@ library LibOracle {
 
         try baseOracle.latestRoundData() returns (uint80 baseRoundID, int256 basePrice, uint256, uint256 baseTimeStamp, uint80) {
             if (oracle == baseOracle) {
-                //@dev multiply base oracle by 10**10 to give it 18 decimals of precision
+                // @dev multiply base oracle by 10**10 to give it 18 decimals of precision
                 uint256 basePriceInEth = basePrice > 0 ? uint256(basePrice * C.BASE_ORACLE_DECIMALS).inv() : 0;
                 basePriceInEth = baseOracleCircuitBreaker(protocolPrice, baseRoundID, basePrice, baseTimeStamp, basePriceInEth);
                 return basePriceInEth;
@@ -79,7 +79,7 @@ library LibOracle {
             chainlinkPriceInEth > protocolPrice ? chainlinkPriceInEth - protocolPrice : protocolPrice - chainlinkPriceInEth;
         bool priceDeviation = protocolPrice > 0 && chainlinkDiff.div(protocolPrice) > 0.5 ether;
 
-        //@dev if there is issue with chainlink, get twap price. Verify twap and compare with chainlink
+        // @dev if there is issue with chainlink, get twap price. Verify twap and compare with chainlink
         if (invalidFetchData) {
             return twapCircuitBreaker();
         } else if (priceDeviation) {
@@ -152,19 +152,19 @@ library LibOracle {
         s.bids[asset][C.HEAD].creationTime = oracleTime;
     }
 
-    //@dev Intentionally using creationTime for oracleTime.
+    // @dev Intentionally using creationTime for oracleTime.
     function getTime(address asset) internal view returns (uint256 creationTime) {
         AppStorage storage s = appStorage();
         return s.bids[asset][C.HEAD].creationTime;
     }
 
-    //@dev Intentionally using ercAmount for oraclePrice. Storing as price may lead to bugs in the match algos.
+    // @dev Intentionally using ercAmount for oraclePrice. Storing as price may lead to bugs in the match algos.
     function getPrice(address asset) internal view returns (uint80 oraclePrice) {
         AppStorage storage s = appStorage();
         return uint80(s.bids[asset][C.HEAD].ercAmount);
     }
 
-    //@dev allows caller to save gas since reading spot price costs ~16K
+    // @dev allows caller to save gas since reading spot price costs ~16K
     function getSavedOrSpotOraclePrice(address asset) internal view returns (uint256) {
         if (LibOrders.getOffsetTime() - getTime(asset) < 15 minutes) {
             return getPrice(asset);

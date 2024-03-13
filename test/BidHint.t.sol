@@ -167,7 +167,7 @@ contract BidOrdersSortingTest is OBFixture {
         createBidsInMarket();
         revertOnBadHintIdArray();
 
-        //@dev get the right hint
+        // @dev get the right hint
         MTypes.OrderHint[] memory orderHintArray = diamond.getHintArray(asset, DEFAULT_PRICE, O.LimitBid, 1);
 
         assertEq(orderHintArray[0].creationTime, getBids()[0].creationTime);
@@ -215,7 +215,7 @@ contract BidOrdersSortingTest is OBFixture {
         diamond.createBid(asset, DEFAULT_PRICE, DEFAULT_AMOUNT, C.LIMIT_ORDER, orderHintArray, shortHintArrayStorage);
     }
 
-    //@dev pass in a hint that needs to move backwards on linked list
+    // @dev pass in a hint that needs to move backwards on linked list
     function test_GetOrderIdDirectionPrevBid() public {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitBidOpt(DEFAULT_PRICE + 1 wei, DEFAULT_AMOUNT, receiver);
@@ -230,7 +230,7 @@ contract BidOrdersSortingTest is OBFixture {
         diamond.createBid(asset, DEFAULT_PRICE + 3 wei, DEFAULT_AMOUNT, C.LIMIT_ORDER, orderHintArray, shortHintArrayStorage);
     }
 
-    //@dev what happens if hint Id of a matched order is passed?
+    // @dev what happens if hint Id of a matched order is passed?
     function test_RevertFindOrderHintIdMatchedHint() public {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
@@ -246,7 +246,7 @@ contract BidOrdersSortingTest is OBFixture {
         diamond.createBid(asset, DEFAULT_PRICE, DEFAULT_AMOUNT, C.LIMIT_ORDER, orderHintArray, shortHintArrayStorage);
     }
 
-    //@dev what happens if hintId of a cancelled order is passed?
+    // @dev what happens if hintId of a cancelled order is passed?
     function test_RevertFindOrderHintIdCancelledHint() public {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);

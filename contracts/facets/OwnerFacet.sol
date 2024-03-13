@@ -59,27 +59,24 @@ contract OwnerFacet is Modifiers {
         headOrder.prevId = C.HEAD;
         headOrder.id = C.HEAD;
         headOrder.nextId = C.TAIL;
-        //@dev parts of OB depend on having sell's HEAD's price and creationTime = 0
+        // @dev parts of OB depend on having sell's HEAD's price and creationTime = 0
         s.asks[asset][C.HEAD] = s.shorts[asset][C.HEAD] = headOrder;
 
-        //@dev Using Bid's HEAD's order contain oracle data
+        // @dev Using Bid's HEAD's order contain oracle data
         headOrder.creationTime = LibOrders.getOffsetTime();
         headOrder.ercAmount = uint80(LibOracle.getOraclePrice(asset));
         s.bids[asset][C.HEAD] = headOrder;
 
-        //@dev hardcoded value
+        // @dev hardcoded value
         Asset.orderIdCounter = C.STARTING_ID; // 100
         Asset.startingShortId = C.HEAD;
 
-        //@dev comment with initial values
+        // @dev comment with initial values
         _setInitialCR(asset, a.initialCR); // 170 -> 1.7 ether
         _setPrimaryLiquidationCR(asset, a.primaryLiquidationCR); // 150 -> 1.5 ether
         _setSecondaryLiquidationCR(asset, a.secondaryLiquidationCR); // 140 -> 1.4 ether
         _setForcedBidPriceBuffer(asset, a.forcedBidPriceBuffer); // 110 -> 1.1 ether
         _setPenaltyCR(asset, a.penaltyCR); // 110 -> 1.1 ether
-        _setResetLiquidationTime(asset, a.resetLiquidationTime); // 12 -> 12 hours
-        _setSecondLiquidationTime(asset, a.secondLiquidationTime); // 8 -> 8 hours
-        _setFirstLiquidationTime(asset, a.firstLiquidationTime); // 6 -> 6 hours
         _setTappFeePct(asset, a.tappFeePct); // 25 -> .025 ether
         _setCallerFeePct(asset, a.callerFeePct); // 5 -> .005 ether
         _setMinBidEth(asset, a.minBidEth); // 10 -> 0.1 ether
@@ -93,7 +90,7 @@ contract OwnerFacet is Modifiers {
         emit Events.CreateMarket(asset, Asset);
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function owner() external view returns (address) {
         return LibDiamond.contractOwner();
     }
@@ -102,7 +99,7 @@ contract OwnerFacet is Modifiers {
         return s.admin;
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function ownerCandidate() external view returns (address) {
         return s.ownerCandidate;
     }
@@ -112,7 +109,7 @@ contract OwnerFacet is Modifiers {
         emit Events.NewOwnerCandidate(newOwner);
     }
 
-    //@dev event emitted in setContractOwner
+    // @dev event emitted in setContractOwner
     function claimOwnership() external {
         if (s.ownerCandidate != msg.sender) revert Errors.NotOwnerCandidate();
         LibDiamond.setContractOwner(msg.sender);
@@ -181,26 +178,6 @@ contract OwnerFacet is Modifiers {
         emit Events.ChangeMarketSetting(asset);
     }
 
-    // Used for Primary Liquidation
-    // resetLiquidationTime > secondLiquidationTime > firstLiquidationTime
-
-    function setResetLiquidationTime(address asset, uint8 value) external onlyAdminOrDAO {
-        _setResetLiquidationTime(asset, value);
-        require(value >= s.asset[asset].secondLiquidationTime, "below secondLiquidationTime");
-        emit Events.ChangeMarketSetting(asset);
-    }
-
-    function setSecondLiquidationTime(address asset, uint8 value) external onlyAdminOrDAO {
-        _setSecondLiquidationTime(asset, value);
-        require(value >= s.asset[asset].firstLiquidationTime, "below firstLiquidationTime");
-        emit Events.ChangeMarketSetting(asset);
-    }
-
-    function setFirstLiquidationTime(address asset, uint8 value) external onlyAdminOrDAO {
-        _setFirstLiquidationTime(asset, value);
-        emit Events.ChangeMarketSetting(asset);
-    }
-
     function setTappFeePct(address asset, uint8 value) external onlyAdminOrDAO {
         _setTappFeePct(asset, value);
         emit Events.ChangeMarketSetting(asset);
@@ -259,7 +236,7 @@ contract OwnerFacet is Modifiers {
 
     function _setTithe(uint256 vault, uint16 dethTithePercent) private {
         if (dethTithePercent > 33_33) revert Errors.InvalidTithe();
-        //@dev dethTithePercent should never be changed outside of this function
+        // @dev dethTithePercent should never be changed outside of this function
         s.vault[vault].dethTithePercent = dethTithePercent;
     }
 
@@ -302,27 +279,6 @@ contract OwnerFacet is Modifiers {
         require(value <= 120, "above 1.2");
         s.asset[asset].penaltyCR = value;
         require(LibAsset.penaltyCR(asset) < LibAsset.secondaryLiquidationCR(asset), "above secondary liquidation");
-    }
-
-    // Used for Primary Liquidation
-    // resetLiquidationTime > secondLiquidationTime > firstLiquidationTime
-
-    function _setResetLiquidationTime(address asset, uint8 value) private {
-        require(value >= 1, "below 1");
-        require(value <= 48, "above 48");
-        s.asset[asset].resetLiquidationTime = value;
-    }
-
-    function _setSecondLiquidationTime(address asset, uint8 value) private {
-        require(value >= 1, "below 1");
-        require(value <= s.asset[asset].resetLiquidationTime, "above resetLiquidationTime");
-        s.asset[asset].secondLiquidationTime = value;
-    }
-
-    function _setFirstLiquidationTime(address asset, uint8 value) private {
-        require(value >= 1, "below 1");
-        require(value <= s.asset[asset].secondLiquidationTime, "above secondLiquidationTime");
-        s.asset[asset].firstLiquidationTime = value;
     }
 
     function _setTappFeePct(address asset, uint8 value) private {

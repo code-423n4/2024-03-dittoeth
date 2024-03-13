@@ -67,7 +67,7 @@ contract BidOrdersFacet is Modifiers {
         onlyDiamond
         returns (uint88 ethFilled, uint88 ercAmountLeft)
     {
-        //@dev leave empty, don't need hint for market buys
+        // @dev leave empty, don't need hint for market buys
         MTypes.OrderHint[] memory orderHintArray;
 
         // @dev update oracle in callers
@@ -99,18 +99,18 @@ contract BidOrdersFacet is Modifiers {
 
         MTypes.BidMatchAlgo memory b;
         b.askId = s.asks[asset][C.HEAD].nextId;
-        //@dev setting initial shortId to match "backwards" (See _shortDirectionHandler() below)
+        // @dev setting initial shortId to match "backwards" (See _shortDirectionHandler() below)
         b.shortHintId = b.shortId = Asset.startingShortId;
 
         STypes.Order memory lowestSell = _getLowestSell(asset, b);
         if (incomingBid.price >= lowestSell.price && (lowestSell.orderType == O.LimitAsk || lowestSell.orderType == O.LimitShort)) {
-            //@dev if match and match price is gt .5% to saved oracle in either direction, update startingShortId
+            // @dev if match and match price is gt .5% to saved oracle in either direction, update startingShortId
             LibOrders.updateOracleAndStartingShortViaThreshold(asset, LibOracle.getPrice(asset), incomingBid, shortHintArray);
             b.shortHintId = b.shortId = Asset.startingShortId;
             b.oraclePrice = LibOracle.getPrice(asset);
             return bidMatchAlgo(asset, incomingBid, orderHintArray, b);
         } else {
-            //@dev no match, add to market if limit order
+            // @dev no match, add to market if limit order
             LibOrders.addBid(asset, incomingBid, orderHintArray);
             return (0, ercAmount);
         }
@@ -137,7 +137,7 @@ contract BidOrdersFacet is Modifiers {
         MTypes.Match memory matchTotal;
 
         while (true) {
-            //@dev Handles scenario when no sells left after partial fill
+            // @dev Handles scenario when no sells left after partial fill
             if (b.askId == C.TAIL && b.shortId == C.TAIL) {
                 if (incomingBid.ercAmount.mul(incomingBid.price) >= minBidEth) {
                     LibOrders.addBid(asset, incomingBid, orderHintArray);
@@ -306,7 +306,7 @@ contract BidOrdersFacet is Modifiers {
             Asset.dethCollateral += matchTotal.shortFillEth;
             Asset.ercDebt += matchTotal.fillErc - matchTotal.askFillErc;
 
-            //@dev Approximates the startingShortId after bid is fully executed
+            // @dev Approximates the startingShortId after bid is fully executed
             STypes.Order storage currentShort = s.shorts[asset][b.shortId];
             O shortOrderType = currentShort.orderType;
             STypes.Order storage prevShort = s.shorts[asset][b.prevShortId];
@@ -331,17 +331,17 @@ contract BidOrdersFacet is Modifiers {
         s.assetUser[asset][bidder].ercEscrowed += matchTotal.fillErc;
         emit Events.MatchOrder(asset, bidder, incomingBid.orderType, incomingBid.id, matchTotal.fillEth, matchTotal.fillErc);
 
-        //@dev match price is based on the order that was already on orderbook
+        // @dev match price is based on the order that was already on orderbook
         LibOrders.handlePriceDiscount(asset, matchTotal.lastMatchPrice);
         return (matchTotal.fillEth, incomingBid.ercAmount);
     }
 
-    //@dev If neither conditions are true, it returns an empty Order struct
+    // @dev If neither conditions are true, it returns an empty Order struct
     function _getLowestSell(address asset, MTypes.BidMatchAlgo memory b) private view returns (STypes.Order memory lowestSell) {
         if (b.shortId != C.HEAD) {
             STypes.Order storage lowestShort = s.shorts[asset][b.shortId];
             STypes.Order storage lowestAsk = s.asks[asset][b.askId];
-            //@dev Setting lowestSell after comparing short and ask prices
+            // @dev Setting lowestSell after comparing short and ask prices
             bool noAsks = b.askId == C.TAIL;
             bool shortPriceLessThanAskPrice = lowestShort.price < lowestAsk.price;
             if (noAsks || shortPriceLessThanAskPrice) {
@@ -350,7 +350,7 @@ contract BidOrdersFacet is Modifiers {
                 return lowestAsk;
             }
         } else if (b.askId != C.TAIL) {
-            //@dev Handles scenario when there are no shorts
+            // @dev Handles scenario when there are no shorts
             return s.asks[asset][b.askId];
         }
     }
@@ -390,7 +390,7 @@ contract BidOrdersFacet is Modifiers {
         */
         uint80 prevPrice = s.shorts[asset][b.prevShortId].price;
         if (prevPrice >= b.oraclePrice && !b.isMovingFwd) {
-            //@dev shortHintId should always be the first thing matched
+            // @dev shortHintId should always be the first thing matched
             b.isMovingBack = true;
             b.shortId = b.prevShortId;
         } else if (prevPrice < b.oraclePrice && !b.isMovingFwd) {
@@ -398,7 +398,7 @@ contract BidOrdersFacet is Modifiers {
             b.shortId = s.shorts[asset][b.shortHintId].nextId;
 
             STypes.Order storage nextShort = s.shorts[asset][lowestSell.nextId];
-            //@dev Only set to true if actually moving forward
+            // @dev Only set to true if actually moving forward
             if (b.shortId != C.HEAD && nextShort.price <= incomingBid.price) {
                 b.isMovingFwd = true;
             }

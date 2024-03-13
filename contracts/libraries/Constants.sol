@@ -42,7 +42,7 @@ library C {
     // @dev Matching RocketPool min deposit for now, Lido is 100 wei
     uint88 internal constant MIN_DEPOSIT = 0.01 ether;
 
-    // re-entrancy
+    // reentrancy
     uint8 internal constant NOT_ENTERED = 1;
     uint8 internal constant ENTERED = 2;
     uint256 internal constant ONE_DECIMAL_PLACES = 10;

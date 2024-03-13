@@ -102,7 +102,7 @@ contract ViewFunctionsTest is OBFixture {
         assertEq(orderHintArray[1].hintId, 101);
         assertEq(orderHintArray[2].hintId, 100);
 
-        //@dev after 100 is C.TAIl, so every hint will be 0
+        // @dev after 100 is C.TAIl, so every hint will be 0
         for (uint256 i = 3; i < numHints; i++) {
             assertEq(orderHintArray[i].hintId, 0);
         }

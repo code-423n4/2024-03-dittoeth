@@ -46,9 +46,6 @@ library TestTypes {
         uint256 penaltyCR;
         uint256 tappFeePct;
         uint256 callerFeePct;
-        uint256 resetLiquidationTime;
-        uint256 secondLiquidationTime;
-        uint256 firstLiquidationTime;
         uint16 startingShortId;
         uint256 minBidEth;
         uint256 minAskEth;

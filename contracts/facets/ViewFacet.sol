@@ -38,12 +38,12 @@ contract ViewFacet is Modifiers {
         return s.assetUser[asset][user].ercEscrowed;
     }
 
-    // @dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getVault(address asset) external view returns (uint256) {
         return s.asset[asset].vault;
     }
 
-    // @dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     // @dev vault of bridge is stored separately from asset vault
     function getBridgeVault(address bridge) external view returns (uint256) {
         return s.bridge[bridge].vault;
@@ -89,7 +89,7 @@ contract ViewFacet is Modifiers {
 
     /**
      * @notice Returns correct Id of bid based on its price
-     * @dev does not need read only re-entrancy
+     * @dev does not need read only reentrancy
      *
      * @param asset The market that will be impacted
      * @param price price of bid
@@ -102,7 +102,7 @@ contract ViewFacet is Modifiers {
 
     /**
      * @notice Returns correct Id of ask based on its price
-     * @dev does not need read only re-entrancy
+     * @dev does not need read only reentrancy
      *
      * @param asset The market that will be impacted
      * @param price price of ask
@@ -115,7 +115,7 @@ contract ViewFacet is Modifiers {
 
     /**
      * @notice Returns correct Id of short based on its price
-     * @dev does not need read only re-entrancy
+     * @dev does not need read only reentrancy
      *
      * @param asset The market that will be impacted
      * @param price price of short
@@ -140,7 +140,7 @@ contract ViewFacet is Modifiers {
         uint16 idBeforeOracle =
             LibOrders.getOrderId(s.shorts, asset, C.NEXT, C.HEAD, LibOracle.getOraclePrice(asset) - 1 wei, O.LimitShort);
 
-        //@dev If id is the last item, return the last item
+        // @dev If id is the last item, return the last item
         if (s.shorts[asset][idBeforeOracle].nextId == C.TAIL) {
             return idBeforeOracle;
         } else {
@@ -148,7 +148,7 @@ contract ViewFacet is Modifiers {
         }
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getHintArray(address asset, uint256 price, O orderType, uint256 numHints)
         external
         view
@@ -186,7 +186,7 @@ contract ViewFacet is Modifiers {
                 _creationTime = short.creationTime;
             }
 
-            //@dev break from loop to prevent considering cancelled/matched/uninitialized orderIds as hint
+            // @dev break from loop to prevent considering cancelled/matched/uninitialized orderIds as hint
             if (_hintId == C.HEAD) break;
 
             orderHintArray[i] = MTypes.OrderHint({hintId: _hintId, creationTime: _creationTime});
@@ -229,23 +229,23 @@ contract ViewFacet is Modifiers {
     }
 
     /// Oracle View Functions
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getOracleAssetPrice(address asset) external view returns (uint256) {
         return LibOracle.getOraclePrice(asset);
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getProtocolAssetPrice(address asset) external view returns (uint256) {
         return LibOracle.getPrice(asset);
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getProtocolAssetTime(address asset) external view returns (uint256) {
         return LibOracle.getTime(asset);
     }
 
     /// Yield View Functions
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getTithe(uint256 vault) external view returns (uint256) {
         return (uint256(s.vault[vault].dethTithePercent + s.vault[vault].dethTitheMod) * 1 ether) / C.FOUR_DECIMAL_PLACES;
     }
@@ -262,7 +262,7 @@ contract ViewFacet is Modifiers {
         while (true) {
             // One short of one shorter in this order book
             STypes.ShortRecord storage currentShort = s.shortRecords[asset][user][id];
-            //@dev: isNotRecentlyModified is mainly for flash loans or loans where they want to deposit to claim yield immediately
+            // @dev: isNotRecentlyModified is mainly for flash loans or loans where they want to deposit to claim yield immediately
             bool isNotRecentlyModified = LibOrders.getOffsetTime() - currentShort.updatedAt > C.YIELD_DELAY_SECONDS;
 
             if (currentShort.status != SR.Closed && isNotRecentlyModified) {
@@ -346,7 +346,7 @@ contract ViewFacet is Modifiers {
 
         while (true) {
             STypes.ShortRecord storage currentShort = s.shortRecords[asset][shorter][id];
-            //@dev skip all of the "empty SRs"
+            // @dev skip all of the "empty SRs"
             if (currentShort.status == SR.Closed && currentShort.nextId > C.TAIL) {
                 id = currentShort.nextId;
                 continue;

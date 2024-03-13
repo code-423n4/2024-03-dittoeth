@@ -50,9 +50,6 @@ contract MultiAssetForkTestHelper is ForkHelper {
         a.primaryLiquidationCR = 350; // 300 -> 3 ether
         a.secondaryLiquidationCR = 300; // 200 -> 2 ether
         a.forcedBidPriceBuffer = 120; // 120 -> 1.2 ether
-        a.resetLiquidationTime = 14; // 14 -> 14 hours
-        a.secondLiquidationTime = 10; // 10 -> 10 hours
-        a.firstLiquidationTime = 8; // 8 -> 8 hours
         a.penaltyCR = 120; // 120 -> 1.2 ether
         a.tappFeePct = 30; // 30 -> .03 ether
         a.callerFeePct = 6; // 10 -> .006 ether

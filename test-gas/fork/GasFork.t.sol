@@ -14,7 +14,7 @@ contract GasForkTest is ConstantsTest {
 
     AggregatorV3Interface public baseOracle = AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419);
 
-    //@dev: foundry test crashes unless latest block height is used
+    // @dev: foundry test crashes unless latest block height is used
     uint256 public forkBlock = 17_273_111;
 
     function setUp() public {
@@ -138,7 +138,7 @@ contract GasForkTest is ConstantsTest {
         emit log_named_uint("decimals", baseOracle.decimals());
     }
 
-    //@dev Also tests getPrevRoundId()
+    // @dev Also tests getPrevRoundId()
     function skipTestGasChainlinkCurrentRound() public {
         (
             uint80 latestRoundID,

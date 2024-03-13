@@ -54,7 +54,7 @@ contract LiquidationRevertTest is LiquidationHelper {
     function test_RevertNoSellsToLiquidateShortsUnderOracle() public {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
-        //@dev create short that can't be matched
+        // @dev create short that can't be matched
         fundLimitShortOpt(DEFAULT_PRICE - 1 wei, DEFAULT_AMOUNT, sender);
         _setETH(2666 ether); //price in USD (min eth for liquidation ratio Formula: .0015P = 4 => P = 2666.67
         vm.expectRevert(Errors.NoSells.selector);

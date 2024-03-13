@@ -17,7 +17,7 @@ contract AskHintTest is OBFixture {
     bool private constant ASK = true;
     bool private constant SHORT = false;
 
-    //@dev AskHintTest is testing both ask and shorts
+    // @dev AskHintTest is testing both ask and shorts
     function setUp() public override {
         super.setUp();
     }
@@ -213,7 +213,7 @@ contract AskHintTest is OBFixture {
             fundLimitShortOpt(DEFAULT_PRICE * 2, DEFAULT_AMOUNT, receiver);
             fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
             assertEq(getShorts()[0].id, 103);
-            //@dev arbitrary amt
+            // @dev arbitrary amt
             depositEthAndPrank(receiver, DEFAULT_AMOUNT * 10);
         }
     }
@@ -344,7 +344,7 @@ contract AskHintTest is OBFixture {
         diamond.createLimitShort(asset, DEFAULT_PRICE, DEFAULT_AMOUNT, orderHintArray, shortHintArrayStorage, initialCR);
     }
 
-    //@dev pass in a hint that needs to move backwards on linked list
+    // @dev pass in a hint that needs to move backwards on linked list
     function test_GetOrderIdDirectionPrevAsk() public {
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         fundLimitAskOpt(DEFAULT_PRICE + 1 wei, DEFAULT_AMOUNT, sender);

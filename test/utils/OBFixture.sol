@@ -88,20 +88,17 @@ contract OBFixture is DeployHelper, ConstantsTest {
 
         vm.stopPrank();
 
-        //@dev prevent the currentTime in tests to equal deployment time
+        // @dev prevent the currentTime in tests to equal deployment time
         skip(1 seconds);
 
         badOrderHintArray.push(MTypes.OrderHint({hintId: 0, creationTime: 123}));
 
-        //@dev Useful for revert test bc can just call storage
+        // @dev Useful for revert test bc can just call storage
         shortHintArrayStorage = setShortHintArray();
 
-        //@dev setting these values to the original values bc I do not want to change all the tests that uses setETH
+        // @dev setting these values to the original values bc I do not want to change all the tests that uses setETH
         vm.startPrank(owner);
         diamond.setWithdrawalFee(_bridgeSteth, 1);
-        diamond.setResetLiquidationTime(asset, 16);
-        diamond.setSecondLiquidationTime(asset, 12);
-        diamond.setFirstLiquidationTime(asset, 10);
         diamond.setInitialCR(asset, 500);
         diamond.setDittoTargetCR(asset, 60);
         diamond.setPrimaryLiquidationCR(asset, 400);
@@ -469,8 +466,8 @@ contract OBFixture is DeployHelper, ConstantsTest {
     function setShortHintArray() public view returns (uint16[] memory) {
         uint16[] memory _shortHintArray = new uint16[](10);
 
-        //@dev these values are basically random.
-        //@dev Values 0-3 are guaranteed to be incorrect. 4-8 can sometimes randomly be correct depending on test
+        // @dev these values are basically random.
+        // @dev Values 0-3 are guaranteed to be incorrect. 4-8 can sometimes randomly be correct depending on test
         _shortHintArray[0] = 0;
         _shortHintArray[1] = 2391;
         _shortHintArray[2] = 511;
@@ -480,7 +477,7 @@ contract OBFixture is DeployHelper, ConstantsTest {
         _shortHintArray[6] = 102;
         _shortHintArray[7] = 103;
         _shortHintArray[8] = 104;
-        //@dev Value 9 will always be correct hint
+        // @dev Value 9 will always be correct hint
         _shortHintArray[9] = diamond.getShortIdAtOracle(asset);
 
         return _shortHintArray;

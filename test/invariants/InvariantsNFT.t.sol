@@ -29,7 +29,7 @@ contract InvariantsNFT is Test {
 
     bytes4[] public selectors;
 
-    //@dev Used for one test: statefulFuzz_allOrderIdsUnique
+    // @dev Used for one test: statefulFuzz_allOrderIdsUnique
     mapping(uint16 id => uint256 cnt) public orderIdMapping;
 
     function setUp() public {

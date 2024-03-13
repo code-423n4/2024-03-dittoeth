@@ -55,7 +55,7 @@ library OracleLibrary {
         secondsAgos[0] = secondsAgo;
         secondsAgos[1] = 0;
 
-        //@dev Returns the cumulative tick and liquidity as of each timestamp secondsAgo from the current block timestamp
+        // @dev Returns the cumulative tick and liquidity as of each timestamp secondsAgo from the current block timestamp
         (int56[] memory tickCumulatives,) = IUniswapV3Pool(pool).observe(secondsAgos);
 
         int56 tickCumulativesDelta = tickCumulatives[1] - tickCumulatives[0];
@@ -66,7 +66,7 @@ library OracleLibrary {
             tick--;
         }
 
-        //@dev Gets price using this formula: p(i) = 1.0001**i, where i is the tick
+        // @dev Gets price using this formula: p(i) = 1.0001**i, where i is the tick
         amountOut = getQuoteAtTick(tick, amountIn, baseToken, quoteToken);
     }
 }

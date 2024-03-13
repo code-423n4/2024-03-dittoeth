@@ -39,17 +39,17 @@ contract BridgeSteth is IBridge, IERC721Receiver {
         return IERC721Receiver.onERC721Received.selector;
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getBaseCollateral() external view returns (address) {
         return address(steth);
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getDethValue() external view returns (uint256) {
         return steth.balanceOf(address(this));
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getUnitDethValue() external view returns (uint256) {
         // This is actually the dETH value of one wstETH
         // Aligns with UNISWAP pool WETH/WSTETH

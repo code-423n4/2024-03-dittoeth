@@ -38,7 +38,7 @@ contract ShortsRevertTest is OBFixture {
     }
 
     function test_CannotExitWithNoShorts() public {
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidShortId.selector);
         diamond.exitShort(asset, 100, DEFAULT_AMOUNT, DEFAULT_PRICE, shortHintArrayStorage, 0);
@@ -69,7 +69,7 @@ contract ShortsRevertTest is OBFixture {
     function test_CannotExitWithInvalidIdLow() public {
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidShortId.selector);
         diamond.exitShort(asset, 99, DEFAULT_AMOUNT, DEFAULT_PRICE, shortHintArrayStorage, 0);
@@ -84,7 +84,7 @@ contract ShortsRevertTest is OBFixture {
         assertEq(getShortRecordCount(sender), 3);
         exitShort(C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE, sender);
         assertEq(getShortRecordCount(sender), 2);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidShortId.selector);
         diamond.exitShort(asset, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE, shortHintArrayStorage, 0);
@@ -99,7 +99,7 @@ contract ShortsRevertTest is OBFixture {
         assertEq(getShortRecordCount(sender), 3);
         exitShort(C.SHORT_STARTING_ID + 2, DEFAULT_AMOUNT, DEFAULT_PRICE, sender);
         assertEq(getShortRecordCount(sender), 2);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidShortId.selector);
         diamond.exitShort(asset, C.SHORT_STARTING_ID + 2, DEFAULT_AMOUNT, DEFAULT_PRICE, shortHintArrayStorage, 0);
@@ -114,7 +114,7 @@ contract ShortsRevertTest is OBFixture {
         assertEq(getShortRecordCount(sender), 3);
         exitShort(C.SHORT_STARTING_ID + 1, DEFAULT_AMOUNT, DEFAULT_PRICE, sender);
         assertEq(getShortRecordCount(sender), 2);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidShortId.selector);
         diamond.exitShort(asset, C.SHORT_STARTING_ID + 1, DEFAULT_AMOUNT, DEFAULT_PRICE, shortHintArrayStorage, 0);
@@ -167,7 +167,7 @@ contract ShortsRevertTest is OBFixture {
         //create ask to allow exit short
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT.mulU88(2 ether), receiver);
         assertGt(shortRecord.collateral, 0);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         depositEthAndPrank(sender, DEFAULT_PRICE.mulU88(DEFAULT_AMOUNT) * 2);
         vm.expectRevert(Errors.InvalidBuyback.selector);
         diamond.exitShort(asset, C.SHORT_STARTING_ID, DEFAULT_AMOUNT.mulU88(2 ether), DEFAULT_PRICE, shortHintArrayStorage, 0);
@@ -179,14 +179,14 @@ contract ShortsRevertTest is OBFixture {
         //create ask to allow exit short
         fundLimitAskOpt(11 ether, DEFAULT_AMOUNT, receiver);
         assertGt(shortRecord.collateral, 0);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
 
         depositEthAndPrank(sender, 13 ether);
         vm.expectRevert(Errors.InsufficientCollateral.selector);
         diamond.exitShort(asset, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, 13 ether, shortHintArrayStorage, 0);
     }
 
-    //@dev lowestAskKey == C.TAIL && startingShortId == C.HEAD
+    // @dev lowestAskKey == C.TAIL && startingShortId == C.HEAD
     function test_ExitShortPriceTooLowScenario1() public {
         makeShorts();
         depositEthAndPrank(sender, C.MIN_DEPOSIT);
@@ -194,7 +194,7 @@ contract ShortsRevertTest is OBFixture {
         diamond.exitShort(asset, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE - 1, shortHintArrayStorage, 0);
     }
 
-    //@dev lowestAskKey == C.TAIL && s.shorts[e.asset][startingShortId].price > price
+    // @dev lowestAskKey == C.TAIL && s.shorts[e.asset][startingShortId].price > price
     function test_ExitShortPriceTooLowScenario2() public {
         makeShorts();
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
@@ -203,7 +203,7 @@ contract ShortsRevertTest is OBFixture {
         diamond.exitShort(asset, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE - 1, shortHintArrayStorage, 0);
     }
 
-    //@dev s.asks[e.asset][lowestAskKey].price > price && startingShortId == C.HEAD);
+    // @dev s.asks[e.asset][lowestAskKey].price > price && startingShortId == C.HEAD);
     function test_ExitShortPriceTooLowScenario3() public {
         makeShorts();
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
@@ -222,8 +222,8 @@ contract ShortsRevertTest is OBFixture {
         diamond.exitShort(asset, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE - 1, shortHintArrayStorage, 0);
     }
 
-    //@dev Only allow partial exit if the CR is same or better than before.
-    //@dev Even undercollateralized (< minCR) can be partially exitted if this condition is met
+    // @dev Only allow partial exit if the CR is same or better than before.
+    // @dev Even undercollateralized (< minCR) can be partially exitted if this condition is met
 
     function test_Revert_PostExitCRLtPreExitCR() public {
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
@@ -319,7 +319,7 @@ contract ShortsRevertTest is OBFixture {
     function test_ExitShortWithZero() public {
         fundLimitBidOpt(1 ether, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(1 ether, DEFAULT_AMOUNT, sender);
-        //@dev have to set here like this because the revert will incorrectly catch the getLastShortId()
+        // @dev have to set here like this because the revert will incorrectly catch the getLastShortId()
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidBuyback.selector);
         diamond.exitShort(asset, C.SHORT_STARTING_ID, 0, DEFAULT_PRICE, shortHintArrayStorage, 0);

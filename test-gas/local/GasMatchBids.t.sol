@@ -261,7 +261,7 @@ contract GasBidMatchSingleShortUpdateOracleTest is GasBidFixture {
         ob.fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         ob.fundLimitShortOpt(DEFAULT_PRICE + 1 wei, DEFAULT_AMOUNT, sender);
         ob.skipTimeAndSetEth({skipTime: C.MIN_DURATION + 1, ethPrice: 4000 ether});
-        //@dev set oracleprice to very low so bid needs to update oracle upon match
+        // @dev set oracleprice to very low so bid needs to update oracle upon match
         testFacet.setOracleTimeAndPrice(asset, 0.0002 ether);
     }
 

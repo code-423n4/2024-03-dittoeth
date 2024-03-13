@@ -34,7 +34,7 @@ contract InvariantsBase is Test {
 
     bytes4[] public selectors;
 
-    //@dev Used for one test: statefulFuzz_allOrderIdsUnique
+    // @dev Used for one test: statefulFuzz_allOrderIdsUnique
     mapping(uint16 id => uint256 cnt) orderIdMapping;
 
     function setUp() public virtual {
@@ -50,7 +50,7 @@ contract InvariantsBase is Test {
         s_ob = ob;
         s_handler = new Handler(ob);
 
-        //@dev duplicate the selector to increase the distribution of certain handler calls
+        // @dev duplicate the selector to increase the distribution of certain handler calls
         selectors = [
             // Bridge
             Handler.deposit.selector,
@@ -276,10 +276,10 @@ contract InvariantsBase is Test {
     }
 
     function allOrderIdsUnique() public {
-        //@dev Unmatched Bids, Asks, Shorts
+        // @dev Unmatched Bids, Asks, Shorts
         uint256 marketDepth = diamond.getBids(asset).length + diamond.getAsks(asset).length + diamond.getShorts(asset).length;
 
-        //@dev Cancelled/Matched Bids, Asks, Shorts
+        // @dev Cancelled/Matched Bids, Asks, Shorts
         STypes.Order memory bidHEAD = diamond.getBidOrder(asset, C.HEAD);
         STypes.Order memory bidPrevHEAD = diamond.getBidOrder(asset, bidHEAD.prevId);
         STypes.Order memory askHEAD = diamond.getAskOrder(asset, C.HEAD);
@@ -304,9 +304,9 @@ contract InvariantsBase is Test {
 
         uint16[] memory allOrderIds = new uint16[](marketDepth);
 
-        //@dev Reuse counter to use as index
+        // @dev Reuse counter to use as index
         counter = 0;
-        //@dev Add all orders in OB to allOrdersId
+        // @dev Add all orders in OB to allOrdersId
         if (diamond.getBids(asset).length > 0) {
             for (uint256 i = 0; i < diamond.getBids(asset).length; i++) {
                 allOrderIds[counter] = diamond.getBids(asset)[i].id;
@@ -326,7 +326,7 @@ contract InvariantsBase is Test {
             }
         }
 
-        //@dev Add all cancelled/Matched ids to allOrdersId
+        // @dev Add all cancelled/Matched ids to allOrdersId
         bidPrevHEAD = diamond.getBidOrder(asset, bidHEAD.prevId);
         askPrevHEAD = diamond.getAskOrder(asset, askHEAD.prevId);
         shortPrevHEAD = diamond.getShortOrder(asset, shortHEAD.prevId);
@@ -370,7 +370,7 @@ contract InvariantsBase is Test {
             if (diamond.getAssetUserStruct(asset, user).shortRecordCounter == 0) {
                 assertEq(shortRecordHEAD.prevId, 0, "statefulFuzz_shortRecordExists_1");
             } else {
-                //@dev check all cancelled shorts are indeed canceled
+                // @dev check all cancelled shorts are indeed canceled
                 while (shortRecordHEAD.prevId != C.HEAD) {
                     STypes.ShortRecord memory shortRecordPrevHEAD = diamond.getShortRecord(asset, user, shortRecordHEAD.prevId);
                     assertTrue(shortRecordPrevHEAD.status == SR.Closed, "statefulFuzz_shortRecordExists_2");
@@ -379,7 +379,7 @@ contract InvariantsBase is Test {
             }
 
             if (shortRecords.length > 0) {
-                //@dev check that all active shortRecords are either full or partial;
+                // @dev check that all active shortRecords are either full or partial;
                 for (uint256 j = 0; j < shortRecords.length; j++) {
                     assertTrue(
                         shortRecords[j].status == SR.PartialFill || shortRecords[j].status == SR.FullyFilled,
@@ -387,7 +387,7 @@ contract InvariantsBase is Test {
                     );
                 }
 
-                //@dev check that all short orders with shortRecordId > 0 is a partial fill
+                // @dev check that all short orders with shortRecordId > 0 is a partial fill
                 STypes.Order[] memory shortOrders = diamond.getShorts(asset);
 
                 for (uint256 k = 0; k < shortOrders.length; k++) {
@@ -410,11 +410,11 @@ contract InvariantsBase is Test {
 
         address[] memory users = s_handler.getUsers();
 
-        //@dev Collateral of matched shorts
+        // @dev Collateral of matched shorts
         uint256 userDethTotal;
         uint256 dethCollateralTotal;
         for (uint256 i = 0; i < users.length; i++) {
-            //@dev wallet balance for deth
+            // @dev wallet balance for deth
             userDethTotal += tokenContract.balanceOf(users[i]);
 
             STypes.ShortRecord[] memory shorts = diamond.getShortRecords(asset, users[i]);
@@ -430,13 +430,13 @@ contract InvariantsBase is Test {
 
         assertEq(diamond.getAssetStruct(asset).dethCollateral, dethCollateralTotal, "statefulFuzz_Vault_DethTotal_3");
 
-        //@dev ...and eth locked up on bid on ob...
+        // @dev ...and eth locked up on bid on ob...
         for (uint256 i = 0; i < diamond.getBids(asset).length; i++) {
             uint256 eth = diamond.getBids(asset)[i].price.mul(diamond.getBids(asset)[i].ercAmount);
             userDethTotal += eth;
         }
 
-        //@dev ...and collateral locked up on short on ob...
+        // @dev ...and collateral locked up on short on ob...
         for (uint256 i = 0; i < diamond.getShorts(asset).length; i++) {
             uint256 collateral = diamond.getShorts(asset)[i].price.mul(diamond.getShorts(asset)[i].ercAmount).mul(
                 LibOrders.convertCR(diamond.getShorts(asset)[i].shortOrderCR)
@@ -444,17 +444,17 @@ contract InvariantsBase is Test {
             userDethTotal += collateral;
         }
 
-        //@dev ...and ethEscrowed of a user...
+        // @dev ...and ethEscrowed of a user...
         for (uint256 i = 0; i < users.length; i++) {
             userDethTotal += diamond.getVaultUserStruct(vault, users[i]).ethEscrowed;
         }
 
-        //@dev ...and ethEscrowed of Tapp...
+        // @dev ...and ethEscrowed of Tapp...
         userDethTotal += diamond.getVaultUserStruct(vault, address(diamond)).ethEscrowed;
-        //@dev ...and dethCollateral from matched shortRecords...
+        // @dev ...and dethCollateral from matched shortRecords...
         userDethTotal += dethCollateralTotal;
 
-        //@dev it is not perfectly equal due to rounding error
+        // @dev it is not perfectly equal due to rounding error
         assertApproxEqAbs(dethTotal, userDethTotal, s_ob.MAX_DELTA_LARGE(), "statefulFuzz_Vault_DethTotal_4");
 
         console.log(dethTotal);
@@ -502,7 +502,7 @@ contract InvariantsBase is Test {
         assertGe(dittoRewardAvail, dittoRewardUsers, "statefulFuzz_dittoReward_1");
     }
 
-    //@dev Cannot used fundLimitOrders because it will mint assets without going through orderbook
+    // @dev Cannot used fundLimitOrders because it will mint assets without going through orderbook
     function vault_ErcEscrowedPlusAssetBalanceEqTotalDebt() public {
         address[] memory users = s_handler.getUsers();
         IAsset assetContract = IAsset(asset);
@@ -602,7 +602,7 @@ contract InvariantsBase is Test {
     //     );
     // }
 
-    //@dev assumes no price changes in the invariant tests
+    // @dev assumes no price changes in the invariant tests
     // function statefulFuzz_shortRecordCRatioAlwaysAbove1() public {
     //     address[] memory users = s_handler.getUsers();
     //     for (uint256 i = 0; i < users.length; i++) {

@@ -3,8 +3,8 @@ pragma solidity 0.8.21;
 
 // import {console} from "contracts/libraries/console.sol";
 
-//@dev leave room for others frozen types
-//@dev Asset frozen status
+// @dev leave room for others frozen types
+// @dev Asset frozen status
 enum F {
     Unfrozen,
     Permanent
@@ -113,9 +113,9 @@ library STypes {
         uint64 ercDebtRate; // max 18x, socialized penalty rate
         uint16 primaryLiquidationCR; // 1.5 ether -> [1-5, 2 decimals]
         uint16 secondaryLiquidationCR; // 1.4 ether -> [1-5, 2 decimals]
-        uint8 resetLiquidationTime; // 12 hours -> [1-48 hours, 0 decimals]
-        uint8 secondLiquidationTime; // 8 hours -> [1-48 hours, 0 decimals]
-        uint8 firstLiquidationTime; // 6 hours -> [1-48 hours, 0 decimals]
+        uint8 fillerT1; // 12 hours -> [1-48 hours, 0 decimals]
+        uint8 fillerT2; // 8 hours -> [1-48 hours, 0 decimals]
+        uint8 fillerT3; // 6 hours -> [1-48 hours, 0 decimals]
         uint8 recoveryCR; // 1.5 ether -> [1-2, 2 decimals]
         uint8 dittoTargetCR; // 2.0 ether -> [1-25.6, 1 decimals]
         uint48 filler1; // keep slots distinct
@@ -294,8 +294,8 @@ library MTypes {
         uint256 oraclePrice;
     }
 
-    //@dev saved via SSTORE2
-    //@dev total bytes: 232 + 176 = 408
+    // @dev saved via SSTORE2
+    // @dev total bytes: 232 + 176 = 408
     struct ProposalData {
         // SLOT 1: 160 + 8 + 88 = 232 (24 unused)
         address shorter;

@@ -165,7 +165,7 @@ contract ExitShortFacet is Modifiers {
 
         short.updateErcDebt(e.asset);
 
-        //@dev if short order was cancelled, fully exit
+        // @dev if short order was cancelled, fully exit
         e.buybackAmount = e.shortOrderIsCancelled ? short.ercDebt : buybackAmount;
         e.beforeExitCR = getCollateralRatioNonPrice(short);
         e.ercDebt = short.ercDebt;
@@ -194,16 +194,16 @@ contract ExitShortFacet is Modifiers {
         if (e.ercDebt == e.ercFilled) {
             // Full Exit
             LibShortRecord.disburseCollateral(e.asset, msg.sender, e.collateral, short.dethYieldRate, short.updatedAt);
-            LibShortRecord.deleteShortRecord(e.asset, msg.sender, id); // prevent re-entrancy
+            LibShortRecord.deleteShortRecord(e.asset, msg.sender, id); // prevent reentrancy
         } else {
             short.collateral -= e.ethFilled;
             short.ercDebt -= e.ercFilled;
             if (short.ercDebt < LibAsset.minShortErc(asset)) revert Errors.CannotLeaveDustAmount();
 
-            //@dev Only allow partial exit if the CR is same or better than before
+            // @dev Only allow partial exit if the CR is same or better than before
             if (getCollateralRatioNonPrice(short) < e.beforeExitCR) revert Errors.PostExitCRLtPreExitCR();
 
-            //@dev collateral already subtracted in exitShort()
+            // @dev collateral already subtracted in exitShort()
             VaultUser.ethEscrowed -= e.collateral - e.ethFilled;
             LibShortRecord.disburseCollateral(e.asset, msg.sender, e.ethFilled, short.dethYieldRate, short.updatedAt);
         }

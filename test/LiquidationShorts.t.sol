@@ -10,7 +10,7 @@ import {PrimaryScenarios} from "test/utils/TestTypes.sol";
 import {LiquidationGeneralTest} from "test/LiquidationGeneral.t.sol";
 import {console} from "contracts/libraries/console.sol";
 
-//@dev Test what happens when forced bid is performed on a short instead of an ask
+// @dev Test what happens when forced bid is performed on a short instead of an ask
 contract LiquidationShortsTest is LiquidationGeneralTest {
     using U256 for uint256;
     using U128 for uint128;
@@ -107,7 +107,7 @@ contract LiquidationShortsTest is LiquidationGeneralTest {
         });
     }
 
-    //@dev: Scenario 1: cratio < 1.1
+    // @dev: Scenario 1: cratio < 1.1
     function test_PrimaryFullLiquidateCratioScenario2FromShort() public {
         fullyLiquidateShortPrimary({scenario: PrimaryScenarios.CRatioBelow110, caller: receiver});
         //check balance after liquidate

@@ -44,7 +44,7 @@ contract ShortOrdersFacet is Modifiers {
         STypes.Asset storage Asset = s.asset[asset];
         STypes.Order memory incomingShort;
 
-        //@dev create "empty" SR. Fail early.
+        // @dev create "empty" SR. Fail early.
         incomingShort.shortRecordId = LibShortRecord.createShortRecord(asset, msg.sender, SR.Closed, 0, 0, 0, 0, 0);
 
         uint256 cr = LibOrders.convertCR(shortOrderCR);
@@ -71,7 +71,7 @@ contract ShortOrdersFacet is Modifiers {
 
         p.startingId = s.bids[asset][C.HEAD].nextId;
         STypes.Order storage highestBid = s.bids[asset][p.startingId];
-        //@dev if match and match price is gt .5% to saved oracle in either direction, update startingShortId
+        // @dev if match and match price is gt .5% to saved oracle in either direction, update startingShortId
         if (highestBid.price >= incomingShort.price && highestBid.orderType == O.LimitBid) {
             LibOrders.updateOracleAndStartingShortViaThreshold(asset, LibOracle.getPrice(asset), incomingShort, shortHintArray);
         }
@@ -81,7 +81,7 @@ contract ShortOrdersFacet is Modifiers {
             revert Errors.BelowRecoveryModeCR();
         }
 
-        //@dev reading spot oracle price
+        // @dev reading spot oracle price
         if (incomingShort.price < p.oraclePrice) {
             LibOrders.addShort(asset, incomingShort, orderHintArray);
         } else {

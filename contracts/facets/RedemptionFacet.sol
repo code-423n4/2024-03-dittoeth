@@ -27,11 +27,12 @@ contract RedemptionFacet is Modifiers {
     using U32 for uint32;
 
     function validRedemptionSR(STypes.ShortRecord storage shortRecord, address proposer, address shorter, uint256 minShortErc)
-        internal view
+        internal
+        view
         returns (bool)
     {
-        //@dev Matches check in onlyValidShortRecord with a more restrictive ercDebt condition
-        //@dev Proposer can't redeem on self
+        // @dev Matches check in onlyValidShortRecord but with a more restrictive ercDebt condition
+        // @dev Proposer can't redeem on self
         if (shortRecord.status == SR.Closed || shortRecord.ercDebt < minShortErc || proposer == shorter) {
             return false;
         } else {
@@ -39,6 +40,17 @@ contract RedemptionFacet is Modifiers {
         }
     }
 
+    /**
+     * @notice Submit an array of SR as candidates for redemption, subject to dispute period
+     * @dev Collateral and debt are immediately removed from the SR candidates
+     * @dev Redemption Fee increases as more redemptions are proposed
+     *
+     * @param asset The market that will be impacted
+     * @param proposalInput Array of data pertaining to the SR candidates
+     * @param redemptionAmount Total amount of ercDebt requested to be redeemed
+     * @param maxRedemptionFee Maximum fee that redeemer is willing to pay
+     *
+     */
     function proposeRedemption(
         address asset,
         MTypes.ProposalInput[] calldata proposalInput,
@@ -55,7 +67,7 @@ contract RedemptionFacet is Modifiers {
 
         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
 
-        //@dev redeemerAssetUser.SSTORE2Pointer gets reset to address(0) after actual redemption
+        // @dev redeemerAssetUser.SSTORE2Pointer gets reset to address(0) after actual redemption
         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
 
         p.oraclePrice = LibOracle.getPrice(p.asset);
@@ -65,7 +77,7 @@ contract RedemptionFacet is Modifiers {
             p.shorter = proposalInput[i].shorter;
             p.shortId = proposalInput[i].shortId;
             p.shortOrderId = proposalInput[i].shortOrderId;
-            //@dev Setting this above _onlyValidShortRecord to allow skipping
+            // @dev Setting this above _onlyValidShortRecord to allow skipping
             STypes.ShortRecord storage currentSR = s.shortRecords[p.asset][p.shorter][p.shortId];
 
             /// Evaluate proposed shortRecord
@@ -75,15 +87,15 @@ contract RedemptionFacet is Modifiers {
             currentSR.updateErcDebt(p.asset);
             p.currentCR = currentSR.getCollateralRatio(p.oraclePrice);
 
-            //@dev Skip if proposal is not sorted correctly or if above redemption threshold
+            // @dev Skip if proposal is not sorted correctly or if above redemption threshold
             if (p.previousCR > p.currentCR || p.currentCR >= C.MAX_REDEMPTION_CR) continue;
 
-            //@dev totalAmountProposed tracks the actual amount that can be redeemed. totalAmountProposed <= redemptionAmount
+            // @dev totalAmountProposed tracks the actual amount that can be redeemed. totalAmountProposed <= redemptionAmount
             if (p.totalAmountProposed + currentSR.ercDebt <= redemptionAmount) {
                 p.amountProposed = currentSR.ercDebt;
             } else {
                 p.amountProposed = redemptionAmount - p.totalAmountProposed;
-                //@dev Exit when proposal would leave less than minShortErc, proxy for nearing end of slate
+                // @dev Exit when proposal would leave less than minShortErc, proxy for nearing end of slate
                 if (currentSR.ercDebt - p.amountProposed < minShortErc) break;
             }
 
@@ -91,8 +103,8 @@ contract RedemptionFacet is Modifiers {
 
             p.previousCR = p.currentCR;
 
-            //@dev Cancel attached shortOrder if below minShortErc, regardless of ercDebt in SR
-            //@dev All verified SR have ercDebt >= minShortErc so CR does not change in cancelShort()
+            // @dev Cancel attached shortOrder if below minShortErc, regardless of ercDebt in SR
+            // @dev All verified SR have ercDebt >= minShortErc so CR does not change in cancelShort()
             STypes.Order storage shortOrder = s.shorts[asset][p.shortOrderId];
             if (currentSR.status == SR.PartialFill && shortOrder.ercAmount < minShortErc) {
                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
@@ -128,7 +140,7 @@ contract RedemptionFacet is Modifiers {
 
         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-        //@dev SSTORE2 the entire proposalData after validating proposalInput
+        // @dev SSTORE2 the entire proposalData after validating proposalInput
         redeemerAssetUser.SSTORE2Pointer = SSTORE2.write(slate);
         redeemerAssetUser.slateLength = p.redemptionCounter;
         redeemerAssetUser.oraclePrice = p.oraclePrice;
@@ -139,8 +151,8 @@ contract RedemptionFacet is Modifiers {
 
         uint32 protocolTime = LibOrders.getOffsetTime();
         redeemerAssetUser.timeProposed = protocolTime;
-        //@dev Calculate the dispute period
-        //@dev timeToDispute is immediate for shorts with CR <= 1.1x
+        // @dev Calculate the dispute period
+        // @dev timeToDispute is immediate for shorts with CR <= 1.1x
 
         /*
         +-------+------------+
@@ -196,6 +208,17 @@ contract RedemptionFacet is Modifiers {
         emit Events.ProposeRedemption(p.asset, msg.sender);
     }
 
+    /**
+     * @notice Challenge the proposed redemption candidates of a specific redeemer
+     * @dev Fee is awarded based on ercDebt correctly disputed to encourage disputing bad proposals
+     *
+     * @param asset The market that will be impacted
+     * @param redeemer Address of the redeemer
+     * @param incorrectIndex Index of the proposal being disputed
+     * @param disputeShorter Shorter address from the SR used to dispute the redeemer proposal
+     * @param disputeShortId Id of the SR used to dispute the redeemer proposal
+     *
+     */
     function disputeRedemption(address asset, address redeemer, uint8 incorrectIndex, address disputeShorter, uint8 disputeShortId)
         external
         isNotFrozen(asset)
@@ -233,8 +256,8 @@ contract RedemptionFacet is Modifiers {
 
         if (disputeCR < incorrectProposal.CR && disputeSR.updatedAt + C.DISPUTE_REDEMPTION_BUFFER <= redeemerAssetUser.timeProposed)
         {
-            //@dev All proposals from the incorrectIndex onward will be removed
-            //@dev Thus the proposer can only redeem a portion of their original slate
+            // @dev All proposals from the incorrectIndex onward will be removed
+            // @dev Thus the proposer can only redeem a portion of their original slate
             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
                 currentProposal = decodedProposalData[i];
 
@@ -250,24 +273,24 @@ contract RedemptionFacet is Modifiers {
             Asset.dethCollateral += d.incorrectCollateral;
             Asset.ercDebt += d.incorrectErcDebt;
 
-            //@dev Update the redeemer's SSTORE2Pointer
+            // @dev Update the redeemer's SSTORE2Pointer
             if (incorrectIndex > 0) {
                 redeemerAssetUser.slateLength = incorrectIndex;
             } else {
-                //@dev this implies everything in the redeemer's proposal was incorrect
+                // @dev this implies everything in the redeemer's proposal was incorrect
                 delete redeemerAssetUser.SSTORE2Pointer;
                 emit Events.DisputeRedemptionAll(d.asset, redeemer);
             }
 
-            //@dev Penalty is based on the proposal with highest CR (decodedProposalData is sorted)
-            //@dev PenaltyPct is bound between CallerFeePct and 33% to prevent exploiting primaryLiquidation fees
+            // @dev Penalty is based on the proposal with highest CR (decodedProposalData is sorted)
+            // @dev PenaltyPct is bound between CallerFeePct and 33% to prevent exploiting primaryLiquidation fees
             uint256 penaltyPct = LibOrders.min(
                 LibOrders.max(LibAsset.callerFeePct(d.asset), (currentProposal.CR - disputeCR).div(currentProposal.CR)), 0.33 ether
             );
 
             uint88 penaltyAmt = d.incorrectErcDebt.mulU88(penaltyPct);
 
-            //@dev Give redeemer back ercEscrowed that is no longer used to redeem (penalty applied)
+            // @dev Give redeemer back ercEscrowed that is no longer used to redeem (penalty applied)
             redeemerAssetUser.ercEscrowed += (d.incorrectErcDebt - penaltyAmt);
             s.assetUser[d.asset][msg.sender].ercEscrowed += penaltyAmt;
         } else {
@@ -275,6 +298,13 @@ contract RedemptionFacet is Modifiers {
         }
     }
 
+    /**
+     * @notice Claim the collateral from the verified redemption candidates
+     * @dev Can only be called by the redeemer after the dispute period has passed
+     *
+     * @param asset The market that will be impacted
+     *
+     */
     function claimRedemption(address asset) external isNotFrozen(asset) nonReentrant {
         uint256 vault = s.asset[asset].vault;
         STypes.AssetUser storage redeemerAssetUser = s.assetUser[asset][msg.sender];
@@ -301,6 +331,16 @@ contract RedemptionFacet is Modifiers {
         emit Events.ClaimRedemption(asset, msg.sender);
     }
 
+    /**
+     * @notice Claim the leftover collateral from a SR that has been fully redeemed
+     * @dev Can only be called by the shorter after the dispute period has passed
+     *
+     * @param asset The market that will be impacted
+     * @param redeemer Address of the redeemer
+     * @param claimIndex Index of the proposal pointing to the shorter SR to be resolved
+     * @param id Shorter address from the SR used to dispute the redeemer proposal
+     *
+     */
     // Redeemed shorters can call this to get their collateral back if redeemer does not claim
     function claimRemainingCollateral(address asset, address redeemer, uint8 claimIndex, uint8 id)
         external
@@ -322,20 +362,21 @@ contract RedemptionFacet is Modifiers {
         _claimRemainingCollateral({asset: asset, vault: Asset.vault, shorter: msg.sender, shortId: id});
     }
 
+    // Send leftover collateral back to shorter and close SR
     function _claimRemainingCollateral(address asset, uint256 vault, address shorter, uint8 shortId) private {
         STypes.ShortRecord storage shortRecord = s.shortRecords[asset][shorter][shortId];
 
         if (shortRecord.ercDebt == 0 && shortRecord.status == SR.FullyFilled) {
-            //@dev Refund shorter the remaining collateral only if fully redeemed and not claimed already
+            // @dev Refund shorter the remaining collateral only if fully redeemed and not claimed already
             uint88 collateral = shortRecord.collateral;
             s.vaultUser[vault][shorter].ethEscrowed += collateral;
-            //@dev Shorter shouldn't lose any unclaimed yield because dispute time > YIELD_DELAY_SECONDS
+            // @dev Shorter shouldn't lose any unclaimed yield because dispute time > YIELD_DELAY_SECONDS
             LibShortRecord.disburseCollateral(asset, shorter, collateral, shortRecord.dethYieldRate, shortRecord.updatedAt);
             LibShortRecord.deleteShortRecord(asset, shorter, shortId);
         }
     }
 
-    //@dev inspired by https://docs.liquity.org/faq/lusd-redemptions#how-is-the-redemption-fee-calculated
+    // @dev inspired by https://docs.liquity.org/faq/lusd-redemptions#how-is-the-redemption-fee-calculated
     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
         internal
         returns (uint88 redemptionFee)
@@ -345,9 +386,9 @@ contract RedemptionFacet is Modifiers {
         uint256 secondsPassed = uint256((protocolTime - Asset.lastRedemptionTime)) * 1 ether;
         uint256 decayFactor = C.SECONDS_DECAY_FACTOR.pow(secondsPassed);
         uint256 decayedBaseRate = Asset.baseRate.mulU64(decayFactor);
-        //@dev Calculate Asset.ercDebt prior to proposal
+        // @dev Calculate Asset.ercDebt prior to proposal
         uint104 totalAssetErcDebt = (ercDebtRedeemed + Asset.ercDebt).mulU104(C.BETA);
-        //@dev Derived via this forumula: baseRateNew = baseRateOld + redeemedLUSD / (2 * totalLUSD)
+        // @dev Derived via this forumula: baseRateNew = baseRateOld + redeemedLUSD / (2 * totalLUSD)
         uint256 redeemedDUSDFraction = ercDebtRedeemed.div(totalAssetErcDebt);
         uint256 newBaseRate = decayedBaseRate + redeemedDUSDFraction;
         newBaseRate = LibOrders.min(newBaseRate, 1 ether); // cap baseRate at a maximum of 100%

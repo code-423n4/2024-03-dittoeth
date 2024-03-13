@@ -55,7 +55,7 @@ contract OrdersFacet is Modifiers {
         LibOrders.cancelShort(asset, id);
     }
 
-    //@dev Used to clear orderbook and/or to prevent DOS
+    // @dev Used to clear orderbook and/or to prevent DOS
     function cancelOrderFarFromOracle(address asset, O orderType, uint16 lastOrderId, uint16 numOrdersToCancel)
         external
         onlyAdminOrDAO

@@ -50,7 +50,7 @@ library LibSRMin {
             if (shortRecord.status == SR.Closed) {
                 // Check remaining shortOrder
                 if (shortOrder.ercAmount < minShortErc) {
-                    //@dev The resulting SR will not have PartialFill status after cancel
+                    // @dev The resulting SR will not have PartialFill status after cancel
                     LibOrders.cancelShort(asset, shortOrderId);
                     isCancelled = true;
                 }

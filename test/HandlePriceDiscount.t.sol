@@ -28,7 +28,7 @@ contract HandlePriceDiscountTest is OBFixture {
         uint256 askMultiplier;
         uint256 bidMultiplier;
 
-        //@dev system matches based on price of order on ob (in these cases, the bid's price)
+        // @dev system matches based on price of order on ob (in these cases, the bid's price)
         if (discountLevel == DiscountLevels.Gte1) {
             if (samePrice) {
                 bidMultiplier = askMultiplier = 0.99 ether;
@@ -71,7 +71,7 @@ contract HandlePriceDiscountTest is OBFixture {
         uint80 savedPrice = uint80(diamond.getProtocolAssetPrice(asset));
         uint256 askMultiplier;
         uint256 bidMultiplier;
-        //@dev system matches based on price of order on ob (in these cases, the ask's price)
+        // @dev system matches based on price of order on ob (in these cases, the ask's price)
         if (discountLevel == DiscountLevels.Gte1) {
             if (samePrice) {
                 bidMultiplier = askMultiplier = 0.99 ether;
@@ -106,7 +106,7 @@ contract HandlePriceDiscountTest is OBFixture {
         bidPrice = uint80(savedPrice.mul(bidMultiplier));
     }
 
-    //@dev handleDiscount: isDiscounted = match price < 1% of the saved oracle price
+    // @dev handleDiscount: isDiscounted = match price < 1% of the saved oracle price
     function test_handleDiscount_IsNotDiscountAndTitheWasNotChanged() public {
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 0);
@@ -114,7 +114,7 @@ contract HandlePriceDiscountTest is OBFixture {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
-        //@dev unchanged from deployment
+        // @dev unchanged from deployment
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 0);
         assertEq(diamond.getTithe(vault), 0.1 ether);
@@ -133,7 +133,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 1% less than the saved oracle
+        // @dev tithe increased bc match price was gt 1% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 22_50);
         assertEq(diamond.getTithe(vault), 0.325 ether);
@@ -152,7 +152,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 1% less than the saved oracle
+        // @dev tithe increased bc match price was gt 1% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 22_50);
         assertEq(diamond.getTithe(vault), 0.325 ether);
@@ -169,7 +169,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 2% less than the saved oracle
+        // @dev tithe increased bc match price was gt 2% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 45_00);
         assertEq(diamond.getTithe(vault), 0.55 ether);
@@ -187,7 +187,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 2% less than the saved oracle
+        // @dev tithe increased bc match price was gt 2% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 45_00);
         assertEq(diamond.getTithe(vault), 0.55 ether);
@@ -205,7 +205,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 3% less than the saved oracle
+        // @dev tithe increased bc match price was gt 3% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 67_50);
         assertEq(diamond.getTithe(vault), 0.775 ether);
@@ -224,7 +224,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 3% less than the saved oracle
+        // @dev tithe increased bc match price was gt 3% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 6750);
         assertEq(diamond.getTithe(vault), 0.775 ether);
@@ -242,7 +242,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -261,7 +261,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -269,7 +269,7 @@ contract HandlePriceDiscountTest is OBFixture {
 
     function test_handleDiscount_IsDiscounted_HugeDiscount_IncomingAsk_SamePrice() public {
         uint80 savedPrice = uint80(diamond.getProtocolAssetPrice(asset));
-        //@dev 80% discount
+        // @dev 80% discount
         uint80 askPrice = uint80(savedPrice.mul(0.2 ether));
         uint80 bidPrice = uint80(savedPrice.mul(0.2 ether));
 
@@ -282,7 +282,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -290,7 +290,7 @@ contract HandlePriceDiscountTest is OBFixture {
 
     function test_handleDiscount_IsDiscounted_HugeDiscount_IncomingAsk_DifferentPrice() public {
         uint80 savedPrice = uint80(diamond.getProtocolAssetPrice(asset));
-        //@dev 80% discount
+        // @dev 80% discount
         uint80 askPrice = uint80(savedPrice.mul(0.2 ether));
         uint80 bidPrice = uint80(savedPrice.mul(0.25 ether));
 
@@ -303,7 +303,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getBids().length, 1);
         assertEq(getBids()[0].price, askPrice / 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -321,7 +321,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 1% less than the saved oracle
+        // @dev tithe increased bc match price was gt 1% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 22_50);
         assertEq(diamond.getTithe(vault), 0.325 ether);
@@ -340,7 +340,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 1% less than the saved oracle
+        // @dev tithe increased bc match price was gt 1% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 22_50);
         assertEq(diamond.getTithe(vault), 0.325 ether);
@@ -357,7 +357,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 2% less than the saved oracle
+        // @dev tithe increased bc match price was gt 2% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 45_00);
         assertEq(diamond.getTithe(vault), 0.55 ether);
@@ -375,7 +375,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 2% less than the saved oracle
+        // @dev tithe increased bc match price was gt 2% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 45_00);
         assertEq(diamond.getTithe(vault), 0.55 ether);
@@ -392,7 +392,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 3% less than the saved oracle
+        // @dev tithe increased bc match price was gt 3% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 67_50);
         assertEq(diamond.getTithe(vault), 0.775 ether);
@@ -410,7 +410,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 3% less than the saved oracle
+        // @dev tithe increased bc match price was gt 3% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 67_50);
         assertEq(diamond.getTithe(vault), 0.775 ether);
@@ -427,7 +427,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -445,7 +445,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -453,7 +453,7 @@ contract HandlePriceDiscountTest is OBFixture {
 
     function test_handleDiscount_IsDiscounted_HugeDiscount_IncomingBid_SamePrice() public {
         uint80 savedPrice = uint80(diamond.getProtocolAssetPrice(asset));
-        //@dev 80% discount
+        // @dev 80% discount
         uint80 askPrice = uint80(savedPrice.mul(0.2 ether));
         uint80 bidPrice = uint80(savedPrice.mul(0.2 ether));
 
@@ -466,7 +466,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -474,7 +474,7 @@ contract HandlePriceDiscountTest is OBFixture {
 
     function test_handleDiscount_IsDiscounted_HugeDiscount_IncomingBid_DifferentPrice() public {
         uint80 savedPrice = uint80(diamond.getProtocolAssetPrice(asset));
-        //@dev 80% discount
+        // @dev 80% discount
         uint80 askPrice = uint80(savedPrice.mul(0.2 ether));
         uint80 bidPrice = uint80(savedPrice);
 
@@ -487,7 +487,7 @@ contract HandlePriceDiscountTest is OBFixture {
         assertEq(getAsks().length, 1);
         assertEq(getAsks()[0].price, bidPrice * 2);
 
-        //@dev tithe increased bc match price was gt 4% less than the saved oracle
+        // @dev tithe increased bc match price was gt 4% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
@@ -496,35 +496,35 @@ contract HandlePriceDiscountTest is OBFixture {
     //reset tithe
 
     function test_handleDiscount_WasDiscountedButIsNoLonger() public {
-        //@dev .00025 * .99 =  0.0002475
+        // @dev .00025 * .99 =  0.0002475
         uint80 lowerPrice = 0.0002475 ether;
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 0);
 
-        //@dev trading at discount
+        // @dev trading at discount
         fundLimitBidOpt(lowerPrice, DEFAULT_AMOUNT, receiver);
         fundLimitAskOpt(lowerPrice, DEFAULT_AMOUNT, sender);
 
-        //@dev tithe increased bc match price was gt 1% less than the saved oracle
+        // @dev tithe increased bc match price was gt 1% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 22_50);
         assertEq(diamond.getTithe(vault), 0.325 ether);
 
-        //@dev trading at even deeper discount
+        // @dev trading at even deeper discount
         lowerPrice = 0.00024 ether;
         fundLimitBidOpt(lowerPrice, DEFAULT_AMOUNT, receiver);
         fundLimitAskOpt(lowerPrice, DEFAULT_AMOUNT, sender);
 
-        //@dev tithe increased bc match price was gt 1% less than the saved oracle
+        // @dev tithe increased bc match price was gt 1% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 90_00);
         assertEq(diamond.getTithe(vault), 1 ether);
 
-        //@dev trading at oracle
+        // @dev trading at oracle
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
-        //@dev tithe back to normal
+        // @dev tithe back to normal
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 0);
         assertEq(diamond.getTithe(vault), 0.1 ether);
@@ -541,15 +541,15 @@ contract HandlePriceDiscountTest is OBFixture {
         fundLimitBidOpt(bidPrice, DEFAULT_AMOUNT, receiver);
         fundLimitAskOpt(askPrice, DEFAULT_AMOUNT, sender);
 
-        //@dev tithe increased bc match price was gt 3% less than the saved oracle
+        // @dev tithe increased bc match price was gt 3% less than the saved oracle
         assertEq(diamond.getVaultStruct(vault).dethTithePercent, 10_00);
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 67_50);
         assertEq(diamond.getTithe(vault), 0.775 ether);
         vm.prank(owner);
-        //@dev 10_00 is the valye set in DeployHelper (Currently)
+        // @dev 10_00 is the valye set in DeployHelper (Currently)
         diamond.setTithe(vault, 10_00);
 
-        //@dev make sure dethTitheMod is unchanged
+        // @dev make sure dethTitheMod is unchanged
         assertEq(diamond.getVaultStruct(vault).dethTitheMod, 67_50);
         assertEq(diamond.getTithe(vault), 0.775 ether);
     }

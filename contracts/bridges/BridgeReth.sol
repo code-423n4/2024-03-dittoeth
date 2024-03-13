@@ -37,18 +37,18 @@ contract BridgeReth is IBridge {
         return IRocketTokenRETH(rocketStorage.getAddress(RETH_TYPEHASH));
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getBaseCollateral() external view returns (address) {
         return rocketStorage.getAddress(RETH_TYPEHASH);
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getDethValue() external view returns (uint256) {
         IRocketTokenRETH rocketETHToken = _getRethContract();
         return rocketETHToken.getEthValue(rocketETHToken.balanceOf(address(this)));
     }
 
-    //@dev does not need read only re-entrancy
+    // @dev does not need read only reentrancy
     function getUnitDethValue() external view returns (uint256) {
         IRocketTokenRETH rocketETHToken = _getRethContract();
         return rocketETHToken.getEthValue(1 ether);

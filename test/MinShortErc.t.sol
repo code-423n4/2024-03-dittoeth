@@ -76,7 +76,7 @@ contract MinShortErcTest is LiquidationHelper {
         uint88 ethFilled = DEFAULT_PRICE.mulU88(debtDiff).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
         uint256 yieldRate = ethFilled.div(initialCollateral + ethFilled).mul(1 ether);
 
-        //@dev shortRecord's debt and collateral should increase
+        // @dev shortRecord's debt and collateral should increase
         shortRecord = getShortRecord(sender, C.SHORT_STARTING_ID);
         //check shortRecord
         assertEq(shortRecord.ercDebt, minShortErc);
@@ -85,9 +85,9 @@ contract MinShortErcTest is LiquidationHelper {
         assertEq(shortRecord.dethYieldRate, yieldRate);
 
         //check shorter's balance
-        //@dev ercEsrowed increased by debtDiff via cancelShort() call within the liquidate function
+        // @dev ercEsrowed increased by debtDiff via cancelShort() call within the liquidate function
         s.ercEscrowed = debtDiff;
-        //@dev the shorter receives less eth back after cancel to increase SR's collateral
+        // @dev the shorter receives less eth back after cancel to increase SR's collateral
         s.ethEscrowed = ethInShortOrder - collateralIncreaseAmt;
         assertStruct(sender, s);
 
@@ -138,7 +138,7 @@ contract MinShortErcTest is LiquidationHelper {
         //Post-cancelShort check
         assertEq(getShorts().length, 0);
 
-        //@dev shortRecord's debt and collateral should increase
+        // @dev shortRecord's debt and collateral should increase
         shortRecord = getShortRecord(sender, C.SHORT_STARTING_ID);
         assertEq(shortRecord.ercDebt, minShortErc);
 
@@ -151,7 +151,7 @@ contract MinShortErcTest is LiquidationHelper {
         assertEq(shortRecord.collateral, initialTotalCollateral + secondTotalCollateral);
 
         //check shorter's balance
-        //@dev the shorter receives less eth back after cancel to increase SR's collateral
+        // @dev the shorter receives less eth back after cancel to increase SR's collateral
         s.ercEscrowed = 0;
         s.ethEscrowed = ethInShortOrder - secondShorterCollateral;
         assertStruct(sender, s);
@@ -183,7 +183,7 @@ contract MinShortErcTest is LiquidationHelper {
         assertEq(getShorts().length, 1);
         assertEq(diamond.getShortRecordCount(asset, sender), 1);
 
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         assertStruct(sender, s); // 0
         assertStruct(extra, e); // 0
     }
@@ -212,14 +212,14 @@ contract MinShortErcTest is LiquidationHelper {
         uint88 receiverEth = DEFAULT_PRICE.mulU88(ercFilled);
         uint88 initialCollateral = receiverEth.mulU88(diamond.getAssetNormalizedStruct(asset).initialCR) + receiverEth;
 
-        //@dev ercEsrowed increased by debtDiff via cancelShort() call within the liquidate function
+        // @dev ercEsrowed increased by debtDiff via cancelShort() call within the liquidate function
         s.ercEscrowed = debtDiff;
-        //@dev shorter's ethEscrowed should be: remaining collateral + eth locked up in short order
+        // @dev shorter's ethEscrowed should be: remaining collateral + eth locked up in short order
         s.ethEscrowed =
             (initialCollateral + collateralIncreaseAmt) - m.ethFilled - m.gasFee - m.tappFee - m.callerFee + ethInShortOrder;
         assertStruct(sender, s);
 
-        //@dev SR's collateral increased -> liquidator as if debt was 2000
+        // @dev SR's collateral increased -> liquidator as if debt was 2000
         e.ercEscrowed = 0;
         e.ethEscrowed = m.gasFee + m.callerFee;
         assertStruct(extra, e);
@@ -316,7 +316,7 @@ contract MinShortErcTest is LiquidationHelper {
         _setETH(2500 ether);
 
         vm.expectRevert(Errors.InvalidShortOrder.selector);
-        //@dev the correct shortOrderId should be C.STARTING_ID
+        // @dev the correct shortOrderId should be C.STARTING_ID
         diamond.liquidate(asset, sender, C.SHORT_STARTING_ID, shortHintArrayStorage, C.STARTING_ID + 1);
     }
 
@@ -327,7 +327,7 @@ contract MinShortErcTest is LiquidationHelper {
         fundLimitBidOpt(DEFAULT_PRICE + 1 wei, underMinShortErc, receiver);
         assertEq(getShorts().length, 1);
 
-        //@dev create SR with the same SR id
+        // @dev create SR with the same SR id
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitBidOpt(DEFAULT_PRICE, underMinShortErc, extra);
         assertEq(getShorts().length, 2);
@@ -336,12 +336,12 @@ contract MinShortErcTest is LiquidationHelper {
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         _setETH(2500 ether);
         vm.expectRevert(Errors.InvalidShortOrder.selector);
-        //@dev Try (and fail) to liquidate receiver, but cancel SENDER's short order
+        // @dev Try (and fail) to liquidate receiver, but cancel SENDER's short order
         diamond.liquidate(asset, receiver, C.SHORT_STARTING_ID, shortHintArrayStorage, C.STARTING_ID);
     }
 
     //Secondary Liquidation
-    //@dev cancels the short order after liquidating a partially filled short
+    // @dev cancels the short order after liquidating a partially filled short
     function setUpSecondaryLiquidatingShortUnderMin(uint88 ercAmount, SecondaryType secondaryType)
         public
         returns (uint256 totalCollateral, uint256 liquidatorCollateral)
@@ -383,7 +383,7 @@ contract MinShortErcTest is LiquidationHelper {
             batches[i] = MTypes.BatchLiquidation({shorter: sender, shortId: id, shortOrderId: shortOrderId});
         }
 
-        //@dev give exact amount to liquidate (no leftover amounts)
+        // @dev give exact amount to liquidate (no leftover amounts)
         if (secondaryType == SecondaryType.LiquidateErcEscrowed) {
             depositUsd(extra, DEFAULT_AMOUNT * 2 + ercAmount);
             e.ercEscrowed = DEFAULT_AMOUNT * 2 + ercAmount;
@@ -400,7 +400,7 @@ contract MinShortErcTest is LiquidationHelper {
         for (uint8 i; i < 3; i++) {
             id = C.SHORT_STARTING_ID + i;
             totalCollateral += getShortRecord(sender, id).collateral;
-            //@dev collateral earned by liquidator
+            // @dev collateral earned by liquidator
             liquidatorCollateral += getShortRecord(sender, id).ercDebt.mul(testFacet.getOraclePriceT(asset));
         }
 
@@ -568,7 +568,7 @@ contract MinShortErcTest is LiquidationHelper {
 
         batches[1] = MTypes.BatchLiquidation({shorter: sender, shortId: C.SHORT_STARTING_ID + 1, shortOrderId: 0});
 
-        //@dev the correct shortOrderId is actually 100 here bc the 1st 2 shorts get full matched
+        // @dev the correct shortOrderId is actually 100 here bc the 1st 2 shorts get full matched
         batches[2] = MTypes.BatchLiquidation({shorter: sender, shortId: C.SHORT_STARTING_ID + 2, shortOrderId: C.STARTING_ID + 2});
 
         depositUsd(extra, DEFAULT_AMOUNT * 2 + ercAmount);
@@ -595,18 +595,18 @@ contract MinShortErcTest is LiquidationHelper {
         STypes.Order memory shortOrder = getShorts()[0];
         STypes.ShortRecord memory shortRecord = getShortRecord(sender, C.SHORT_STARTING_ID);
 
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = 0;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         fundLimitAskOpt(DEFAULT_PRICE, minShortErc, receiver);
         uint16[] memory shortHintArray = setShortHintArray();
         vm.prank(sender);
         diamond.exitShort(asset, C.SHORT_STARTING_ID, underMinShortErc, DEFAULT_PRICE, shortHintArray, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 debtDiff = minShortErc - shortRecord.ercDebt;
@@ -614,15 +614,15 @@ contract MinShortErcTest is LiquidationHelper {
             shortOrder.price.mulU88(shortOrder.ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
         uint88 ethFilled = DEFAULT_PRICE.mulU80(minShortErc);
 
-        //@dev ercEsrowed increased by debtDiff via cancelShort() call within the liquidate function
+        // @dev ercEsrowed increased by debtDiff via cancelShort() call within the liquidate function
         s.ercEscrowed = debtDiff;
-        //@dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order - the eth used to buyback
+        // @dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order - the eth used to buyback
         s.ethEscrowed = initialCollateral + remainingCollateral - ethFilled;
         assertStruct(sender, s);
     }
 
     function test_ExitShortPrimary_ShortOrderUnderMinShortErc() public {
-        //@dev DEFAULT_AMOUNT currently == 5000 ether. Change this if DEFAULT_AMOUNT or minShortErc changes
+        // @dev DEFAULT_AMOUNT currently == 5000 ether. Change this if DEFAULT_AMOUNT or minShortErc changes
         uint88 aboveMinShortErc = 3001 ether;
         uint88 receiverEth = DEFAULT_PRICE.mulU88(aboveMinShortErc);
         uint88 initialCollateral = receiverEth.mulU88(diamond.getAssetNormalizedStruct(asset).initialCR) + receiverEth;
@@ -633,25 +633,25 @@ contract MinShortErcTest is LiquidationHelper {
 
         STypes.Order memory shortOrder = getShorts()[0];
 
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = 0;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         fundLimitAskOpt(DEFAULT_PRICE, aboveMinShortErc, receiver);
         uint16[] memory shortHintArray = setShortHintArray();
         vm.prank(sender);
         diamond.exitShort(asset, C.SHORT_STARTING_ID, aboveMinShortErc, DEFAULT_PRICE, shortHintArray, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 remainingCollateral =
             shortOrder.price.mulU88(shortOrder.ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
         uint88 ethFilled = DEFAULT_PRICE.mulU80(aboveMinShortErc);
 
-        //@dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order - the eth used to buyback
+        // @dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order - the eth used to buyback
         s.ercEscrowed = 0;
         s.ethEscrowed = initialCollateral + remainingCollateral - ethFilled;
         assertStruct(sender, s);
@@ -665,12 +665,12 @@ contract MinShortErcTest is LiquidationHelper {
         fundLimitBidOpt(DEFAULT_PRICE, underMinShortErc, receiver);
         assertEq(getShorts().length, 1);
 
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = 0;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         fundLimitAskOpt(DEFAULT_PRICE, underMinShortErc, receiver);
         uint16[] memory shortHintArray = setShortHintArray();
         vm.prank(sender);
@@ -693,29 +693,29 @@ contract MinShortErcTest is LiquidationHelper {
 
         depositUsd(sender, underMinShortErc);
         s.ercEscrowed = underMinShortErc;
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = underMinShortErc;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         vm.prank(sender);
         diamond.exitShortErcEscrowed(asset, C.SHORT_STARTING_ID, underMinShortErc, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 remainingCollateral =
             shortOrder.price.mulU88(shortOrder.ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
 
-        //@dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
+        // @dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
         s.ercEscrowed = 0;
         s.ethEscrowed = initialCollateral + remainingCollateral;
         assertStruct(sender, s);
     }
 
     function test_ExitShortErcEscrowed_FullExit_ShortOrderUnderMinShortErc() public {
-        //@dev DEFAULT_AMOUNT currently == 5000 ether. Change this if DEFAULT_AMOUNT or minShortErc changes
+        // @dev DEFAULT_AMOUNT currently == 5000 ether. Change this if DEFAULT_AMOUNT or minShortErc changes
         uint88 aboveMinShortErc = 3001 ether;
         uint88 receiverEth = DEFAULT_PRICE.mulU88(aboveMinShortErc);
         uint88 initialCollateral = receiverEth.mulU88(diamond.getAssetNormalizedStruct(asset).initialCR) + receiverEth;
@@ -728,22 +728,22 @@ contract MinShortErcTest is LiquidationHelper {
 
         depositUsd(sender, aboveMinShortErc);
         s.ercEscrowed = aboveMinShortErc;
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = aboveMinShortErc;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         vm.prank(sender);
         diamond.exitShortErcEscrowed(asset, C.SHORT_STARTING_ID, aboveMinShortErc, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 remainingCollateral =
             shortOrder.price.mulU88(shortOrder.ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
 
-        //@dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
+        // @dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
         s.ercEscrowed = 0;
         s.ethEscrowed = initialCollateral + remainingCollateral;
         assertStruct(sender, s);
@@ -759,12 +759,12 @@ contract MinShortErcTest is LiquidationHelper {
 
         uint88 buybackAmount = ercAmount / 2;
         depositUsd(sender, buybackAmount);
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = buybackAmount;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         vm.prank(sender);
         vm.expectRevert(Errors.CannotLeaveDustAmount.selector);
         diamond.exitShortErcEscrowed(asset, C.SHORT_STARTING_ID, buybackAmount, C.STARTING_ID);
@@ -788,23 +788,23 @@ contract MinShortErcTest is LiquidationHelper {
         vm.prank(sender);
         token.increaseAllowance(_diamond, underMinShortErc);
 
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = 0;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
         assertEq(token.balanceOf(sender), underMinShortErc);
 
-        //@dev exit the short
+        // @dev exit the short
         vm.prank(sender);
         diamond.exitShortWallet(asset, C.SHORT_STARTING_ID, underMinShortErc, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 remainingCollateral =
             shortOrder.price.mulU88(shortOrder.ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
 
-        //@dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
+        // @dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
         s.ercEscrowed = 0;
         s.ethEscrowed = initialCollateral + remainingCollateral;
         assertStruct(sender, s);
@@ -813,7 +813,7 @@ contract MinShortErcTest is LiquidationHelper {
 
     function test_ExitShortWallet_FullExit_ShortOrderUnderMinShortErc() public {
         // uint88 minShortErc = uint88(diamond.getMinShortErc(asset));
-        //@dev DEFAULT_AMOUNT currently == 5000 ether. Change this if DEFAULT_AMOUNT or minShortErc changes
+        // @dev DEFAULT_AMOUNT currently == 5000 ether. Change this if DEFAULT_AMOUNT or minShortErc changes
         uint88 aboveMinShortErc = 3001 ether;
         uint88 receiverEth = DEFAULT_PRICE.mulU88(aboveMinShortErc);
         uint88 initialCollateral = receiverEth.mulU88(diamond.getAssetNormalizedStruct(asset).initialCR) + receiverEth;
@@ -830,23 +830,23 @@ contract MinShortErcTest is LiquidationHelper {
         vm.prank(sender);
         token.increaseAllowance(_diamond, aboveMinShortErc);
 
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = 0;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
         assertEq(token.balanceOf(sender), aboveMinShortErc);
 
-        //@dev exit the short
+        // @dev exit the short
         vm.prank(sender);
         diamond.exitShortWallet(asset, C.SHORT_STARTING_ID, aboveMinShortErc, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 remainingCollateral =
             shortOrder.price.mulU88(shortOrder.ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
 
-        //@dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
+        // @dev ethEscrowed should be the initial collateral + the collateral that wasn't filled in short order
         s.ercEscrowed = 0;
         s.ethEscrowed = initialCollateral + remainingCollateral;
         assertStruct(sender, s);
@@ -868,12 +868,12 @@ contract MinShortErcTest is LiquidationHelper {
         assertEq(token.balanceOf(sender), buybackAmount);
         vm.prank(sender);
         token.increaseAllowance(_diamond, buybackAmount);
-        //@dev check balances before liquidation
+        // @dev check balances before liquidation
         s.ercEscrowed = 0;
         s.ethEscrowed = 0;
         assertStruct(sender, s);
 
-        //@dev exit the short
+        // @dev exit the short
         vm.prank(sender);
         vm.expectRevert(Errors.CannotLeaveDustAmount.selector);
         diamond.exitShortWallet(asset, C.SHORT_STARTING_ID, buybackAmount, C.STARTING_ID);
@@ -890,7 +890,7 @@ contract MinShortErcTest is LiquidationHelper {
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         vm.prank(sender);
         vm.expectRevert(Errors.InvalidShortOrder.selector);
-        //@dev the correct shortOrderId should be C.STARTING_ID
+        // @dev the correct shortOrderId should be C.STARTING_ID
         diamond.exitShort(asset, C.SHORT_STARTING_ID, underMinShortErc, DEFAULT_PRICE, shortHintArrayStorage, C.STARTING_ID + 1);
     }
 
@@ -901,7 +901,7 @@ contract MinShortErcTest is LiquidationHelper {
         fundLimitBidOpt(DEFAULT_PRICE + 1 wei, underMinShortErc, receiver);
         assertEq(getShorts().length, 1);
 
-        //@dev create SR with the same SR id
+        // @dev create SR with the same SR id
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitBidOpt(DEFAULT_PRICE, underMinShortErc, extra);
         assertEq(getShorts().length, 2);
@@ -1042,7 +1042,7 @@ contract MinShortErcTest is LiquidationHelper {
         vm.prank(sender);
         diamond.transferFrom(sender, extra, 1);
 
-        //@dev sender's short order was cancelled prior to xfer
+        // @dev sender's short order was cancelled prior to xfer
         uint88 ercAmount = DEFAULT_AMOUNT / 2;
         uint88 ethInShortOrder =
             DEFAULT_PRICE.mulU88(DEFAULT_AMOUNT - ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);

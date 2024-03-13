@@ -65,12 +65,12 @@ contract PrimaryLiquidationFacet is Modifiers {
             shorter: shorter
         });
 
-        //@dev liquidate requires more up-to-date oraclePrice
+        // @dev liquidate requires more up-to-date oraclePrice
         LibOrders.updateOracleAndStartingShortViaTimeBidOnly(asset, shortHintArray);
 
         MTypes.PrimaryLiquidation memory m = _setLiquidationStruct(asset, shorter, id, shortOrderId);
 
-        //@dev Can liquidate as long as CR is low enough
+        // @dev Can liquidate as long as CR is low enough
         if (m.cRatio >= LibAsset.primaryLiquidationCR(m.asset)) {
             // If CR is too high, check for recovery mode and violation to continue liquidation
             if (!LibSRRecovery.checkRecoveryModeViolation(m.asset, m.cRatio, m.oraclePrice)) revert Errors.SufficientCollateral();
@@ -156,13 +156,13 @@ contract PrimaryLiquidationFacet is Modifiers {
         uint256 startGas = gasleft();
         uint88 ercAmountLeft;
 
-        //@dev Provide higher price to better ensure it can fully fill the liquidation
+        // @dev Provide higher price to better ensure it can fully fill the liquidation
         uint80 _bidPrice = m.oraclePrice.mulU80(m.forcedBidPriceBuffer);
 
         // Shorter loses leftover collateral to TAPP when unable to maintain CR above the minimum
         m.loseCollateral = m.cRatio <= m.penaltyCR;
 
-        //@dev Increase ethEscrowed by shorter's full collateral for forced bid
+        // @dev Increase ethEscrowed by shorter's full collateral for forced bid
         STypes.VaultUser storage TAPP = s.vaultUser[m.vault][address(this)];
         TAPP.ethEscrowed += m.short.collateral;
 
@@ -190,13 +190,13 @@ contract PrimaryLiquidationFacet is Modifiers {
 
         m.ercDebtMatched = m.short.ercDebt - ercAmountLeft;
 
-        //@dev virtually burning the repurchased debt
+        // @dev virtually burning the repurchased debt
         s.assetUser[m.asset][address(this)].ercEscrowed -= m.ercDebtMatched;
         s.asset[m.asset].ercDebt -= m.ercDebtMatched;
 
         uint256 gasUsed = startGas - gasleft();
-        //@dev manually setting basefee to 1,000,000 in foundry.toml;
-        //@dev By basing gasFee off of baseFee instead of priority, adversaries are prevent from draining the TAPP
+        // @dev manually setting basefee to 1,000,000 in foundry.toml;
+        // @dev By basing gasFee off of baseFee instead of priority, adversaries are prevent from draining the TAPP
         m.gasFee = uint88(gasUsed * block.basefee); // @dev(safe-cast)
     }
 
@@ -215,7 +215,7 @@ contract PrimaryLiquidationFacet is Modifiers {
         uint88 callerFee = m.ethFilled.mulU88(m.callerFeePct) + m.gasFee;
 
         m.totalFee += tappFee + callerFee;
-        //@dev TAPP already received the gasFee for being the forcedBid caller. tappFee nets out.
+        // @dev TAPP already received the gasFee for being the forcedBid caller. tappFee nets out.
         if (TAPP.ethEscrowed >= callerFee) {
             TAPP.ethEscrowed -= callerFee;
             VaultUser.ethEscrowed += callerFee;

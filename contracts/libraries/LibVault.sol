@@ -46,6 +46,7 @@ library LibVault {
         return (uint256(s.vault[vault].dittoMatchedRate) * 1 ether) / C.TWO_DECIMAL_PLACES;
     }
 
+    // Loops through each bridge in the vault and totals present value
     function getDethTotal(uint256 vault) internal view returns (uint256 dethTotal) {
         AppStorage storage s = appStorage();
         address[] storage bridges = s.vaultBridges[vault];

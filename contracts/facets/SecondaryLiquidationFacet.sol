@@ -34,7 +34,7 @@ contract SecondaryLiquidationFacet is Modifiers {
      *
      */
 
-    //@dev If you want to liquidated more than uint88.max worth of erc in shorts, you must call liquidateSecondary multiple times
+    // @dev If you want to liquidated more than uint88.max worth of erc in shorts, you must call liquidateSecondary multiple times
     function liquidateSecondary(address asset, MTypes.BatchLiquidation[] memory batches, uint88 liquidateAmount, bool isWallet)
         external
         onlyValidAsset(asset)
@@ -109,7 +109,7 @@ contract SecondaryLiquidationFacet is Modifiers {
                 _secondaryLiquidationHelper(m);
             }
 
-            //@dev cancels shortOrder of partialFilled SR
+            // @dev cancels shortOrder of partialFilled SR
             if (shortUnderMin) {
                 LibOrders.cancelShort(m.asset, m.shortOrderId);
             }

@@ -118,33 +118,6 @@ library LibAsset {
         return uint256(s.asset[asset].minShortErc) * 1 ether;
     }
 
-    // default of 6 hours, stored in uint8 as 6
-    // range of [1 - 48],
-    // i.e. 6 -> 6 hours
-    // @dev primary liquidation first eligibility window
-    function firstLiquidationTime(address asset) internal view returns (uint256) {
-        AppStorage storage s = appStorage();
-        return uint256(s.asset[asset].firstLiquidationTime) * 1 hours;
-    }
-
-    // default of 8 hours, stored in uint8 as 8
-    // range of [1 - 48],
-    // i.e. 8 -> 8 hours
-    // @dev primary liquidation second eligibility window
-    function secondLiquidationTime(address asset) internal view returns (uint256) {
-        AppStorage storage s = appStorage();
-        return uint256(s.asset[asset].secondLiquidationTime) * 1 hours;
-    }
-
-    // default of 12 hours, stored in uint8 as 12
-    // range of [1 - 48],
-    // i.e. 12 -> 12 hours
-    // @dev primary liquidation time limit
-    function resetLiquidationTime(address asset) internal view returns (uint256) {
-        AppStorage storage s = appStorage();
-        return uint256(s.asset[asset].resetLiquidationTime) * 1 hours;
-    }
-
     // default of 1.5 ether, stored in uint8 as 150
     // range of [1-2],
     // 2 decimal places, divide by 100

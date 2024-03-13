@@ -203,7 +203,7 @@ contract SellOrdersTest is OBFixture {
         });
     }
 
-    //@dev no match because price out of range
+    // @dev no match because price out of range
     function test_AddingLimitSellAskPriceGreaterBidPrice() public {
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitAskOpt(DEFAULT_PRICE + 1 wei, DEFAULT_AMOUNT, sender);
@@ -284,7 +284,7 @@ contract SellOrdersTest is OBFixture {
     //Testing max orderId
     function test_CanStillMatchOrderWhenAskOrderIdIsMaxed() public {
         vm.prank(owner);
-        //@dev 65535 is max value
+        // @dev 65535 is max value
         testFacet.setOrderIdT(asset, 65534);
 
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
@@ -302,7 +302,7 @@ contract SellOrdersTest is OBFixture {
             orderHintArray
         );
 
-        //@dev Can still match since orderId isn't used invoked until it needs to be added on ob
+        // @dev Can still match since orderId isn't used invoked until it needs to be added on ob
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         assertEq(diamond.getAssetNormalizedStruct(asset).orderId, 65535);
     }

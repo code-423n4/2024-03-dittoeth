@@ -30,7 +30,7 @@ contract RedemptionTest is OBFixture {
     function setUp() public override {
         super.setUp();
 
-        //@dev give potential redeemer some ethEscrowed for the fee
+        // @dev give potential redeemer some ethEscrowed for the fee
         depositEth(receiver, INITIAL_ETH_AMOUNT);
         depositEth(extra, INITIAL_ETH_AMOUNT);
     }
@@ -226,7 +226,7 @@ contract RedemptionTest is OBFixture {
         vm.prank(redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT, MAX_REDEMPTION_FEE);
 
-        //@dev try to flag again before getting rid of existing flags
+        // @dev try to flag again before getting rid of existing flags
         depositUsdAndPrank(redeemer, DEF_REDEMPTION_AMOUNT);
         vm.expectRevert(Errors.ExistingProposedRedemptions.selector);
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT, MAX_REDEMPTION_FEE);
@@ -316,7 +316,7 @@ contract RedemptionTest is OBFixture {
         vm.prank(redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT, MAX_REDEMPTION_FEE);
 
-        //@dev calculated based on oracle price
+        // @dev calculated based on oracle price
         uint88 colRedeemed = getColRedeemed(asset, redeemer);
 
         assertEq(diamond.getAssetStruct(asset).ercDebt, 0);
@@ -354,7 +354,7 @@ contract RedemptionTest is OBFixture {
         assertFalse(sstore2Pointer == address(0));
         MTypes.ProposalData[] memory decodedProposalData = getSlate(redeemer);
 
-        //@dev skip C.SHORT_STARTING_ID + 1
+        // @dev skip C.SHORT_STARTING_ID + 1
         assertEq(decodedProposalData.length, 2);
         assertEq(decodedProposalData[0].shortId, C.SHORT_STARTING_ID);
         assertEq(decodedProposalData[1].shortId, C.SHORT_STARTING_ID + 2);
@@ -419,7 +419,7 @@ contract RedemptionTest is OBFixture {
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT, MAX_REDEMPTION_FEE);
 
         MTypes.ProposalData[] memory decodedProposalData = getSlate(redeemer);
-        //@dev skipped 1 out of 3
+        // @dev skipped 1 out of 3
         assertEq(decodedProposalData.length, 2);
     }
 
@@ -439,7 +439,7 @@ contract RedemptionTest is OBFixture {
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         fundLimitBidOpt(DEFAULT_PRICE + 1, DEFAULT_AMOUNT + 1, receiver);
         fundLimitShortOpt(DEFAULT_PRICE + 1, DEFAULT_AMOUNT + 1, sender);
-        //@dev will skip this one
+        // @dev will skip this one
         fundLimitBidOpt(DEFAULT_PRICE * 2, DEFAULT_AMOUNT + 2, receiver);
         fundLimitShortOpt(DEFAULT_PRICE * 2, DEFAULT_AMOUNT + 2, sender);
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -451,7 +451,7 @@ contract RedemptionTest is OBFixture {
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT, MAX_REDEMPTION_FEE);
 
         MTypes.ProposalData[] memory decodedProposalData = getSlate(redeemer);
-        //@dev skipped 1 out of 3
+        // @dev skipped 1 out of 3
         assertEq(decodedProposalData.length, 2);
         checkEscrowed({redeemer: redeemer, ercEscrowed: DEFAULT_AMOUNT + 2});
     }
@@ -461,7 +461,7 @@ contract RedemptionTest is OBFixture {
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
-        //@dev will skip this one
+        // @dev will skip this one
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT + 1, receiver);
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT + 1, sender);
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -474,7 +474,7 @@ contract RedemptionTest is OBFixture {
         diamond.proposeRedemption(asset, proposalInputs, amount, MAX_REDEMPTION_FEE);
 
         MTypes.ProposalData[] memory decodedProposalData = getSlate(redeemer);
-        //@dev skipped 1 out of 3
+        // @dev skipped 1 out of 3
         assertEq(decodedProposalData.length, 2);
         checkEscrowed({redeemer: redeemer, ercEscrowed: DEFAULT_AMOUNT + 1});
     }
@@ -524,7 +524,7 @@ contract RedemptionTest is OBFixture {
 
         checkRedemptionSSTORE(redeemer, proposalInputs, IS_FULL, IS_FULL);
 
-        //@dev locks up ercEscrowed to use for later redemption
+        // @dev locks up ercEscrowed to use for later redemption
         checkEscrowed({redeemer: redeemer, ercEscrowed: 0});
     }
 
@@ -544,7 +544,7 @@ contract RedemptionTest is OBFixture {
 
         checkRedemptionSSTORE(redeemer, proposalInputs, IS_FULL, IS_PARTIAL);
 
-        //@dev locks up ercEscrowed to use for later redemption
+        // @dev locks up ercEscrowed to use for later redemption
         checkEscrowed({redeemer: redeemer, ercEscrowed: DEF_REDEMPTION_AMOUNT - partialRedemptionAmount});
     }
 
@@ -682,7 +682,7 @@ contract RedemptionTest is OBFixture {
 
         checkRedemptionSSTORE(redeemer, proposalInputs, IS_FULL, IS_FULL);
 
-        //@dev locks up ercEscrowed to use for later redemption
+        // @dev locks up ercEscrowed to use for later redemption
         checkEscrowed({redeemer: redeemer, ercEscrowed: 0});
     }
 
@@ -704,13 +704,13 @@ contract RedemptionTest is OBFixture {
 
         checkRedemptionSSTORE(redeemer, proposalInputs, IS_FULL, IS_PARTIAL);
 
-        //@dev locks up ercEscrowed to use for later redemption
+        // @dev locks up ercEscrowed to use for later redemption
         checkEscrowed({redeemer: redeemer, ercEscrowed: DEF_REDEMPTION_AMOUNT - partialRedemptionAmount});
     }
 
     //proposeRedemption - timeToDispute
 
-    //@dev 1.1 ether < CR <= 1.2 ether
+    // @dev 1.1 ether < CR <= 1.2 ether
     function test_proposeRedemption_TimeToDispute_1() public {
         makeShorts({singleShorter: true});
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -727,7 +727,7 @@ contract RedemptionTest is OBFixture {
         assertGt(highestCR, 1.1 ether);
         assertLe(highestCR, 1.2 ether);
         timeToDispute = diamond.getAssetUserStruct(asset, redeemer).timeToDispute;
-        assertEq(timeToDispute, 301 seconds); //@dev time already skipped 1 second in set up
+        assertEq(timeToDispute, 301 seconds); // @dev time already skipped 1 second in set up
         assertGt(timeToDispute, 0 hours);
         assertLe(timeToDispute, 0.33 hours);
 
@@ -741,7 +741,7 @@ contract RedemptionTest is OBFixture {
         diamond.claimRedemption(asset);
     }
 
-    //@dev 1.2 ether < CR <= 1.3 ether
+    // @dev 1.2 ether < CR <= 1.3 ether
     function test_proposeRedemption_TimeToDispute_2() public {
         makeShorts({singleShorter: true});
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -758,7 +758,7 @@ contract RedemptionTest is OBFixture {
         assertGt(highestCR, 1.2 ether);
         assertLe(highestCR, 1.3 ether);
         timeToDispute = diamond.getAssetUserStruct(asset, redeemer).timeToDispute;
-        assertEq(timeToDispute, 1201 seconds); //@dev time already skipped 1 second in set up
+        assertEq(timeToDispute, 1201 seconds); // @dev time already skipped 1 second in set up
         assertGt(timeToDispute, 0.33 hours);
         assertLe(timeToDispute, 0.75 hours);
 
@@ -771,7 +771,7 @@ contract RedemptionTest is OBFixture {
         diamond.claimRedemption(asset);
     }
 
-    //@dev 1.3 ether < CR <= 1.5 ether
+    // @dev 1.3 ether < CR <= 1.5 ether
     function test_proposeRedemption_TimeToDispute_3() public {
         makeShorts({singleShorter: true});
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -788,7 +788,7 @@ contract RedemptionTest is OBFixture {
         assertGt(highestCR, 1.3 ether);
         assertLe(highestCR, 1.5 ether);
         timeToDispute = diamond.getAssetUserStruct(asset, redeemer).timeToDispute;
-        assertEq(timeToDispute, 3376 seconds); //@dev time already skipped 1 second in set up
+        assertEq(timeToDispute, 3376 seconds); // @dev time already skipped 1 second in set up
         assertGt(timeToDispute, 0.75 hours);
         assertLe(timeToDispute, 1.5 hours);
 
@@ -801,7 +801,7 @@ contract RedemptionTest is OBFixture {
         diamond.claimRedemption(asset);
     }
 
-    //@dev 1.5 ether < CR <= 1.7 ether
+    // @dev 1.5 ether < CR <= 1.7 ether
     function test_proposeRedemption_TimeToDispute_4() public {
         makeShorts({singleShorter: true});
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -818,7 +818,7 @@ contract RedemptionTest is OBFixture {
         assertGt(highestCR, 1.5 ether);
         assertLe(highestCR, 1.7 ether);
         timeToDispute = diamond.getAssetUserStruct(asset, redeemer).timeToDispute;
-        assertEq(timeToDispute, 9451 seconds); //@dev time already skipped 1 second in set up
+        assertEq(timeToDispute, 9451 seconds); // @dev time already skipped 1 second in set up
         assertGt(timeToDispute, 1.5 hours);
         assertLe(timeToDispute, 3 hours);
 
@@ -831,7 +831,7 @@ contract RedemptionTest is OBFixture {
         diamond.claimRedemption(asset);
     }
 
-    //@dev 1.7 ether < CR <= 2 ether
+    // @dev 1.7 ether < CR <= 2 ether
     function test_proposeRedemption_TimeToDispute_5() public {
         makeShorts({singleShorter: true});
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -848,7 +848,7 @@ contract RedemptionTest is OBFixture {
         assertGt(highestCR, 1.7 ether);
         assertLe(highestCR, 2 ether);
         timeToDispute = diamond.getAssetUserStruct(asset, redeemer).timeToDispute;
-        assertEq(timeToDispute, 19801 seconds); //@dev time already skipped 1 second in set up
+        assertEq(timeToDispute, 19801 seconds); // @dev time already skipped 1 second in set up
         assertGt(timeToDispute, 3 hours);
         assertLe(timeToDispute, 6 hours);
 
@@ -861,7 +861,7 @@ contract RedemptionTest is OBFixture {
         diamond.claimRedemption(asset);
     }
 
-    //@dev CR under 1.1x can be immediately claimed on
+    // @dev CR under 1.1x can be immediately claimed on
     function test_proposeRedemption_TimeToDispute_LowCR() public {
         makeShorts({singleShorter: true});
         MTypes.ProposalInput[] memory proposalInputs = makeProposalInputs({singleShorter: true});
@@ -879,7 +879,7 @@ contract RedemptionTest is OBFixture {
         timeToDispute = diamond.getAssetUserStruct(asset, redeemer).timeToDispute;
         assertEq(timeToDispute, 0);
 
-        //@dev immediately claim
+        // @dev immediately claim
         vm.startPrank(redeemer);
         diamond.claimRedemption(asset);
     }
@@ -950,12 +950,12 @@ contract RedemptionTest is OBFixture {
             assertEq(shortRecords[i].ercDebt, 0);
         }
 
-        //@dev Preparing things for the tests ahead
+        // @dev Preparing things for the tests ahead
         uint16[] memory shortHintArray = setShortHintArray();
         MTypes.BatchLiquidation[] memory batches = new MTypes.BatchLiquidation[](1);
         batches[0] = MTypes.BatchLiquidation({shorter: shorter, shortId: C.SHORT_STARTING_ID, shortOrderId: 0});
 
-        //@dev Revert tests
+        // @dev Revert tests
         vm.expectRevert(Errors.InvalidShortId.selector);
         exitShortWallet(C.SHORT_STARTING_ID, DEFAULT_AMOUNT, shorter);
 
@@ -986,7 +986,7 @@ contract RedemptionTest is OBFixture {
         vm.expectRevert(Errors.InvalidShortId.selector);
         combineShorts({id1: C.SHORT_STARTING_ID, id2: C.SHORT_STARTING_ID + 1});
 
-        //@dev increase debt > 0 to mint
+        // @dev increase debt > 0 to mint
         vm.startPrank(shorter);
         diamond.setErcDebt(asset, shorter, C.SHORT_STARTING_ID, 2000 ether);
         diamond.mintNFT(asset, C.SHORT_STARTING_ID, 0);
@@ -1019,7 +1019,7 @@ contract RedemptionTest is OBFixture {
         proposalInputs = new MTypes.ProposalInput[](2);
 
         proposalInputs[0] = MTypes.ProposalInput({shorter: sender, shortId: shortId1, shortOrderId: 0});
-        //@dev dispute this redemption
+        // @dev dispute this redemption
         proposalInputs[1] = MTypes.ProposalInput({shorter: sender, shortId: shortId2, shortOrderId: 0});
     }
 
@@ -1031,7 +1031,7 @@ contract RedemptionTest is OBFixture {
         diamond.proposeRedemption(asset, proposalInputs, redemptionAmount, MAX_REDEMPTION_FEE);
     }
 
-    //@dev used to test the 1 hr buffer period
+    // @dev used to test the 1 hr buffer period
     function changeUpdateAtAndSkipTime(uint8 shortId) public {
         vm.prank(sender);
         decreaseCollateral(shortId, 1 wei);
@@ -1290,7 +1290,7 @@ contract RedemptionTest is OBFixture {
 
         address disputer = extra;
         vm.prank(disputer);
-        //@dev CR for C.SHORT_STARTING_ID + 2 is not lower than CR for C.SHORT_STARTING_ID + 1
+        // @dev CR for C.SHORT_STARTING_ID + 2 is not lower than CR for C.SHORT_STARTING_ID + 1
         vm.expectRevert(Errors.InvalidRedemptionDispute.selector);
         diamond.disputeRedemption({
             asset: asset,
@@ -1314,7 +1314,7 @@ contract RedemptionTest is OBFixture {
 
         address disputer = extra;
         vm.prank(disputer);
-        //@dev the 1 hr buffer period has not elapsed yet
+        // @dev the 1 hr buffer period has not elapsed yet
         vm.expectRevert(Errors.InvalidRedemptionDispute.selector);
         diamond.disputeRedemption({
             asset: asset,
@@ -1411,7 +1411,7 @@ contract RedemptionTest is OBFixture {
         address disputer = extra;
         vm.prank(disputer);
 
-        //@dev 96616666666666666670 = INITIAL_ETH_AMOUNT - redemption fee
+        // @dev 96616666666666666670 = INITIAL_ETH_AMOUNT - redemption fee
         r.ethEscrowed = 96616666666666666670;
         r.ercEscrowed = initialErcEscrowed;
         assertStruct(redeemer, r);
@@ -1434,12 +1434,12 @@ contract RedemptionTest is OBFixture {
             correctSR: correctSR
         });
 
-        //@dev refund redeemer their redemptionAmount after penalty applied
+        // @dev refund redeemer their redemptionAmount after penalty applied
         r.ercEscrowed = initialErcEscrowed + (incorrectRedemptionAmount - penaltyAmt);
         assertStruct(redeemer, r);
 
         sstore2Pointer = diamond.getAssetUserStruct(asset, redeemer).SSTORE2Pointer;
-        //@dev most important checks in the test
+        // @dev most important checks in the test
         assertFalse(sstore2Pointer == address(0));
         assertEq(diamond.getAssetUserStruct(asset, redeemer).slateLength, 1);
     }
@@ -1472,7 +1472,7 @@ contract RedemptionTest is OBFixture {
         assertEq(decodedProposalData.length, 2);
         assertGt(diamond.getAssetUserStruct(asset, redeemer).timeProposed, 0);
         assertEq(diamond.getAssetUserStruct(asset, redeemer).slateLength, 2);
-        //@dev 96616666666666666670 = INITIAL_ETH_AMOUNT - redemption fee
+        // @dev 96616666666666666670 = INITIAL_ETH_AMOUNT - redemption fee
         r.ethEscrowed = 96616666666666666670;
         r.ercEscrowed = initialErcEscrowed;
         assertStruct(redeemer, r);
@@ -1499,12 +1499,12 @@ contract RedemptionTest is OBFixture {
             correctSR: correctSR
         });
 
-        //@dev refund redeemer their redemptionAmount after penalty applied
+        // @dev refund redeemer their redemptionAmount after penalty applied
         r.ercEscrowed = initialErcEscrowed + (_redemptionAmounts - penaltyAmt);
         assertStruct(redeemer, r);
 
         //SStorePointer is updated
-        //@dev checking SStorePointer is address(0) is MAIN check of this test
+        // @dev checking SStorePointer is address(0) is MAIN check of this test
         sstore2Pointer = diamond.getAssetUserStruct(asset, redeemer).SSTORE2Pointer;
         assertEq(sstore2Pointer, address(0));
         assertEq(diamond.getAssetUserStruct(asset, redeemer).slateLength, 2);
@@ -1600,7 +1600,7 @@ contract RedemptionTest is OBFixture {
 
         _setETH(1000 ether);
         vm.prank(redeemer);
-        //@dev partially propose the last proposal
+        // @dev partially propose the last proposal
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT - leftoverErc, MAX_REDEMPTION_FEE);
 
         address sstore2Pointer = diamond.getAssetUserStruct(asset, redeemer).SSTORE2Pointer;
@@ -1733,7 +1733,7 @@ contract RedemptionTest is OBFixture {
         diamond.proposeRedemption(asset, proposalInputs, DEF_REDEMPTION_AMOUNT, 1 wei);
     }
 
-    //@dev this test is directional
+    // @dev this test is directional
     function test_RedemptionFee() public {
         address shorter = sender;
         address redeemer = receiver;
@@ -1742,7 +1742,7 @@ contract RedemptionTest is OBFixture {
             fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, redeemer);
             fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, shorter);
         }
-        //@dev 1,000,000 dUSD
+        // @dev 1,000,000 dUSD
         assertEq(diamond.getAssetStruct(asset).ercDebt, DEFAULT_AMOUNT * 200);
 
         assertEq(diamond.getAssetStruct(asset).baseRate, 0);
@@ -1833,7 +1833,7 @@ contract RedemptionTest is OBFixture {
         vm.prank(redeemer);
         diamond.claimRedemption(asset);
         assertApproxEqAbs(totalColRedeemed, 4.999999999999999999 ether, MAX_DELTA_SMALL);
-        //@dev close to zero
+        // @dev close to zero
         assertApproxEqAbs(diamond.getAssetStruct(asset).baseRate, 0.002688205351340749 ether, MAX_DELTA_SMALL);
     }
 
@@ -1874,7 +1874,7 @@ contract RedemptionTest is OBFixture {
         vm.prank(redeemer);
         diamond.proposeRedemption(asset, proposalInputs, 1 wei, MAX_REDEMPTION_FEE);
 
-        //@dev after 12 hrs, baseRate is roughly halved
+        // @dev after 12 hrs, baseRate is roughly halved
         assertApproxEqAbs(diamond.getAssetStruct(asset).baseRate, 0.003750000000417061 ether, MAX_DELTA_SMALL);
         assertApproxEqAbs(initialBaseRate, 0.003750000000417061 ether, 0.5 ether);
     }
@@ -1919,7 +1919,7 @@ contract RedemptionTest is OBFixture {
         depositUsdAndPrank(extra, DEFAULT_AMOUNT * 10); // Use different redeemer
         diamond.proposeRedemption(asset, proposalInputs, DEFAULT_AMOUNT * 10, MAX_REDEMPTION_FEE);
 
-        //@dev ercRedeemed/ercDebtTotal where 3 was removed in the first redemption
+        // @dev ercRedeemed/ercDebtTotal where 3 was removed in the first redemption
         uint256 baseRateAdd = uint256(10 ether).div(200 ether - 3 ether).div(C.BETA);
         uint256 baseRateFinal = baseRateInitial + baseRateAdd;
         assertEq(diamond.getAssetStruct(asset).baseRate, baseRateFinal);

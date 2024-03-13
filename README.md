@@ -103,6 +103,8 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 - There is an edge case where a short meets erc requirements because of ercDebtRate application
 - `disburseCollateral` in `proposeRedemption()` can cause user to lose yield if their SR was recently modified and it’s still below 2.0 CR (modified through order fill, or increase collateral)
 - Redemption proposal is intentionally overly conservative in considering SR ineligible (with regards to `minShortErc`) to prevent scenarios of ercDebt under `minShortErc`
+- Recovery Mode: currently not checking `recoveryCR` in secondary liquidation unlike primary, may introduce later.
+- `claimRemaningCollateral()` is called on a SR included in a redemption proposal is later correctly disputed.
 
 # Overview
 

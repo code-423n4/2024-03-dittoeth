@@ -91,39 +91,6 @@ contract OwnerTest is OBFixture {
         diamond.setDittoShorterRate(VAULT.ONE, 101);
     }
 
-    function test_Revert_SetResetLiquidationTime() public {
-        vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
-        diamond.setResetLiquidationTime(asset, 1);
-
-        vm.startPrank(owner);
-        vm.expectRevert("below 1");
-        diamond.setResetLiquidationTime(asset, 1 - 1);
-        vm.expectRevert("above 48");
-        diamond.setResetLiquidationTime(asset, 48 + 1);
-    }
-
-    function test_Revert_SetSecondLiquidationTime() public {
-        vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
-        diamond.setSecondLiquidationTime(asset, 1);
-
-        vm.startPrank(owner);
-        vm.expectRevert("below 1");
-        diamond.setSecondLiquidationTime(asset, 1 - 1);
-        vm.expectRevert("above resetLiquidationTime");
-        diamond.setSecondLiquidationTime(asset, 18);
-    }
-
-    function test_Revert_SetFirstLiquidationTime() public {
-        vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
-        diamond.setFirstLiquidationTime(asset, 1);
-
-        vm.startPrank(owner);
-        vm.expectRevert("below 1");
-        diamond.setFirstLiquidationTime(asset, 1 - 1);
-        vm.expectRevert("above secondLiquidationTime");
-        diamond.setFirstLiquidationTime(asset, 13);
-    }
-
     function test_Revert_SetInitialCR() public {
         vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
         diamond.setInitialCR(asset, 100);
@@ -337,27 +304,6 @@ contract OwnerTest is OBFixture {
         assertEq(diamond.getAssetStruct(asset).dittoTargetCR, 20);
     }
 
-    function test_SetResetLiquidationTime() public {
-        assertEq(diamond.getAssetStruct(asset).resetLiquidationTime, 16);
-        vm.prank(owner);
-        diamond.setResetLiquidationTime(asset, 13);
-        assertEq(diamond.getAssetStruct(asset).resetLiquidationTime, 13);
-    }
-
-    function test_SetSecondLiquidationTime() public {
-        assertEq(diamond.getAssetStruct(asset).secondLiquidationTime, 12);
-        vm.prank(owner);
-        diamond.setSecondLiquidationTime(asset, 11);
-        assertEq(diamond.getAssetStruct(asset).secondLiquidationTime, 11);
-    }
-
-    function test_SetFirstLiquidationTime() public {
-        assertEq(diamond.getAssetStruct(asset).firstLiquidationTime, 10);
-        vm.prank(owner);
-        diamond.setFirstLiquidationTime(asset, 2);
-        assertEq(diamond.getAssetStruct(asset).firstLiquidationTime, 2);
-    }
-
     function test_SetTappFeePct() public {
         assertEq(diamond.getAssetStruct(asset).tappFeePct, 25);
         vm.prank(owner);
@@ -425,9 +371,6 @@ contract OwnerTest is OBFixture {
         a.primaryLiquidationCR = 300;
         a.secondaryLiquidationCR = 200;
         a.forcedBidPriceBuffer = 120;
-        a.resetLiquidationTime = 14;
-        a.secondLiquidationTime = 10;
-        a.firstLiquidationTime = 8;
         a.penaltyCR = 110;
         a.tappFeePct = 25;
         a.callerFeePct = 5;

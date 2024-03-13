@@ -26,7 +26,7 @@ contract GasRedemptionFixture is GasHelper {
             ob.fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
             ob.fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         }
-        //@dev give potential redeemer some ethEscrowed for the fee
+        // @dev give potential redeemer some ethEscrowed for the fee
         ob.depositEth(receiver, INITIAL_ETH_AMOUNT);
         diamond.setBaseRate(asset, uint64(1 ether));
         diamond.setLastRedemptionTime(asset, uint32(diamond.getOffsetTime()));
@@ -176,7 +176,7 @@ contract GasDisputeTest is GasRedemptionFixture {
         ob.fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         ob.fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
 
-        //@dev skip time to account for the 1 hr buffer period
+        // @dev skip time to account for the 1 hr buffer period
         vm.prank(sender);
         diamond.decreaseCollateral(asset, C.SHORT_STARTING_ID + 100, 1 wei);
         skip(1 hours);
@@ -368,7 +368,7 @@ contract GasClaimOneRedemptionTest is GasRedemptionFixture {
         vm.prank(_redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEFAULT_AMOUNT * _numRedemptions, MAX_REDEMPTION_FEE);
 
-        //@dev skip lots of time to permit redemption
+        // @dev skip lots of time to permit redemption
         skip(1 days);
 
         gasRedemptionProposalAssert({redeemer: _redeemer, shorter: _shorter, numRedemptions: _numRedemptions});
@@ -402,7 +402,7 @@ contract GasClaimThreeRedemptionTest is GasRedemptionFixture {
         vm.prank(_redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEFAULT_AMOUNT * _numRedemptions, MAX_REDEMPTION_FEE);
 
-        //@dev skip lots of time to permit redemption
+        // @dev skip lots of time to permit redemption
         skip(1 days);
 
         gasRedemptionProposalAssert({redeemer: _redeemer, shorter: _shorter, numRedemptions: _numRedemptions});
@@ -436,7 +436,7 @@ contract GasClaimTenRedemptionTest is GasRedemptionFixture {
         vm.prank(_redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEFAULT_AMOUNT * _numRedemptions, MAX_REDEMPTION_FEE);
 
-        //@dev skip lots of time to permit redemption
+        // @dev skip lots of time to permit redemption
         skip(1 days);
 
         gasRedemptionProposalAssert({redeemer: _redeemer, shorter: _shorter, numRedemptions: _numRedemptions});
@@ -470,7 +470,7 @@ contract GasClaim100RedemptionTest is GasRedemptionFixture {
         vm.prank(_redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEFAULT_AMOUNT * _numRedemptions, MAX_REDEMPTION_FEE);
 
-        //@dev skip lots of time to permit redemption
+        // @dev skip lots of time to permit redemption
         skip(1 days);
 
         gasRedemptionProposalAssert({redeemer: _redeemer, shorter: _shorter, numRedemptions: _numRedemptions});
@@ -503,7 +503,7 @@ contract GasClaimRemainingCollateralTest is GasRedemptionFixture {
         vm.prank(_redeemer);
         diamond.proposeRedemption(asset, proposalInputs, DEFAULT_AMOUNT, MAX_REDEMPTION_FEE);
 
-        //@dev skip lots of time to permit redemption
+        // @dev skip lots of time to permit redemption
         skip(1 days);
         gasRedemptionProposalAssert({redeemer: _redeemer, shorter: _shorter, numRedemptions: 1});
 

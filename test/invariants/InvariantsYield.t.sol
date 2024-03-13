@@ -12,7 +12,7 @@ contract InvariantsYield is InvariantsBase {
     function setUp() public override {
         super.setUp();
 
-        //@dev duplicate the selector to increase the distribution of certain handler calls
+        // @dev duplicate the selector to increase the distribution of certain handler calls
         selectors = [
             // Bridge
             Handler.deposit.selector,

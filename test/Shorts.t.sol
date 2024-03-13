@@ -85,7 +85,7 @@ contract ShortsTest is OBFixture {
 
     function primaryExitShort(bool isFullExit) public {
         if (isFullExit) {
-            //@dev: fully exit all 1 short
+            // @dev: fully exit all 1 short
             exitShort(C.SHORT_STARTING_ID + 1, DEFAULT_AMOUNT, DEFAULT_PRICE, sender);
             assertEq(getShortRecordCount(sender), 2);
             assertEq(diamond.getAssetStruct(asset).ercDebt, DEFAULT_AMOUNT.mulU88(2 ether));
@@ -101,7 +101,7 @@ contract ShortsTest is OBFixture {
             assertStruct(extra, e);
         } else {
             uint88 partialAmt = DEFAULT_AMOUNT / 2;
-            //@dev: partially exit one short
+            // @dev: partially exit one short
             exitShort(C.SHORT_STARTING_ID + 1, partialAmt, DEFAULT_PRICE, sender);
             uint256 shortCount = getShortRecordCount(sender);
             assertEq(shortCount, 3);
@@ -415,10 +415,10 @@ contract ShortsTest is OBFixture {
         assertEq(getShortRecordCount(sender), 1);
         assertEq(shortRecords[0].id, C.SHORT_STARTING_ID);
 
-        //@dev pre-make SR whenever a shorter calls createLimitBid
+        // @dev pre-make SR whenever a shorter calls createLimitBid
         assertEq(shortsUnfilled[0].shortRecordId, C.SHORT_STARTING_ID + 1);
 
-        //@dev pre-made SR should be "empty"
+        // @dev pre-made SR should be "empty"
         STypes.ShortRecord memory preMadeSR = diamond.getShortRecord(asset, sender, C.SHORT_STARTING_ID + 1);
         assertEq(preMadeSR.collateral, 0);
         assertEq(preMadeSR.ercDebt, 0);

@@ -31,15 +31,35 @@ contract BridgeRouterFacet is Modifiers {
         stethBridge = _stethBridge;
     }
 
+    /**
+     * @notice Returns the present value of all bridges within a given vault
+     *
+     * @param vault The vault being queried
+     *
+     */
     function getDethTotal(uint256 vault) external view nonReentrantView returns (uint256) {
         return vault.getDethTotal();
     }
 
-    //@dev does not need read only re-entrancy
+    /**
+     * @notice Returns an array of the bridge addresses of the vault
+     * @dev does not need read only reentrancy
+     *
+     * @param vault The vault being queried
+     *
+     */
     function getBridges(uint256 vault) external view returns (address[] memory) {
         return s.vaultBridges[vault];
     }
 
+    /**
+     * @notice Deposit LST into the protocol
+     * @dev User receives equivalent value in dETH, and withdrawal credit if applicable
+     *
+     * @param bridge The address of the bridge corresponding to the LST deposited
+     * @param amount The quantity of LST to deposit
+     *
+     */
     function deposit(address bridge, uint88 amount) external nonReentrant {
         if (amount < C.MIN_DEPOSIT) revert Errors.UnderMinimumDeposit();
 
@@ -52,6 +72,13 @@ contract BridgeRouterFacet is Modifiers {
         emit Events.Deposit(bridge, msg.sender, dethAmount);
     }
 
+    /**
+     * @notice Deposit ETH into the protocol
+     * @dev User receives equivalent value in dETH at a 1:1 ratio, and withdrawal credit if applicable
+     *
+     * @param bridge The address of the bridge corresponding to the LST deposited (via ETH exchange)
+     *
+     */
     function depositEth(address bridge) external payable nonReentrant {
         if (msg.value < C.MIN_DEPOSIT) revert Errors.UnderMinimumDeposit();
 
@@ -63,6 +90,14 @@ contract BridgeRouterFacet is Modifiers {
         emit Events.DepositEth(bridge, msg.sender, dethAmount);
     }
 
+    /**
+     * @notice Withdraw LST out of the protocol
+     * @dev Withdrawal credit only applicable for vaults holding multiple unique LST
+     *
+     * @param bridge The address of the bridge corresponding to the LST being withdrawn
+     * @param dethAmount The quantity of dETH to withdraw
+     *
+     */
     function withdraw(address bridge, uint88 dethAmount) external nonReentrant {
         if (dethAmount == 0) revert Errors.ParameterIsZero();
 
@@ -87,6 +122,14 @@ contract BridgeRouterFacet is Modifiers {
         emit Events.Withdraw(bridge, msg.sender, dethAmount, fee);
     }
 
+    /**
+     * @notice Withdraw LST out of the protocol
+     * @dev Only callable by DAO, takes from TAPP balance
+     *
+     * @param bridge The address of the bridge corresponding to the LST being withdrawn
+     * @param dethAmount The quantity of dETH to withdraw
+     *
+     */
     function withdrawTapp(address bridge, uint88 dethAmount) external onlyDAO {
         if (dethAmount == 0) revert Errors.ParameterIsZero();
 
@@ -100,15 +143,16 @@ contract BridgeRouterFacet is Modifiers {
         emit Events.WithdrawTapp(bridge, msg.sender, dethAmount);
     }
 
+    // Automatically updates the vault yield rate when bridge deposits are sufficiently large
+    // @dev Deters attempts to take advantage of long delays between updates to the yield rate, by creating large temporary positions
     function maybeUpdateYield(uint256 vault, uint88 amount) private {
         uint88 dethTotal = s.vault[vault].dethTotal;
         if (dethTotal > C.BRIDGE_YIELD_UPDATE_THRESHOLD && amount.div(dethTotal) > C.BRIDGE_YIELD_PERCENT_THRESHOLD) {
-            // Update yield for "large" bridge deposits
             vault.updateYield();
         }
     }
 
-    //@dev Checks for invalid bridge input
+    // Checks for invalid bridge input
     function _getVault(address bridge) private view returns (uint256 vault, uint256 bridgePointer) {
         if (bridge == rethBridge) {
             vault = VAULT.ONE;
@@ -121,6 +165,7 @@ contract BridgeRouterFacet is Modifiers {
         }
     }
 
+    // Accounting for situations when the vault (via bridges) experiences loss in value
     function _ethConversion(uint256 vault, uint88 amount) private view returns (uint88) {
         uint256 dethTotalNew = vault.getDethTotal();
         uint88 dethTotal = s.vault[vault].dethTotal;

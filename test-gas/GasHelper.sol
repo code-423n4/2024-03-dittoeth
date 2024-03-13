@@ -190,7 +190,7 @@ contract GasHelper is Gas {
         ditto = IAsset(ob.contracts("ditto"));
         dusd = IAsset(ob.contracts("dusd"));
 
-        //@dev skip to make updatedAt for
+        // @dev skip to make updatedAt for
         skip(1 days);
         ob.setETH(4000 ether);
 

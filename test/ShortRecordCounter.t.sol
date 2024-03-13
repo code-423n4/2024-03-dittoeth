@@ -48,7 +48,7 @@ contract shortRecordCounterTest is OBFixture {
 
         vm.prank(sender);
         cancelShort(C.STARTING_ID);
-        //@dev cancelling the short opened up a slot for the shorter to make another short
+        // @dev cancelling the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
         vm.prank(sender);
         vm.expectRevert(Errors.CannotMakeMoreThanMaxSR.selector);
@@ -61,11 +61,11 @@ contract shortRecordCounterTest is OBFixture {
             fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         }
 
-        //@dev exit a short
+        // @dev exit a short
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         exitShort(C.SHORT_STARTING_ID, DEFAULT_AMOUNT, DEFAULT_PRICE, sender);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -79,11 +79,11 @@ contract shortRecordCounterTest is OBFixture {
             fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         }
 
-        //@dev exit a short
+        // @dev exit a short
         depositUsd(sender, DEFAULT_AMOUNT);
         exitShortErcEscrowed(C.SHORT_STARTING_ID, DEFAULT_AMOUNT, sender);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -97,12 +97,12 @@ contract shortRecordCounterTest is OBFixture {
             fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         }
 
-        //@dev exit a short
+        // @dev exit a short
         vm.prank(_diamond);
         token.mint(sender, DEFAULT_AMOUNT);
         exitShortWallet(C.SHORT_STARTING_ID, DEFAULT_AMOUNT, sender);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -118,12 +118,12 @@ contract shortRecordCounterTest is OBFixture {
 
         _setETH(2600 ether);
 
-        //@dev liquidate a short
+        // @dev liquidate a short
         fundLimitAskOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
         vm.prank(extra);
         diamond.liquidate(asset, sender, C.SHORT_STARTING_ID, shortHintArrayStorage, 0);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -139,11 +139,11 @@ contract shortRecordCounterTest is OBFixture {
 
         _setETH(750 ether);
 
-        //@dev liquidate a short
+        // @dev liquidate a short
         depositUsd(extra, DEFAULT_AMOUNT);
         liquidateErcEscrowed(sender, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, extra);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -159,12 +159,12 @@ contract shortRecordCounterTest is OBFixture {
 
         _setETH(750 ether);
 
-        //@dev liquidate a short
+        // @dev liquidate a short
         vm.prank(_diamond);
         token.mint(extra, DEFAULT_AMOUNT);
         liquidateWallet(sender, C.SHORT_STARTING_ID, DEFAULT_AMOUNT, extra);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -181,7 +181,7 @@ contract shortRecordCounterTest is OBFixture {
         vm.prank(sender);
         combineShorts({id1: C.SHORT_STARTING_ID, id2: C.SHORT_STARTING_ID + 2});
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);
@@ -200,7 +200,7 @@ contract shortRecordCounterTest is OBFixture {
         vm.prank(sender);
         diamond.transferFrom(sender, extra, 1);
 
-        //@dev deleting the short opened up a slot for the shorter to make another short
+        // @dev deleting the short opened up a slot for the shorter to make another short
         fundLimitShortOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, sender);
 
         vm.prank(sender);

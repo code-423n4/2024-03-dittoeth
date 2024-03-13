@@ -91,7 +91,7 @@ contract TestFacet is Modifiers {
         return orderArr;
     }
 
-    //@dev unused
+    // @dev unused
     // function currentInactiveShorts(address asset) external view returns (STypes.Order[] memory) {
     //     uint16 currentId = s.shorts[asset][C.HEAD].prevId;
     //     uint256 orderSize;
@@ -130,9 +130,6 @@ contract TestFacet is Modifiers {
             penaltyCR: LibAsset.penaltyCR(asset),
             tappFeePct: LibAsset.tappFeePct(asset),
             callerFeePct: LibAsset.callerFeePct(asset),
-            resetLiquidationTime: LibAsset.resetLiquidationTime(asset),
-            secondLiquidationTime: LibAsset.secondLiquidationTime(asset),
-            firstLiquidationTime: LibAsset.firstLiquidationTime(asset),
             startingShortId: s.asset[asset].startingShortId,
             minBidEth: LibAsset.minBidEth(asset),
             minAskEth: LibAsset.minAskEth(asset),

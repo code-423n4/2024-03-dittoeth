@@ -191,7 +191,7 @@ contract GasPlaceBidOnObWithHintTest is GasHelper {
         assertEq(ob.getBids().length, 5);
     }
 
-    //@dev testGasCreateBidIncomingIsBestPrice should be < testGasCreateBidIncomingIsNotBestPrice
+    // @dev testGasCreateBidIncomingIsBestPrice should be < testGasCreateBidIncomingIsNotBestPrice
     function testGas_CreateBidIncomingIsBestPrice() public deposits {
         uint16[] memory shortHintArray = createShortHintArrayGas({shortHint: ONE});
         MTypes.OrderHint[] memory orderHintArray = createOrderHintArrayGas();
@@ -229,7 +229,7 @@ contract GasPlaceAskOnObWithHintTest is GasHelper {
         diamond.cancelAsk(asset, 104);
     }
 
-    //@dev testGasCreateAskIncomingIsBestPrice should be < testGasCreateAskIncomingIsNotBestPrice
+    // @dev testGasCreateAskIncomingIsBestPrice should be < testGasCreateAskIncomingIsNotBestPrice
     function testGas_CreateAskIncomingIsBestPrice() public deposits {
         MTypes.OrderHint[] memory orderHintArray = createOrderHintArrayGas();
         address _asset = asset;
@@ -265,7 +265,7 @@ contract GasPlaceShortOnObWithHintTest is GasHelper {
         diamond.cancelShort(asset, 104);
     }
 
-    //@dev testGasCreateShortIncomingIsBestPrice should be < testGasCreateShortIncomingIsNotBestPrice
+    // @dev testGasCreateShortIncomingIsBestPrice should be < testGasCreateShortIncomingIsNotBestPrice
     function testGas_CreateShortIncomingIsBestPrice() public deposits {
         uint16[] memory shortHintArray = createShortHintArrayGas({shortHint: ONE});
         MTypes.OrderHint[] memory orderHintArray = createOrderHintArrayGas();

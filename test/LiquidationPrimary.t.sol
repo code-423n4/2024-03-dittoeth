@@ -25,7 +25,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
     ////////////////C Ratio scenario testing////////////////
 
     /*
-      //@dev: scenarios for below
+      // @dev: scenarios for below
         primary
         Scenario 1: cratio < 2 and cratio >= 1.1
             a: Short covers all fees
@@ -40,7 +40,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
 
     // Primary Liquidate Scenario Testing
     ///////Full///////
-    //@dev: Scenario A: Short covers all fees
+    // @dev: Scenario A: Short covers all fees
     function fullyLiquidateShortPrimaryScenarioA(PrimaryScenarios scenario, address caller)
         public
         returns (LiquidationStruct memory m, STypes.ShortRecord memory shortRecord)
@@ -120,7 +120,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         assertStruct(receiver, r);
     }
 
-    //@dev: Scenario 1: cratio < 2 and cratio >= 1.1
+    // @dev: Scenario 1: cratio < 2 and cratio >= 1.1
     function test_PrimaryFullLiquidateCratioScenario1A() public {
         fullyLiquidateShortPrimaryScenarioA({scenario: PrimaryScenarios.CRatioBetween110And200, caller: receiver});
 
@@ -151,7 +151,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 2: cratio < 1.1
+    // @dev: Scenario 2: cratio < 1.1
     function test_PrimaryFullLiquidateCratioScenario2A() public {
         fullyLiquidateShortPrimaryScenarioA({scenario: PrimaryScenarios.CRatioBelow110, caller: receiver});
 
@@ -182,7 +182,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 3: cratio < 1.1 black swan
+    // @dev: Scenario 3: cratio < 1.1 black swan
     function test_PrimaryFullLiquidateCratioScenario3A() public {
         (LiquidationStruct memory m,) =
             fullyLiquidateShortPrimaryScenarioA({scenario: PrimaryScenarios.CRatioBelow110BlackSwan, caller: receiver});
@@ -215,7 +215,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario B: Short covers all fees except gas fee, tapp covers
+    // @dev: Scenario B: Short covers all fees except gas fee, tapp covers
     function fullyLiquidateShortPrimaryScenarioB(PrimaryScenarios scenario, address caller)
         public
         returns (LiquidationStruct memory m, STypes.ShortRecord memory shortRecord)
@@ -298,7 +298,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         assertStruct(receiver, r);
     }
 
-    //@dev: Scenario 1: cratio < 2 and cratio >= 1.1
+    // @dev: Scenario 1: cratio < 2 and cratio >= 1.1
     function test_PrimaryFullLiquidateCratioScenario1B() public {
         fullyLiquidateShortPrimaryScenarioB({scenario: PrimaryScenarios.CRatioBetween110And200, caller: receiver});
 
@@ -329,7 +329,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 2: cratio < 1.1
+    // @dev: Scenario 2: cratio < 1.1
     function test_PrimaryFullLiquidateCratioScenario2B() public {
         fullyLiquidateShortPrimaryScenarioB({scenario: PrimaryScenarios.CRatioBelow110, caller: receiver});
 
@@ -360,7 +360,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 3: cratio < 1.1 black swan
+    // @dev: Scenario 3: cratio < 1.1 black swan
     function test_PrimaryFullLiquidateCratioScenario3B() public {
         (LiquidationStruct memory m,) =
             fullyLiquidateShortPrimaryScenarioB({scenario: PrimaryScenarios.CRatioBelow110BlackSwan, caller: receiver});
@@ -474,7 +474,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         assertStruct(receiver, r);
     }
 
-    //@dev: Scenario 1: cratio < 2 and cratio >= 1.1
+    // @dev: Scenario 1: cratio < 2 and cratio >= 1.1
     function test_PrimaryPartialLiquidateCratioScenario1() public {
         (LiquidationStruct memory m,) =
             partiallyLiquidateShortPrimary({scenario: PrimaryScenarios.CRatioBetween110And200, caller: receiver});
@@ -507,12 +507,12 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 2: cratio < 1.1
+    // @dev: Scenario 2: cratio < 1.1
     function test_PrimaryPartialLiquidateCratioScenario2() public {
         (LiquidationStruct memory m,) =
             partiallyLiquidateShortPrimary({scenario: PrimaryScenarios.CRatioBelow110, caller: receiver});
 
-        //@dev tapp absorbs the short
+        // @dev tapp absorbs the short
 
         // check balance after liquidate
         checkShortsAndAssetBalance({
@@ -528,7 +528,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
 
     function test_PrimaryPartialLiquidateCratioScenario2CalledBytapp() public {
         (LiquidationStruct memory m,) = partiallyLiquidateShortPrimary({scenario: PrimaryScenarios.CRatioBelow110, caller: tapp});
-        //@dev tapp absorbs the short
+        // @dev tapp absorbs the short
 
         // check balance after liquidate
         checkShortsAndAssetBalance({
@@ -542,7 +542,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 3: cratio < 1.1 black swan
+    // @dev: Scenario 3: cratio < 1.1 black swan
     function test_PrimaryPartialLiquidateCratioScenario3() public {
         (LiquidationStruct memory m,) =
             partiallyLiquidateShortPrimary({scenario: PrimaryScenarios.CRatioBelow110BlackSwan, caller: receiver});
@@ -633,7 +633,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         assertStruct(receiver, r);
     }
 
-    //@dev: Scenario 1: cratio < 2 and cratio >= 1.1
+    // @dev: Scenario 1: cratio < 2 and cratio >= 1.1
     function test_PrimaryPartialThenFullyLiquidateCratioScenario1() public {
         /////Partial Liquidation/////
 
@@ -702,7 +702,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 2: cratio < 1.1
+    // @dev: Scenario 2: cratio < 1.1
     function test_PrimaryPartialThenFullyLiquidateCratioScenario2() public {
         /////Partial Liquidation/////
         (LiquidationStruct memory m,) =
@@ -805,7 +805,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         assertStruct(receiver, r);
     }
 
-    //@dev: Scenario 2: cratio < 1.1
+    // @dev: Scenario 2: cratio < 1.1
     function test_PrimaryPartialThenPartialLiquidateCratioScenario2() public {
         /////Partial Liquidation/////
         (LiquidationStruct memory m,) =
@@ -954,7 +954,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: when short.collateral < ethFilled
+    // @dev: when short.collateral < ethFilled
     function test_PrimaryFullLiquidateCratioScenario2CRatioUnder1() public {
         //Don't use prepare short for custom ask pricing
         fundLimitBidOpt(DEFAULT_PRICE, DEFAULT_AMOUNT, receiver);
@@ -1018,7 +1018,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         });
     }
 
-    //@dev: Scenario 3: cratio < 1.1 black swan
+    // @dev: Scenario 3: cratio < 1.1 black swan
     function test_PrimaryPartialShort1ThenPartialShort2ThenFullShortTappThenPartialShort3LiquidateCratioScenario3() public {
         /////Partial Liquidation 1/////
         (LiquidationStruct memory m,) =
@@ -1098,7 +1098,7 @@ contract PrimaryLiquidationTest is LiquidationHelper {
         assertApproxEqAbs(short.ercDebtRate, diamond.getAssetStruct(asset).ercDebtRate, MAX_DELTA_SMALL);
     }
 
-    //@dev cancels the short order before liquidating a partially filled short
+    // @dev cancels the short order before liquidating a partially filled short
     function test__PrimaryLiquidation_SRPartialFill() public {
         uint88 ercAmount = DEFAULT_AMOUNT - 100 ether;
         uint88 receiverEth = DEFAULT_PRICE.mulU88(ercAmount);
@@ -1120,18 +1120,18 @@ contract PrimaryLiquidationTest is LiquidationHelper {
 
         LiquidationStruct memory m = simulateLiquidation(r, s, 2500 ether, extra, sender, C.STARTING_ID);
 
-        //@dev corresponding short order canceled
+        // @dev corresponding short order canceled
         assertEq(getShorts().length, 0);
 
         uint88 ethInShortOrder =
             DEFAULT_PRICE.mulU88(DEFAULT_AMOUNT - ercAmount).mulU88(diamond.getAssetNormalizedStruct(asset).initialCR);
 
-        //@dev shorter's ethEscrowed should be: remaining collateral + eth locked up in short order
+        // @dev shorter's ethEscrowed should be: remaining collateral + eth locked up in short order
         s.ercEscrowed = 0;
         s.ethEscrowed = initialCollateral - m.ethFilled - m.gasFee - m.tappFee - m.callerFee + ethInShortOrder;
         assertStruct(sender, s);
 
-        //@dev SR's collateral increased -> liquidator as if debt was 2000
+        // @dev SR's collateral increased -> liquidator as if debt was 2000
         e.ercEscrowed = 0;
         e.ethEscrowed = m.gasFee + m.callerFee;
         assertStruct(extra, e);

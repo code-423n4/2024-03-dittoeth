@@ -96,7 +96,7 @@ contract RevertOrdersTest is OBFixture {
         diamond.createBid(asset, DEFAULT_PRICE, DEFAULT_AMOUNT, C.MARKET_ORDER, badOrderHintArray, shortHintArrayStorage);
     }
 
-    //@dev using diamond.createLimitShort instead of helper createLimitShort to avoid clashing with the built-in function call diamond.getShortIdAtOracle(asset)
+    // @dev using diamond.createLimitShort instead of helper createLimitShort to avoid clashing with the built-in function call diamond.getShortIdAtOracle(asset)
     function test_RevertIf_PriceOrQuantity0() public {
         vm.expectRevert(Errors.OrderUnderMinimumSize.selector);
         diamond.createLimitShort(asset, 0, 0, badOrderHintArray, shortHintArrayStorage, initialCR);
