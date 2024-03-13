@@ -1,0 +1,62 @@
+{
+  "name": "ob",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "ditto-eth-subgraph",
+    "scripts/sol-to-isol"
+  ],
+  "scripts": {
+    "coverage": "./scripts/coverage.sh",
+    "gen-abi": "cd frontend && bun run gen-abi",
+    "static-next": "cd frontend && bun run format:write && bun run build",
+    "dev": "cd frontend && bun run dev",
+    "anvil-fork": "./scripts/anvil-fork.sh",
+    "deploy-local": "FOUNDRY_PROFILE=deploy-local forge script DeployDiamond --ffi --fork-url http://localhost:8545 --broadcast",
+    "deploy-mainnet": "FOUNDRY_PROFILE=deploy-mainnet forge script DeployDiamond --keystores $ETH_KEYSTORE --password $ETH_PASSWORD --ffi --rpc-url $MAINNET_RPC_URL --etherscan-api-key $ETHERSCAN_API_KEY --verify --slow --legacy --with-gas-price 40000000000",
+    "postdeploy-local": "bun run gen-abi && bun ./scripts/copyAddress.ts",
+    "gas": "bun ./scripts/createGasSnapshot.ts",
+    "gas-compare": "git checkout main -- .gas.json && bun run test-gas",
+    "invariant": "./scripts/invariant-reverts.sh && bun ./scripts/formatReverts.ts",
+    "invariant-compare": "git checkout main -- .revert.json && bun run invariant",
+    "test": "forge test",
+    "test-gas": "FOUNDRY_PROFILE=gas forge build && FOUNDRY_PROFILE=testgas forge test && bun run gas",
+    "test-fork": "FOUNDRY_PROFILE=forkgas forge test",
+    "prebuild": "./scripts/copy-hooks.sh && bun ./scripts/preforge.ts",
+    "build": "bun run interfaces-force && forge build",
+    "build-mainnet": "FOUNDRY_PROFILE=deploy-mainnet forge build",
+    "lint": "solhint contracts/**/*.sol test/**/*.sol test-gas/**/*.sol deploy/DeployDiamond.s.sol deploy/DeployHelper.sol",
+    "typescript": "./node_modules/.bin/tsc --noEmit --project frontend/tsconfig.json && ./node_modules/.bin/tsc --noEmit",
+    "interfaces": "bun ./scripts/sol-to-isol/bin.js",
+    "interfaces-force": "bun ./scripts/sol-to-isol/bin.js --force",
+    "subgraph-gen": "cd ditto-eth-subgraph && bun run codegen",
+    "subgraph-build": "cd ditto-eth-subgraph && bun run build",
+    "subgraph-create": "cd ditto-eth-subgraph && bun run create-local",
+    "subgraph-deploy": "cd ditto-eth-subgraph && bun run deploy-local",
+    "postsubgraph-deploy": "bun graphql-codegen && cd frontend && bun run format:write"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.2.2",
+    "@parcel/watcher": "^2.4.0",
+    "@types/node": "^18.15.11",
+    "bun-types": "1.0.9",
+    "prettier": "^3.0.3",
+    "solhint-community": "^3.5.0",
+    "typescript": "^5.0.4"
+  },
+  "volta": {
+    "node": "20.11.0",
+    "npm": "10.3.0"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^0.6.1",
+    "@openzeppelin-v5/contracts": "npm:@openzeppelin/contracts@^5.0.1",
+    "@openzeppelin/contracts": "^4.9.0",
+    "@prb/math": "^4.0.1",
+    "ds-test": "github:dapphub/ds-test",
+    "forge-std": "github:foundry-rs/forge-std#v1.7.4",
+    "solmate": "^6.2.0"
+  }
+}
