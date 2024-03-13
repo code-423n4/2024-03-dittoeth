@@ -1,0 +1,13 @@
+contracts/facets/BidOrdersFacet.sol
+contracts/facets/ShortOrdersFacet.sol
+contracts/facets/BridgeRouterFacet.sol
+contracts/facets/ExitShortFacet.sol
+contracts/facets/RedemptionFacet.sol
+contracts/libraries/LibBridgeRouter.sol
+contracts/libraries/LibBytes.sol
+contracts/libraries/LibOracle.sol
+contracts/libraries/LibOrders.sol
+contracts/libraries/LibSRRecovery.sol
+contracts/libraries/LibSRMin.sol
+contracts/libraries/LibSRTransfer.sol
+contracts/libraries/UniswapOracleLibrary.sol

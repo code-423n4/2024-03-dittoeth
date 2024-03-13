@@ -68,23 +68,23 @@ On the orderbook, bidders and shorters bring ETH, askers can sell their dUSD. Bi
 
 # Scope
 
-> Run [Solidity Metrics](https://marketplace.visualstudio.com/items?itemName=tintinweb.solidity-metrics) on `contracts/` using exclusions with length 120 (`forge fmt`)
+*See [scope.txt](https://github.com/code-423n4/2024-03-dittoeth//blob/main/scope.txt)*
 
-| Contract | nSLOC | Purpose | Changes | External Libraries |
-| -------- | ----- | ------- | ------- | ------------------ |
-| [facets/BidOrdersFacet.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/BidOrdersFacet.sol)                   | 234   | Facet for creating and matching bids                    | dust checks                                                   |                          |
-| [facets/ShortOrdersFacet.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ShortOrdersFacet.sol)               | 54    | Facet for creating and matching short orders            | SR created with Short Order, recoveryMode, minShortErc checks |                          |
-| [facets/BridgeRouterFacet.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/BridgeRouterFacet.sol)             | 101   | Facet to handle depositing and withdrawing LSTs         | Credit mechanism for withdraw                                 | IBridge                  |
-| [facets/ExitShortFacet.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)                   | 126   | Facet for a shorter to exit their short                 | minShortErc checks                                            | IDiamond.createForcedBid |
-| [facets/RedemptionFacet.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/RedemptionFacet.sol)                 | 241   | Ability to swap dUSD for ETH, akin to Liquity           | new                                                           |                          |
-| [libraries/LibBridgeRouter.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibBridgeRouter.sol)           | 151   | Helper library used in BridgeRouterFacet                | new                                                           | Uniswap                  |
-| [libraries/LibBytes.sol](https://github.com/code-423n4/2024-03-dittoeth/)                                                         | 35    | Library in RedemptionFacet to save proposals in SSTORE2 | new                                                           |                          |
-| [libraries/LibOracle.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOracle.sol)                       | 125   | Library to get price with Chainlink + backup            | handle reverts                                                | Chainlink/Uniswap        |
-| [libraries/LibOrders.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)                       | 575   | Library Order Facets to do matching                     | dust, oracle price changes, auto adjust dethTithePercent      |                          |
-| [libraries/LibSRRecovery.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)               | 23    | Library to check if hits recovery CR                    | new                                                           |                          |
-| [libraries/LibSRMin.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)                         | 47    | Library to help do checks around minShortErc            | new                                                           |                          |
-| [libraries/LibSRTransfer.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)               | 29    | Library to transfer ShortRecord as NFT                  | new checks                                                    |                          |
-| [libraries/UniswapOracleLibrary.sol](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/UniswapOracleLibrary.sol) | 34    | Used to get TWAP from Uniswap                           | didn't audit last time                                        | Uniswap                  |
+| Contract                                                                                                                                     | nSLOC | Purpose                                                 | Changes                                                       | External Libraries       |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------- | ------------------------------------------------------------- | ------------------------ |
+| [facets/BidOrdersFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/BidOrdersFacet.sol)                   | 234   | Facet for creating and matching bids                    | dust checks                                                   |                          |
+| [facets/ShortOrdersFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/ShortOrdersFacet.sol)               | 54    | Facet for creating and matching short orders            | SR created with Short Order, recoveryMode, minShortErc checks |                          |
+| [facets/BridgeRouterFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/BridgeRouterFacet.sol)             | 101   | Facet to handle depositing and withdrawing LSTs         | Credit mechanism for withdraw                                 | IBridge                  |
+| [facets/ExitShortFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/ExitShortFacet.sol)                   | 126   | Facet for a shorter to exit their short                 | minShortErc checks                                            | IDiamond.createForcedBid |
+| [facets/RedemptionFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/RedemptionFacet.sol)                 | 241   | Ability to swap dUSD for ETH, akin to Liquity           | new                                                           |                          |
+| [libraries/LibBridgeRouter.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibBridgeRouter.sol)           | 151   | Helper library used in BridgeRouterFacet                | new                                                           | Uniswap                  |
+| [libraries/LibBytes.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibBytes.sol)                         | 35    | Library in RedemptionFacet to save proposals in SSTORE2 | new                                                           |                          |
+| [libraries/LibOracle.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibOracle.sol)                       | 125   | Library to get price with Chainlink + backup            | handle reverts                                                | Chainlink/Uniswap        |
+| [libraries/LibOrders.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibOrders.sol)                       | 575   | Library Order Facets to do matching                     | dust, oracle price changes, auto adjust dethTithePercent      |                          |
+| [libraries/LibSRRecovery.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibSRRecovery.sol)               | 23    | Library to check if hits recovery CR                    | new                                                           |                          |
+| [libraries/LibSRMin.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibSRMin.sol)                         | 47    | Library to help do checks around minShortErc            | new                                                           |                          |
+| [libraries/LibSRTransfer.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibSRTransfer.sol)               | 29    | Library to transfer ShortRecord as NFT                  | new checks                                                    |                          |
+| [libraries/UniswapOracleLibrary.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/UniswapOracleLibrary.sol) | 34    | Used to get TWAP from Uniswap                           | didn't audit last time                                        | Uniswap                  |
 
 ## Out of scope
 
@@ -147,7 +147,7 @@ This is large update to the original [codebase](https://github.com/Cyfrin/2023-0
 - Fix issues related to withdrawals (see "finding-579" [L-13. Instant arbitrage opportunity through rETH and stETH price discrepancy](https://www.codehawks.com/report/clm871gl00001mp081mzjdlwc#L-13)): introduce a "credit" system for when LST (rETH/stETH) is deposited to handle arbitrage between depositing and withdrawing. Users can only withdraw what type of LST they deposit with. Any extra withdrawals due to yield gain will be given based on checking the oracle price difference between the LSTs. Also remove
 - Add redemptions feature similar in purpose to Liquity (not a fork): allows redeeming stable asset (dusd) for eth, from lowest collateral ratio ShortRecord to highest. However, ShortRecords are not sorted on-chain, so users must propose a set of ShortRecords will a calculated dispute time (if disputed there is a penalty). Then after the time passes, users can claim their corresponding redemption. There is also a maximum limit CR that is allowed (at the moment, 2 CR) to be redeemable, meaning if the lowest CR short is 2 CR, the redemption function cannot be used.
 - Help with a potential DUSD discount: when matches happen (bid/ask) below oracle price, the fee/tithe increases accordingly, meaning shorters decrease in yield and some may be incentivized to exit, which happens until some equilibrium is reached.
-- A simple "Recovery Mode" like functionality, when the overal total CR of the system is under 150%, liquidation can happen at 150% instead of 110%.
+- A simple "Recovery Mode" like functionality, when the overall total CR of the system is under 150%, liquidation can happen at 150% instead of 110%.
 - Remove flagging concept from primary liquidations.
 - Redemptions have been introduced with the intention to be available before primary/secondary liquidation methods. Upon deploy/release, the associated threshold for liquidations should be lower than the redemption CR.
 - Allow Short Orders to be leveraged, assuming they provide enough to cover minShortErc when matched against a bid.
@@ -158,11 +158,11 @@ This is large update to the original [codebase](https://github.com/Cyfrin/2023-0
 - [x] Please list specific ERC20 that your protocol is anticipated to interact with. Could be "any" (literally anything, fee on transfer tokens, ERC777 tokens and so forth) or a list of tokens you envision using on launch.
   - Lido (stETH) and Rocketpool (rETH) and potentially other LSTs in the future
 - [x] Please list specific ERC721 that your protocol is anticipated to interact with.
-  - Ditto's own ShortRecord(s) _can_ become an NFT if it's minted/transfered
+  - Ditto's own ShortRecord(s) _can_ become an NFT if it's minted/transferred
 - [x] Which blockchains will this code be deployed to, and are considered in scope for this audit?
   - Ethereum mainnet only
 - [x] Please list all trusted roles (e.g. operators, slashers, pausers, etc.), the privileges they hold, and any conditions under which privilege escalation is expected/allowable
-  - Owner: Highest level of access, ablility to create new vaults and markets, in addition to parameter changes
+  - Owner: Highest level of access, ability to create new vaults and markets, in addition to parameter changes
   - Admin: Secondary role to allow quicker response time to sensitive actions, includes parameter changes
 - [ ] In the event of a DOS, could you outline a minimum duration after which you would consider a finding to be valid? This question is asked in the context of most systems' capacity to handle DoS attacks gracefully for a certain period.
 - [ ] Is any part of your implementation intended to conform to any EIP's? If yes, please list the contracts in this format:
@@ -180,10 +180,6 @@ _List specific areas to address - see [this blog post](https://medium.com/code4r
 - Dust amounts: want to prevent small orders on the orderbook to prevent skyrocketing gas costs for large orders that match with multiple limit orders
 - Concept of `minShortErc`: Primary liquidators should always have a large enough incentive to liquidate (`callerFeePct` tied to liquidated collateral) risky debt because every ShortRecord must either contain enough ercDebt or have access to enough ercDebt (through cancelling the associated short order). The one noted exception is listed in known issues (ercDebt requirements met from application of ercDebtRate)
 - Anything related to being able to correctly liquidate/exit ShortRecords that are a certain collateral ratio
-
-## Main invariants
-
-_Describe the project's main invariants (properties that should NEVER EVER be broken)._
 
 ## Scoping Details
 
@@ -249,14 +245,16 @@ bun run test-gas
 # invariant tests only
 bun run invariant
 
+# run coverage from scratch
+bun run coverage
+
 # view coverage as is (brew install lcov)
 genhtml \
         --output-directory coverage \
         filtered-lcov.info
-    open coverage/index.html
+open coverage/index.html
 
-# run coverage from scratch
-bun run coverage
+
 ```
 
 - `bun run` to check commands
