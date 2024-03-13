@@ -1,0 +1,20 @@
+{
+  // editor
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // misc
+  "terminal.integrated.scrollback": 5000,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/package-lock.json": true
+  },
+  // solidity
+  "solidity.defaultCompiler": "remote",
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  "solidity.compileUsingRemoteVersion": "v0.8.24+commit.e11b9ed9",
+  "solidity-metrics.file.exclusions.glob": "{**/node_modules,**/mock*,**/test*,**/migrations,**/Migrations.sol,**/console.sol,**/TestFacet.sol,**/governance/*.sol,**/UniswapTickMath.sol,**/LibDiamond.sol,**/IDiamondLoupe.sol,**/IDiamondCut.sol,**/Errors.sol,**/interfaces/*.sol,**/Events.sol,**/ViewFacet.sol,**/DiamondLoupeFacet.sol,**/DiamondCutFacet.sol,**/PRBMathHelper.sol,**/Asset.sol,**/Ditto.sol,**/Diamond.sol,**/BridgeSteth.sol,**/BridgeReth.sol,**/DataTypes.sol,**/AppStorage.sol,**/Constants.sol,**/LibAsset.sol,**/LibBridge.sol,**/ERC721Facet.sol,/**/OwnerFacet.sol,**/MarketShutdownFacet.sol,**/VaultFacet.sol,**/TWAPFacet.sol,**/EtherscanDiamondImpl.sol,**/DiamondEtherscanFacet.sol,**/LibDiamondEtherscan.sol,**/PrimaryLiquidationFacet.sol,**/SecondaryLiquidationFacet.sol,**/OwnerFacet.sol,**/YieldFacet.sol,**/ShortOrdersFacet.sol,**/OrdersFacet.sol,**/AskOrdersFacet.sol,**/ShortRecordFacet.sol,**/LibShortRecord.sol,**/LibVault.sol}",
+  "solidity.formatter": "forge"
+}

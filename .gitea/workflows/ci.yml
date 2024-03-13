@@ -1,0 +1,60 @@
+name: CI
+on: [push]
+jobs:
+  combinedTest:
+    runs-on: ubuntu-latest
+    env:
+      RUNNER_TOOL_CACHE: /toolcache
+    steps:
+      - name: Check out the repo
+        uses: https://github.com/actions/checkout@v4
+
+      - name: Setup node
+        uses: https://github.com/actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Setup Bun
+        uses: https://github.com/oven-sh/setup-bun@v1.1.1
+        with:
+          bun-version: "1.0.30"
+
+      - run: npm ci
+      - run: bun run lint
+      - run: bun run interfaces
+
+      - name: Install Foundry
+        uses: https://github.com/foundry-rs/foundry-toolchain@v1.1.0
+        with:
+          version: nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a
+          cache: true
+
+      - name: Build contracts
+        run: forge build
+
+      - name: Build contracts for gas profile
+        run: FOUNDRY_PROFILE=gas forge build --sizes
+
+      - name: forge-test
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+        run: FOUNDRY_PROFILE=default forge test --no-match-test statefulFuzz
+
+      - name: forge-test-gas
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+        run: FOUNDRY_PROFILE=testgas forge test
+
+      - name: forge-test-deploy
+        env:
+          ANVIL_9_PRIVATE_KEY: ${{ secrets.ANVIL_9_PRIVATE_KEY }}
+        run: ./scripts/ci-deploy.sh
+
+      - run: bun run typescript
+
+      - name: forge-test-statefulFuzz
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+        run: timeout 180s bun run invariant
