@@ -29,15 +29,16 @@
     - [\[NC-10\] Change int to int256](#nc-10-change-int-to-int256)
     - [\[NC-11\] Interfaces should be defined in separate files from their usage](#nc-11-interfaces-should-be-defined-in-separate-files-from-their-usage)
     - [\[NC-12\] Lack of checks in setters](#nc-12-lack-of-checks-in-setters)
-    - [\[NC-13\] Incomplete NatSpec: `@param` is missing on actually documented functions](#nc-13-incomplete-natspec-param-is-missing-on-actually-documented-functions)
-    - [\[NC-14\] Use a `modifier` instead of a `require/if` statement for a special `msg.sender` actor](#nc-14-use-a-modifier-instead-of-a-requireif-statement-for-a-special-msgsender-actor)
-    - [\[NC-15\] Consider using named mappings](#nc-15-consider-using-named-mappings)
-    - [\[NC-16\] Adding a `return` statement when the function defines a named return variable, is redundant](#nc-16-adding-a-return-statement-when-the-function-defines-a-named-return-variable-is-redundant)
-    - [\[NC-17\] `require()` / `revert()` statements should have descriptive reason strings](#nc-17-requirerevertstatements-should-have-descriptive-reason-strings)
-    - [\[NC-18\] Take advantage of Custom Error's return value property](#nc-18-take-advantage-of-custom-errors-return-value-property)
-    - [\[NC-19\] Internal and private variables and functions names should begin with an underscore](#nc-19-internal-and-private-variables-and-functions-names-should-begin-with-an-underscore)
-    - [\[NC-20\] Constants should be defined rather than using magic numbers](#nc-20-constants-should-be-defined-rather-than-using-magic-numbers)
-    - [\[NC-21\] Variables need not be initialized to zero](#nc-21-variables-need-not-be-initialized-to-zero)
+    - [\[NC-13\] Lines are too long](#nc-13-lines-are-too-long)
+    - [\[NC-14\] Incomplete NatSpec: `@param` is missing on actually documented functions](#nc-14-incomplete-natspec-param-is-missing-on-actually-documented-functions)
+    - [\[NC-15\] Use a `modifier` instead of a `require/if` statement for a special `msg.sender` actor](#nc-15-use-a-modifier-instead-of-a-requireif-statement-for-a-special-msgsender-actor)
+    - [\[NC-16\] Consider using named mappings](#nc-16-consider-using-named-mappings)
+    - [\[NC-17\] Adding a `return` statement when the function defines a named return variable, is redundant](#nc-17-adding-a-return-statement-when-the-function-defines-a-named-return-variable-is-redundant)
+    - [\[NC-18\] `require()` / `revert()` statements should have descriptive reason strings](#nc-18-requirerevertstatements-should-have-descriptive-reason-strings)
+    - [\[NC-19\] Take advantage of Custom Error's return value property](#nc-19-take-advantage-of-custom-errors-return-value-property)
+    - [\[NC-20\] Internal and private variables and functions names should begin with an underscore](#nc-20-internal-and-private-variables-and-functions-names-should-begin-with-an-underscore)
+    - [\[NC-21\] Constants should be defined rather than using magic numbers](#nc-21-constants-should-be-defined-rather-than-using-magic-numbers)
+    - [\[NC-22\] Variables need not be initialized to zero](#nc-22-variables-need-not-be-initialized-to-zero)
   - [Low Issues](#low-issues)
     - [\[L-1\] Missing checks for `address(0)` when assigning values to address state variables](#l-1-missing-checks-for-address0-when-assigning-values-to-address-state-variables)
     - [\[L-2\] Division by zero not prevented](#l-2-division-by-zero-not-prevented)
@@ -59,26 +60,26 @@
 
 | |Issue|Instances|
 |-|:-|:-:|
-| [GAS-1](#GAS-1) | `a = a + b` is more gas effective than `a += b` for state variables (excluding arrays and mappings) | 59 |
+| [GAS-1](#GAS-1) | `a = a + b` is more gas effective than `a += b` for state variables (excluding arrays and mappings) | 68 |
 | [GAS-2](#GAS-2) | Use assembly to check for `address(0)` | 5 |
 | [GAS-3](#GAS-3) | Cache array length outside of loop | 6 |
 | [GAS-4](#GAS-4) | State variables should be cached in stack variables rather than re-reading them from storage | 1 |
-| [GAS-5](#GAS-5) | Use calldata instead of memory for function arguments that do not get mutated | 3 |
-| [GAS-6](#GAS-6) | For Operations that will not overflow, you could use unchecked | 292 |
+| [GAS-5](#GAS-5) | Use calldata instead of memory for function arguments that do not get mutated | 4 |
+| [GAS-6](#GAS-6) | For Operations that will not overflow, you could use unchecked | 332 |
 | [GAS-7](#GAS-7) | Use Custom Errors instead of Revert Strings to save Gas | 1 |
 | [GAS-8](#GAS-8) | Avoid contract existence checks by using low level calls | 2 |
-| [GAS-9](#GAS-9) | State variables only set in the constructor should be declared `immutable` | 3 |
+| [GAS-9](#GAS-9) | State variables only set in the constructor should be declared `immutable` | 4 |
 | [GAS-10](#GAS-10) | Functions guaranteed to revert when called by normal users can be marked `payable` | 1 |
 | [GAS-11](#GAS-11) | `++i` costs less gas compared to `i++` or `i += 1` (same for `--i` vs `i--` or `i -= 1`) | 16 |
 | [GAS-12](#GAS-12) | Increments/decrements can be unchecked in for-loops | 7 |
-| [GAS-13](#GAS-13) | Use != 0 instead of > 0 for unsigned integer comparison | 12 |
-| [GAS-14](#GAS-14) | `internal` functions not called by the contract should be removed | 24 |
+| [GAS-13](#GAS-13) | Use != 0 instead of > 0 for unsigned integer comparison | 14 |
+| [GAS-14](#GAS-14) | `internal` functions not called by the contract should be removed | 26 |
 
 ### <a name="GAS-1"></a>[GAS-1] `a = a + b` is more gas effective than `a += b` for state variables (excluding arrays and mappings)
 
 This saves **16 gas per instance.**
 
-*Instances (59)*:
+*Instances (68)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -130,35 +131,54 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+166:         TAPP.ethEscrowed += m.short.collateral;
+
+183:             Asset.ercDebtRate += ercDebtSocialized.divU64(Asset.ercDebt - ercDebtPrev);
+
+216:         m.totalFee += tappFee + callerFee;
+
+220:             VaultUser.ethEscrowed += callerFee;
+
+223:             VaultUser.ethEscrowed += callerFee - m.gasFee + tappFee;
+
+250:                 s.vaultUser[m.vault][m.shorter].ethEscrowed += m.short.collateral;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-122:             p.totalAmountProposed += p.amountProposed;
+124:             p.totalAmountProposed += p.amountProposed;
 
-123:             p.totalColRedeemed += p.colRedeemed;
+125:             p.totalColRedeemed += p.colRedeemed;
 
-265:                 currentSR.collateral += currentProposal.colRedeemed;
+267:                 currentSR.collateral += currentProposal.colRedeemed;
 
-266:                 currentSR.ercDebt += currentProposal.ercDebtRedeemed;
+268:                 currentSR.ercDebt += currentProposal.ercDebtRedeemed;
 
-268:                 d.incorrectCollateral += currentProposal.colRedeemed;
+270:                 d.incorrectCollateral += currentProposal.colRedeemed;
 
-269:                 d.incorrectErcDebt += currentProposal.ercDebtRedeemed;
+271:                 d.incorrectErcDebt += currentProposal.ercDebtRedeemed;
 
-272:             s.vault[Asset.vault].dethCollateral += d.incorrectCollateral;
+274:             s.vault[Asset.vault].dethCollateral += d.incorrectCollateral;
 
-273:             Asset.dethCollateral += d.incorrectCollateral;
+275:             Asset.dethCollateral += d.incorrectCollateral;
 
-274:             Asset.ercDebt += d.incorrectErcDebt;
+276:             Asset.ercDebt += d.incorrectErcDebt;
 
-294:             redeemerAssetUser.ercEscrowed += (d.incorrectErcDebt - penaltyAmt);
+296:             redeemerAssetUser.ercEscrowed += (d.incorrectErcDebt - penaltyAmt);
 
-295:             s.assetUser[d.asset][msg.sender].ercEscrowed += penaltyAmt;
+297:             s.assetUser[d.asset][msg.sender].ercEscrowed += penaltyAmt;
 
-321:             totalColRedeemed += currentProposal.colRedeemed;
+323:             totalColRedeemed += currentProposal.colRedeemed;
 
-329:         redeemerVaultUser.ethEscrowed += totalColRedeemed;
+331:         redeemerVaultUser.ethEscrowed += totalColRedeemed;
 
-372:             s.vaultUser[vault][shorter].ethEscrowed += collateral;
+374:             s.vaultUser[vault][shorter].ethEscrowed += collateral;
 
 ```
 
@@ -167,25 +187,25 @@ File: contracts/facets/RedemptionFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-27:                 VaultUser.bridgeCreditReth += amount;
+28:                 VaultUser.bridgeCreditReth += amount;
 
-29:                 VaultUser.bridgeCreditSteth += amount;
+30:                 VaultUser.bridgeCreditSteth += amount;
 
-33:         VaultUser.ethEscrowed += amount;
+34:         VaultUser.ethEscrowed += amount;
 
-34:         s.vault[vault].dethTotal += amount;
+35:         s.vault[vault].dethTotal += amount;
 
-162:                     VaultUserTo.bridgeCreditReth += collateral;
+165:                     VaultUserTo.bridgeCreditReth += collateral;
 
-165:                     VaultUserTo.bridgeCreditReth += creditReth;
+168:                     VaultUserTo.bridgeCreditReth += creditReth;
 
-171:                     VaultUserTo.bridgeCreditSteth += collateral;
+174:                     VaultUserTo.bridgeCreditSteth += collateral;
 
-174:                     VaultUserTo.bridgeCreditSteth += creditSteth;
+177:                     VaultUserTo.bridgeCreditSteth += creditSteth;
 
-188:                 VaultUserTo.bridgeCreditReth += creditReth;
+191:                 VaultUserTo.bridgeCreditReth += creditReth;
 
-189:                 VaultUserTo.bridgeCreditSteth += creditSteth;
+192:                 VaultUserTo.bridgeCreditSteth += creditSteth;
 
 ```
 
@@ -240,6 +260,19 @@ File: contracts/libraries/LibOrders.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
+```solidity
+File: contracts/libraries/LibSRUtil.sol
+
+42:                 s.vaultUser[vault][shorter].ethEscrowed += yield;
+
+44:                 s.vaultUser[vault][address(this)].ethEscrowed += yield;
+
+159:             short.ercDebt += ercDebt;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
+
 ### <a name="GAS-2"></a>[GAS-2] Use assembly to check for `address(0)`
 
 *Saves 6 gas per instance*
@@ -249,13 +282,13 @@ File: contracts/libraries/LibOrders.sol
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-71:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
+73:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
 
-233:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+235:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-312:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+314:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-351:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+353:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
 ```
 
@@ -279,13 +312,13 @@ If not cached, the solidity compiler will always read the length of the array du
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-76:         for (uint8 i = 0; i < proposalInput.length; i++) {
+78:         for (uint8 i = 0; i < proposalInput.length; i++) {
 
-240:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+242:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
-261:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
+263:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
 
-319:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+321:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
 ```
 
@@ -327,7 +360,7 @@ If the array is passed to an `internal` function which passes the array to anoth
 
  *Saves 60 gas per instance*
 
-*Instances (3)*:
+*Instances (4)*:
 
 ```solidity
 File: contracts/facets/ExitShortFacet.sol
@@ -337,6 +370,15 @@ File: contracts/facets/ExitShortFacet.sol
 ```
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+47:     function liquidate(address asset, address shorter, uint8 id, uint16[] memory shortHintArray, uint16 shortOrderId)
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ```solidity
 File: contracts/facets/ShortOrdersFacet.sol
@@ -351,7 +393,7 @@ File: contracts/facets/ShortOrdersFacet.sol
 
 ### <a name="GAS-6"></a>[GAS-6] For Operations that will not overflow, you could use unchecked
 
-*Instances (292)*:
+*Instances (332)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -484,7 +526,7 @@ File: contracts/facets/ExitShortFacet.sol
 
 14: import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
 
-15: import {LibSRMin} from "contracts/libraries/LibSRMin.sol";
+15: import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 
 56:         Asset.ercDebt -= buybackAmount;
 
@@ -521,6 +563,87 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+4: import {U256, U96, U88, U80} from "contracts/libraries/PRBMathHelper.sol";
+
+6: import {IDiamond} from "interfaces/IDiamond.sol";
+
+8: import {Errors} from "contracts/libraries/Errors.sol";
+
+9: import {Events} from "contracts/libraries/Events.sol";
+
+10: import {STypes, MTypes, SR} from "contracts/libraries/DataTypes.sol";
+
+11: import {Modifiers} from "contracts/libraries/AppStorage.sol";
+
+12: import {LibAsset} from "contracts/libraries/LibAsset.sol";
+
+13: import {LibOrders} from "contracts/libraries/LibOrders.sol";
+
+14: import {LibOracle} from "contracts/libraries/LibOracle.sol";
+
+15: import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
+
+16: import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
+
+17: import {C} from "contracts/libraries/Constants.sol";
+
+105:                 startingShortId == C.HEAD // means no short >= oracleprice
+
+140:             m.ethDebt = m.short.ercDebt.mul(m.oraclePrice).mul(m.forcedBidPriceBuffer).mul(1 ether + m.tappFeePct + m.callerFeePct); // ethDebt accounts for forcedBidPriceBuffer and potential fees
+
+166:         TAPP.ethEscrowed += m.short.collateral;
+
+180:             m.short.ercDebt = uint88(m.ethDebt.div(_bidPrice.mul(1 ether + m.callerFeePct + m.tappFeePct))); // @dev(safe-cast)
+
+181:             uint96 ercDebtSocialized = ercDebtPrev - m.short.ercDebt;
+
+183:             Asset.ercDebtRate += ercDebtSocialized.divU64(Asset.ercDebt - ercDebtPrev);
+
+190:         m.ercDebtMatched = m.short.ercDebt - ercAmountLeft;
+
+193:         s.assetUser[m.asset][address(this)].ercEscrowed -= m.ercDebtMatched;
+
+194:         s.asset[m.asset].ercDebt -= m.ercDebtMatched;
+
+196:         uint256 gasUsed = startGas - gasleft();
+
+199:         m.gasFee = uint88(gasUsed * block.basefee); // @dev(safe-cast)
+
+214:         uint88 callerFee = m.ethFilled.mulU88(m.callerFeePct) + m.gasFee;
+
+216:         m.totalFee += tappFee + callerFee;
+
+219:             TAPP.ethEscrowed -= callerFee;
+
+220:             VaultUser.ethEscrowed += callerFee;
+
+223:             VaultUser.ethEscrowed += callerFee - m.gasFee + tappFee;
+
+224:             m.totalFee -= m.gasFee;
+
+225:             TAPP.ethEscrowed -= m.totalFee;
+
+242:         uint88 decreaseCol = min88(m.totalFee + m.ethFilled, m.short.collateral);
+
+249:                 m.short.collateral -= decreaseCol;
+
+250:                 s.vaultUser[m.vault][m.shorter].ethEscrowed += m.short.collateral;
+
+251:                 TAPP.ethEscrowed -= m.short.collateral;
+
+255:             m.short.ercDebt -= m.ercDebtMatched;
+
+256:             m.short.collateral -= decreaseCol;
+
+259:             TAPP.ethEscrowed -= m.short.collateral;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
 4: import {U256, U104, U88, U80, U64, U32} from "contracts/libraries/PRBMathHelper.sol";
@@ -537,113 +660,115 @@ File: contracts/facets/RedemptionFacet.sol
 
 11: import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
 
-12: import {LibOracle} from "contracts/libraries/LibOracle.sol";
+12: import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 
-13: import {LibOrders} from "contracts/libraries/LibOrders.sol";
+13: import {LibOracle} from "contracts/libraries/LibOracle.sol";
 
-14: import {LibBytes} from "contracts/libraries/LibBytes.sol";
+14: import {LibOrders} from "contracts/libraries/LibOrders.sol";
 
-15: import {C} from "contracts/libraries/Constants.sol";
+15: import {LibBytes} from "contracts/libraries/LibBytes.sol";
 
-17: import {SSTORE2} from "solmate/utils/SSTORE2.sol";
+16: import {C} from "contracts/libraries/Constants.sol";
 
-18: import {console} from "contracts/libraries/console.sol";
+18: import {SSTORE2} from "solmate/utils/SSTORE2.sol";
 
-76:         for (uint8 i = 0; i < proposalInput.length; i++) {
+19: import {console} from "contracts/libraries/console.sol";
 
-94:             if (p.totalAmountProposed + currentSR.ercDebt <= redemptionAmount) {
+78:         for (uint8 i = 0; i < proposalInput.length; i++) {
 
-97:                 p.amountProposed = redemptionAmount - p.totalAmountProposed;
+96:             if (p.totalAmountProposed + currentSR.ercDebt <= redemptionAmount) {
 
-99:                 if (currentSR.ercDebt - p.amountProposed < minShortErc) break;
+99:                 p.amountProposed = redemptionAmount - p.totalAmountProposed;
 
-119:             currentSR.collateral -= p.colRedeemed;
+101:                 if (currentSR.ercDebt - p.amountProposed < minShortErc) break;
 
-120:             currentSR.ercDebt -= p.amountProposed;
+121:             currentSR.collateral -= p.colRedeemed;
 
-122:             p.totalAmountProposed += p.amountProposed;
+122:             currentSR.ercDebt -= p.amountProposed;
 
-123:             p.totalColRedeemed += p.colRedeemed;
+124:             p.totalAmountProposed += p.amountProposed;
 
-137:             p.redemptionCounter++;
+125:             p.totalColRedeemed += p.colRedeemed;
 
-138:             if (redemptionAmount - p.totalAmountProposed < minShortErc) break;
+139:             p.redemptionCounter++;
 
-147:         redeemerAssetUser.ercEscrowed -= p.totalAmountProposed;
+140:             if (redemptionAmount - p.totalAmountProposed < minShortErc) break;
 
-150:         Asset.ercDebt -= p.totalAmountProposed;
+149:         redeemerAssetUser.ercEscrowed -= p.totalAmountProposed;
 
-158:         +-------+------------+
+152:         Asset.ercDebt -= p.totalAmountProposed;
 
 160:         +-------+------------+
 
-167:         +-------+------------+
+162:         +-------+------------+
 
-170:         Using simple y = mx + b formula
+169:         +-------+------------+
 
-172:         where x = currentCR - previousCR
+172:         Using simple y = mx + b formula
 
-173:         m = (y2-y1)/(x2-x1)
+174:         where x = currentCR - previousCR
 
-181:             redeemerAssetUser.timeToDispute = protocolTime + uint32((m.mul(p.currentCR - 1.7 ether) + 3 ether) * 1 hours / 1 ether);
+175:         m = (y2-y1)/(x2-x1)
 
-185:                 protocolTime + uint32((m.mul(p.currentCR - 1.5 ether) + 1.5 ether) * 1 hours / 1 ether);
+183:             redeemerAssetUser.timeToDispute = protocolTime + uint32((m.mul(p.currentCR - 1.7 ether) + 3 ether) * 1 hours / 1 ether);
 
-189:                 protocolTime + uint32((m.mul(p.currentCR - 1.3 ether) + 0.75 ether) * 1 hours / 1 ether);
+187:                 protocolTime + uint32((m.mul(p.currentCR - 1.5 ether) + 1.5 ether) * 1 hours / 1 ether);
 
-193:                 protocolTime + uint32((m.mul(p.currentCR - 1.2 ether) + C.ONE_THIRD) * 1 hours / 1 ether);
+191:                 protocolTime + uint32((m.mul(p.currentCR - 1.3 ether) + 0.75 ether) * 1 hours / 1 ether);
 
-196:             redeemerAssetUser.timeToDispute = protocolTime + uint32(m.mul(p.currentCR - 1.1 ether) * 1 hours / 1 ether);
+195:                 protocolTime + uint32((m.mul(p.currentCR - 1.2 ether) + C.ONE_THIRD) * 1 hours / 1 ether);
 
-207:         VaultUser.ethEscrowed -= redemptionFee;
+198:             redeemerAssetUser.timeToDispute = protocolTime + uint32(m.mul(p.currentCR - 1.1 ether) * 1 hours / 1 ether);
 
-240:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+209:         VaultUser.ethEscrowed -= redemptionFee;
 
-257:         if (disputeCR < incorrectProposal.CR && disputeSR.updatedAt + C.DISPUTE_REDEMPTION_BUFFER <= redeemerAssetUser.timeProposed)
+242:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
-261:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
+259:         if (disputeCR < incorrectProposal.CR && disputeSR.updatedAt + C.DISPUTE_REDEMPTION_BUFFER <= redeemerAssetUser.timeProposed)
 
-265:                 currentSR.collateral += currentProposal.colRedeemed;
+263:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
 
-266:                 currentSR.ercDebt += currentProposal.ercDebtRedeemed;
+267:                 currentSR.collateral += currentProposal.colRedeemed;
 
-268:                 d.incorrectCollateral += currentProposal.colRedeemed;
+268:                 currentSR.ercDebt += currentProposal.ercDebtRedeemed;
 
-269:                 d.incorrectErcDebt += currentProposal.ercDebtRedeemed;
+270:                 d.incorrectCollateral += currentProposal.colRedeemed;
 
-272:             s.vault[Asset.vault].dethCollateral += d.incorrectCollateral;
+271:                 d.incorrectErcDebt += currentProposal.ercDebtRedeemed;
 
-273:             Asset.dethCollateral += d.incorrectCollateral;
+274:             s.vault[Asset.vault].dethCollateral += d.incorrectCollateral;
 
-274:             Asset.ercDebt += d.incorrectErcDebt;
+275:             Asset.dethCollateral += d.incorrectCollateral;
 
-288:                 LibOrders.max(LibAsset.callerFeePct(d.asset), (currentProposal.CR - disputeCR).div(currentProposal.CR)), 0.33 ether
+276:             Asset.ercDebt += d.incorrectErcDebt;
 
-294:             redeemerAssetUser.ercEscrowed += (d.incorrectErcDebt - penaltyAmt);
+290:                 LibOrders.max(LibAsset.callerFeePct(d.asset), (currentProposal.CR - disputeCR).div(currentProposal.CR)), 0.33 ether
 
-295:             s.assetUser[d.asset][msg.sender].ercEscrowed += penaltyAmt;
+296:             redeemerAssetUser.ercEscrowed += (d.incorrectErcDebt - penaltyAmt);
 
-319:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+297:             s.assetUser[d.asset][msg.sender].ercEscrowed += penaltyAmt;
 
-321:             totalColRedeemed += currentProposal.colRedeemed;
+321:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
-329:         redeemerVaultUser.ethEscrowed += totalColRedeemed;
+323:             totalColRedeemed += currentProposal.colRedeemed;
 
-356:             LibBytes.readProposalData(redeemerAssetUser.SSTORE2Pointer, claimIndex + 1);
+331:         redeemerVaultUser.ethEscrowed += totalColRedeemed;
 
-372:             s.vaultUser[vault][shorter].ethEscrowed += collateral;
+358:             LibBytes.readProposalData(redeemerAssetUser.SSTORE2Pointer, claimIndex + 1);
 
-386:         uint256 secondsPassed = uint256((protocolTime - Asset.lastRedemptionTime)) * 1 ether;
+374:             s.vaultUser[vault][shorter].ethEscrowed += collateral;
 
-390:         uint104 totalAssetErcDebt = (ercDebtRedeemed + Asset.ercDebt).mulU104(C.BETA);
+388:         uint256 secondsPassed = uint256((protocolTime - Asset.lastRedemptionTime)) * 1 ether;
 
-393:         uint256 newBaseRate = decayedBaseRate + redeemedDUSDFraction;
+392:         uint104 totalAssetErcDebt = (ercDebtRedeemed + Asset.ercDebt).mulU104(C.BETA);
 
-394:         newBaseRate = LibOrders.min(newBaseRate, 1 ether); // cap baseRate at a maximum of 100%
+395:         uint256 newBaseRate = decayedBaseRate + redeemedDUSDFraction;
 
-395:         assert(newBaseRate > 0); // Base rate is always non-zero after redemption
+396:         newBaseRate = LibOrders.min(newBaseRate, 1 ether); // cap baseRate at a maximum of 100%
 
-399:         uint256 redemptionRate = LibOrders.min((Asset.baseRate + 0.005 ether), 1 ether);
+397:         assert(newBaseRate > 0); // Base rate is always non-zero after redemption
+
+401:         uint256 redemptionRate = LibOrders.min((Asset.baseRate + 0.005 ether), 1 ether);
 
 ```
 
@@ -668,7 +793,7 @@ File: contracts/facets/ShortOrdersFacet.sol
 
 12: import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
 
-13: import {LibSRRecovery} from "contracts/libraries/LibSRRecovery.sol";
+13: import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 
 14: import {C} from "contracts/libraries/Constants.sol";
 
@@ -699,59 +824,59 @@ File: contracts/libraries/LibBridgeRouter.sol
 
 12: import {U256, U88} from "contracts/libraries/PRBMathHelper.sol";
 
-27:                 VaultUser.bridgeCreditReth += amount;
+28:                 VaultUser.bridgeCreditReth += amount;
 
-29:                 VaultUser.bridgeCreditSteth += amount;
+30:                 VaultUser.bridgeCreditSteth += amount;
 
-33:         VaultUser.ethEscrowed += amount;
+34:         VaultUser.ethEscrowed += amount;
 
-34:         s.vault[vault].dethTotal += amount;
+35:         s.vault[vault].dethTotal += amount;
 
-50:                 VaultUser.bridgeCreditReth -= amount;
+52:                 VaultUser.bridgeCreditReth -= amount;
 
-55:             amount -= creditReth;
+57:             amount -= creditReth;
 
-64:                         VaultUser.bridgeCreditSteth -= amount;
+66:                         VaultUser.bridgeCreditSteth -= amount;
 
-68:                         return amount - creditSteth;
+70:                         return amount - creditSteth;
 
-80:                 VaultUser.bridgeCreditSteth -= amount;
+82:                 VaultUser.bridgeCreditSteth -= amount;
 
-85:             amount -= creditSteth;
+87:             amount -= creditSteth;
 
-94:                         VaultUser.bridgeCreditReth -= amount;
+96:                         VaultUser.bridgeCreditReth -= amount;
 
-98:                         return amount - creditReth;
+100:                         return amount - creditReth;
 
-127:                 return factorReth.div(factorSteth) - 1 ether;
+129:                 return factorReth.div(factorSteth) - 1 ether;
 
-133:                 return factorSteth.div(factorReth) - 1 ether;
+135:                 return factorSteth.div(factorReth) - 1 ether;
 
-161:                     VaultUserFrom.bridgeCreditReth -= collateral;
+164:                     VaultUserFrom.bridgeCreditReth -= collateral;
 
-162:                     VaultUserTo.bridgeCreditReth += collateral;
+165:                     VaultUserTo.bridgeCreditReth += collateral;
 
-165:                     VaultUserTo.bridgeCreditReth += creditReth;
+168:                     VaultUserTo.bridgeCreditReth += creditReth;
 
-170:                     VaultUserFrom.bridgeCreditSteth -= collateral;
+173:                     VaultUserFrom.bridgeCreditSteth -= collateral;
 
-171:                     VaultUserTo.bridgeCreditSteth += collateral;
+174:                     VaultUserTo.bridgeCreditSteth += collateral;
 
-174:                     VaultUserTo.bridgeCreditSteth += creditSteth;
+177:                     VaultUserTo.bridgeCreditSteth += creditSteth;
 
-178:                 uint88 creditTotal = creditReth + creditSteth;
+181:                 uint88 creditTotal = creditReth + creditSteth;
 
-182:                     VaultUserFrom.bridgeCreditReth -= creditReth;
+185:                     VaultUserFrom.bridgeCreditReth -= creditReth;
 
-183:                     VaultUserFrom.bridgeCreditSteth -= creditSteth;
+186:                     VaultUserFrom.bridgeCreditSteth -= creditSteth;
 
-188:                 VaultUserTo.bridgeCreditReth += creditReth;
+191:                 VaultUserTo.bridgeCreditReth += creditReth;
 
-189:                 VaultUserTo.bridgeCreditSteth += creditSteth;
+192:                 VaultUserTo.bridgeCreditSteth += creditSteth;
 
-196:         s.vaultUser[vault][msg.sender].ethEscrowed -= (amount + fee);
+200:         s.vaultUser[vault][msg.sender].ethEscrowed -= (amount + fee);
 
-197:         s.vault[vault].dethTotal -= amount;
+201:         s.vault[vault].dethTotal -= amount;
 
 ```
 
@@ -955,57 +1080,47 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-4: import {STypes, SR} from "contracts/libraries/DataTypes.sol";
+4: import {U88, U256} from "contracts/libraries/PRBMathHelper.sol";
 
-5: import {Errors} from "contracts/libraries/Errors.sol";
+6: import {STypes, SR} from "contracts/libraries/DataTypes.sol";
 
-6: import {AppStorage, appStorage} from "contracts/libraries/AppStorage.sol";
+7: import {AppStorage, appStorage} from "contracts/libraries/AppStorage.sol";
 
-7: import {LibAsset} from "contracts/libraries/LibAsset.sol";
+8: import {C} from "contracts/libraries/Constants.sol";
 
-8: import {LibOrders} from "contracts/libraries/LibOrders.sol";
+9: import {LibOrders} from "contracts/libraries/LibOrders.sol";
 
-59:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
+10: import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
 
-```
+11: import {LibAsset} from "contracts/libraries/LibAsset.sol";
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+12: import {Errors} from "contracts/libraries/Errors.sol";
 
-```solidity
-File: contracts/libraries/LibSRRecovery.sol
+13: import {LibBridgeRouter} from "contracts/libraries/LibBridgeRouter.sol";
 
-4: import {AppStorage, appStorage} from "contracts/libraries/AppStorage.sol";
+31:         Vault.dethCollateral -= collateral;
 
-5: import {U256, U88, U80} from "contracts/libraries/PRBMathHelper.sol";
+32:         Asset.dethCollateral -= collateral;
 
-7: import {LibAsset} from "contracts/libraries/LibAsset.sol";
+34:         uint88 yield = collateral.mulU88(Vault.dethYieldRate - dethYieldRate);
 
-8: import {STypes} from "contracts/libraries/DataTypes.sol";
+40:             bool isNotRecentlyModified = LibOrders.getOffsetTime() - updatedAt > C.YIELD_DELAY_SECONDS;
 
-```
+42:                 s.vaultUser[vault][shorter].ethEscrowed += yield;
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
+44:                 s.vaultUser[vault][address(this)].ethEscrowed += yield;
 
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
+95:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
 
-4: import {STypes, SR} from "contracts/libraries/DataTypes.sol";
+156:         uint88 ercDebt = short.ercDebt.mulU88(ercDebtRate - short.ercDebtRate);
 
-5: import {Errors} from "contracts/libraries/Errors.sol";
-
-6: import {AppStorage, appStorage} from "contracts/libraries/AppStorage.sol";
-
-7: import {LibBridgeRouter} from "contracts/libraries/LibBridgeRouter.sol";
-
-8: import {LibOrders} from "contracts/libraries/LibOrders.sol";
-
-9: import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
+159:             short.ercDebt += ercDebt;
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -1072,7 +1187,7 @@ File: contracts/libraries/LibOracle.sol
 
 Variables only set in the constructor and never edited afterwards should be marked as immutable, as it would avoid the expensive storage-writing operation in the constructor (around **20 000 gas** per variable) and replace the expensive storage-reading operations (around **2100 gas** per reading) to a less expensive value reading (**3 gas**)
 
-*Instances (3)*:
+*Instances (4)*:
 
 ```solidity
 File: contracts/facets/BridgeRouterFacet.sol
@@ -1093,6 +1208,15 @@ File: contracts/facets/ExitShortFacet.sol
 ```
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+31:         dusd = _dusd;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ### <a name="GAS-10"></a>[GAS-10] Functions guaranteed to revert when called by normal users can be marked `payable`
 
@@ -1167,21 +1291,21 @@ File: contracts/facets/BidOrdersFacet.sol
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-76:         for (uint8 i = 0; i < proposalInput.length; i++) {
+78:         for (uint8 i = 0; i < proposalInput.length; i++) {
 
-137:             p.redemptionCounter++;
-
-158:         +-------+------------+
+139:             p.redemptionCounter++;
 
 160:         +-------+------------+
 
-167:         +-------+------------+
+162:         +-------+------------+
 
-240:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+169:         +-------+------------+
 
-261:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
+242:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
-319:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+263:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
+
+321:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
 ```
 
@@ -1245,13 +1369,13 @@ The risk of overflow is non-existent for `uint256`.
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-76:         for (uint8 i = 0; i < proposalInput.length; i++) {
+78:         for (uint8 i = 0; i < proposalInput.length; i++) {
 
-240:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+242:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
-261:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
+263:             for (uint256 i = incorrectIndex; i < decodedProposalData.length; i++) {
 
-319:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+321:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
 ```
 
@@ -1279,7 +1403,7 @@ File: contracts/libraries/LibOrders.sol
 
 ### <a name="GAS-13"></a>[GAS-13] Use != 0 instead of > 0 for unsigned integer comparison
 
-*Instances (12)*:
+*Instances (14)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -1308,9 +1432,9 @@ File: contracts/facets/BridgeRouterFacet.sol
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-277:             if (incorrectIndex > 0) {
+279:             if (incorrectIndex > 0) {
 
-395:         assert(newBaseRate > 0); // Base rate is always non-zero after redemption
+397:         assert(newBaseRate > 0); // Base rate is always non-zero after redemption
 
 ```
 
@@ -1339,32 +1463,36 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRRecovery.sol
+File: contracts/libraries/LibSRUtil.sol
 
-28:             if (Asset.ercDebt > 0) {
+35:         if (yield > 0) {
+
+113:             if (Asset.ercDebt > 0) {
+
+158:         if (ercDebt > 0) {
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ### <a name="GAS-14"></a>[GAS-14] `internal` functions not called by the contract should be removed
 
 If the functions are required by an interface, the contract should inherit from that interface and use the `override` keyword
 
-*Instances (24)*:
+*Instances (26)*:
 
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-20:     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
+21:     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
 
-37:     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
+39:     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
 
-111:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
+113:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
 
-141:     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
+144:     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
 
-194:     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
+198:     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
 
 ```
 
@@ -1420,33 +1548,23 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-13:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+22:     function disburseCollateral(address asset, address shorter, uint88 collateral, uint256 dethYieldRate, uint32 updatedAt)
 
-36:     function checkShortMinErc(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+49:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
 
-```
+72:     function checkShortMinErc(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+102:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
 
-```solidity
-File: contracts/libraries/LibSRRecovery.sol
+124:     function transferShortRecord(address from, address to, uint40 tokenId) internal {
 
-17:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
-
-```
-
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
-
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
-
-14:     function transferShortRecord(address from, address to, uint40 tokenId) internal {
+151:     function updateErcDebt(STypes.ShortRecord storage short, address asset) internal {
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -1461,31 +1579,32 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 | |Issue|Instances|
 |-|:-|:-:|
-| [NC-1](#NC-1) | Missing checks for `address(0)` when assigning values to address state variables | 3 |
+| [NC-1](#NC-1) | Missing checks for `address(0)` when assigning values to address state variables | 4 |
 | [NC-2](#NC-2) | Array indices should be referenced via `enum`s rather than via numeric literals | 3 |
 | [NC-3](#NC-3) | `require()` should be used instead of `assert()` | 2 |
-| [NC-4](#NC-4) | `constant`s should be defined rather than using magic numbers | 18 |
-| [NC-5](#NC-5) | Control structures do not follow the Solidity Style Guide | 79 |
+| [NC-4](#NC-4) | `constant`s should be defined rather than using magic numbers | 19 |
+| [NC-5](#NC-5) | Control structures do not follow the Solidity Style Guide | 87 |
 | [NC-6](#NC-6) | Dangerous `while(true)` loop | 3 |
 | [NC-7](#NC-7) | Delete rogue `console.log` imports | 1 |
 | [NC-8](#NC-8) | Function ordering does not follow the Solidity style guide | 3 |
-| [NC-9](#NC-9) | Functions should not be longer than 50 lines | 65 |
+| [NC-9](#NC-9) | Functions should not be longer than 50 lines | 74 |
 | [NC-10](#NC-10) | Change int to int256 | 3 |
 | [NC-11](#NC-11) | Interfaces should be defined in separate files from their usage | 1 |
-| [NC-12](#NC-12) | Lack of checks in setters | 1 |
-| [NC-13](#NC-13) | Incomplete NatSpec: `@param` is missing on actually documented functions | 3 |
-| [NC-14](#NC-14) | Use a `modifier` instead of a `require/if` statement for a special `msg.sender` actor | 5 |
-| [NC-15](#NC-15) | Consider using named mappings | 12 |
-| [NC-16](#NC-16) | Adding a `return` statement when the function defines a named return variable, is redundant | 46 |
-| [NC-17](#NC-17) | `require()` / `revert()` statements should have descriptive reason strings | 57 |
-| [NC-18](#NC-18) | Take advantage of Custom Error's return value property | 57 |
-| [NC-19](#NC-19) | Internal and private variables and functions names should begin with an underscore | 62 |
-| [NC-20](#NC-20) | Constants should be defined rather than using magic numbers | 6 |
-| [NC-21](#NC-21) | Variables need not be initialized to zero | 6 |
+| [NC-12](#NC-12) | Lack of checks in setters | 2 |
+| [NC-13](#NC-13) | Lines are too long | 1 |
+| [NC-14](#NC-14) | Incomplete NatSpec: `@param` is missing on actually documented functions | 4 |
+| [NC-15](#NC-15) | Use a `modifier` instead of a `require/if` statement for a special `msg.sender` actor | 6 |
+| [NC-16](#NC-16) | Consider using named mappings | 12 |
+| [NC-17](#NC-17) | Adding a `return` statement when the function defines a named return variable, is redundant | 46 |
+| [NC-18](#NC-18) | `require()` / `revert()` statements should have descriptive reason strings | 63 |
+| [NC-19](#NC-19) | Take advantage of Custom Error's return value property | 63 |
+| [NC-20](#NC-20) | Internal and private variables and functions names should begin with an underscore | 65 |
+| [NC-21](#NC-21) | Constants should be defined rather than using magic numbers | 6 |
+| [NC-22](#NC-22) | Variables need not be initialized to zero | 6 |
 
 ### <a name="NC-1"></a>[NC-1] Missing checks for `address(0)` when assigning values to address state variables
 
-*Instances (3)*:
+*Instances (4)*:
 
 ```solidity
 File: contracts/facets/BridgeRouterFacet.sol
@@ -1506,6 +1625,15 @@ File: contracts/facets/ExitShortFacet.sol
 ```
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+31:         dusd = _dusd;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ### <a name="NC-2"></a>[NC-2] Array indices should be referenced via `enum`s rather than via numeric literals
 
@@ -1533,35 +1661,44 @@ Prior to solidity version 0.8.0, hitting an assert consumes the **remainder of t
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-395:         assert(newBaseRate > 0); // Base rate is always non-zero after redemption
+397:         assert(newBaseRate > 0); // Base rate is always non-zero after redemption
 
 ```
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/RedemptionFacet.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-26:                 assert(shortRecord.status != SR.PartialFill);
+62:                 assert(shortRecord.status != SR.PartialFill);
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ### <a name="NC-4"></a>[NC-4] `constant`s should be defined rather than using magic numbers
 
 Even [assembly](https://github.com/code-423n4/2022-05-opensea-seaport/blob/9d7ce4d08bf3c3010304a0476a785c70c0e90ae7/contracts/lib/TokenTransferrer.sol#L35-L39) can benefit from using readable constants instead of hex/numeric literals
 
-*Instances (18)*:
+*Instances (19)*:
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+56:         if (shortHintArray.length > 10) revert Errors.TooManyHints();
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-165:         | 1.7   |     3      |
+167:         | 1.7   |     3      |
 
-166:         | 2.0   |     6      |
+168:         | 2.0   |     6      |
 
-181:             redeemerAssetUser.timeToDispute = protocolTime + uint32((m.mul(p.currentCR - 1.7 ether) + 3 ether) * 1 hours / 1 ether);
+183:             redeemerAssetUser.timeToDispute = protocolTime + uint32((m.mul(p.currentCR - 1.7 ether) + 3 ether) * 1 hours / 1 ether);
 
 ```
 
@@ -1570,9 +1707,9 @@ File: contracts/facets/RedemptionFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-116:         uint256 unitRethTWAP = OracleLibrary.estimateTWAP(1 ether, 30 minutes, VAULT.RETH_WETH, VAULT.RETH, C.WETH);
+118:         uint256 unitRethTWAP = OracleLibrary.estimateTWAP(1 ether, 30 minutes, VAULT.RETH_WETH, VAULT.RETH, C.WETH);
 
-120:         uint256 unitWstethTWAP = OracleLibrary.estimateTWAP(1 ether, 30 minutes, VAULT.WSTETH_WETH, VAULT.WSTETH, C.WETH);
+122:         uint256 unitWstethTWAP = OracleLibrary.estimateTWAP(1 ether, 30 minutes, VAULT.WSTETH_WETH, VAULT.WSTETH, C.WETH);
 
 ```
 
@@ -1636,7 +1773,7 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 See the [control structures](https://docs.soliditylang.org/en/latest/style-guide.html#control-structures) section of the Solidity Style Guide
 
-*Instances (79)*:
+*Instances (87)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -1700,53 +1837,72 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+11: import {Modifiers} from "contracts/libraries/AppStorage.sol";
+
+54:         if (msg.sender == shorter) revert Errors.CannotLiquidateSelf();
+
+56:         if (shortHintArray.length > 10) revert Errors.TooManyHints();
+
+75:             if (!LibSRUtil.checkRecoveryModeViolation(m.asset, m.cRatio, m.oraclePrice)) revert Errors.SufficientCollateral();
+
+100:         if (
+
+230:         if (a > type(uint88).max) revert Errors.InvalidAmount();
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
 8: import {Modifiers} from "contracts/libraries/AppStorage.sol";
 
-60:         if (proposalInput.length > type(uint8).max) revert Errors.TooManyProposals();
+62:         if (proposalInput.length > type(uint8).max) revert Errors.TooManyProposals();
 
-66:         if (redemptionAmount < minShortErc) revert Errors.RedemptionUnderMinShortErc();
+68:         if (redemptionAmount < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-68:         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
+70:         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
 
-71:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
+73:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
 
-85:             if (!validRedemptionSR(currentSR, msg.sender, p.shorter, minShortErc)) continue;
+87:             if (!validRedemptionSR(currentSR, msg.sender, p.shorter, minShortErc)) continue;
 
-91:             if (p.previousCR > p.currentCR || p.currentCR >= C.MAX_REDEMPTION_CR) continue;
+93:             if (p.previousCR > p.currentCR || p.currentCR >= C.MAX_REDEMPTION_CR) continue;
 
-99:                 if (currentSR.ercDebt - p.amountProposed < minShortErc) break;
+101:                 if (currentSR.ercDebt - p.amountProposed < minShortErc) break;
 
-110:                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
+112:                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
 
-138:             if (redemptionAmount - p.totalAmountProposed < minShortErc) break;
+140:             if (redemptionAmount - p.totalAmountProposed < minShortErc) break;
 
-141:         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
+143:         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-203:         if (redemptionFee > maxRedemptionFee) revert Errors.RedemptionFeeTooHigh();
+205:         if (redemptionFee > maxRedemptionFee) revert Errors.RedemptionFeeTooHigh();
 
-206:         if (VaultUser.ethEscrowed < redemptionFee) revert Errors.InsufficientETHEscrowed();
+208:         if (VaultUser.ethEscrowed < redemptionFee) revert Errors.InsufficientETHEscrowed();
 
-227:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
+229:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
 
-233:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+235:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-235:         if (LibOrders.getOffsetTime() >= redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasElapsed();
+237:         if (LibOrders.getOffsetTime() >= redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasElapsed();
 
-249:         if (!validRedemptionSR(disputeSR, d.redeemer, disputeShorter, minShortErc)) revert Errors.InvalidRedemption();
+251:         if (!validRedemptionSR(disputeSR, d.redeemer, disputeShorter, minShortErc)) revert Errors.InvalidRedemption();
 
-257:         if (disputeCR < incorrectProposal.CR && disputeSR.updatedAt + C.DISPUTE_REDEMPTION_BUFFER <= redeemerAssetUser.timeProposed)
+259:         if (disputeCR < incorrectProposal.CR && disputeSR.updatedAt + C.DISPUTE_REDEMPTION_BUFFER <= redeemerAssetUser.timeProposed)
 
-312:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+314:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-313:         if (LibOrders.getOffsetTime() < redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasNotElapsed();
+315:         if (LibOrders.getOffsetTime() < redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasNotElapsed();
 
-351:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+353:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-352:         if (redeemerAssetUser.timeToDispute > LibOrders.getOffsetTime()) revert Errors.TimeToDisputeHasNotElapsed();
+354:         if (redeemerAssetUser.timeToDispute > LibOrders.getOffsetTime()) revert Errors.TimeToDisputeHasNotElapsed();
 
-359:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
+361:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
 
 ```
 
@@ -1834,28 +1990,25 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-21:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
+37:             @dev If somebody exits a short, gets liquidated, decreases their collateral before YIELD_DELAY_SECONDS duration is up,
 
-48:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
+40:             bool isNotRecentlyModified = LibOrders.getOffsetTime() - updatedAt > C.YIELD_DELAY_SECONDS;
 
-59:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
+57:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
 
-```
+84:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+95:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
 
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
+130:         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
 
-20:         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
-
-21:         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
+131:         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -1901,7 +2054,7 @@ These shouldn't be deployed in production
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-18: import {console} from "contracts/libraries/console.sol";
+19: import {console} from "contracts/libraries/console.sol";
 
 ```
 
@@ -2059,7 +2212,7 @@ File: contracts/libraries/LibOrders.sol
 
 Overly complex code can make understanding functionality more difficult, try to further modularize your code to ensure readability
 
-*Instances (65)*:
+*Instances (74)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -2111,19 +2264,40 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+47:     function liquidate(address asset, address shorter, uint8 id, uint16[] memory shortHintArray, uint16 shortOrderId)
+
+96:     function _checklowestSell(MTypes.PrimaryLiquidation memory m) private view {
+
+122:     function _setLiquidationStruct(address asset, address shorter, uint8 id, uint16 shortOrderId)
+
+154:     function _performForcedBid(MTypes.PrimaryLiquidation memory m, uint16[] memory shortHintArray) private {
+
+209:     function _liquidationFeeHandler(MTypes.PrimaryLiquidation memory m) private {
+
+229:     function min88(uint256 a, uint88 b) private pure returns (uint88) {
+
+240:     function _fullorPartialLiquidation(MTypes.PrimaryLiquidation memory m) private {
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-29:     function validRedemptionSR(STypes.ShortRecord storage shortRecord, address proposer, address shorter, uint256 minShortErc)
+31:     function validRedemptionSR(STypes.ShortRecord storage shortRecord, address proposer, address shorter, uint256 minShortErc)
 
-222:     function disputeRedemption(address asset, address redeemer, uint8 incorrectIndex, address disputeShorter, uint8 disputeShortId)
+224:     function disputeRedemption(address asset, address redeemer, uint8 incorrectIndex, address disputeShorter, uint8 disputeShortId)
 
-308:     function claimRedemption(address asset) external isNotFrozen(asset) nonReentrant {
+310:     function claimRedemption(address asset) external isNotFrozen(asset) nonReentrant {
 
-345:     function claimRemainingCollateral(address asset, address redeemer, uint8 claimIndex, uint8 id)
+347:     function claimRemainingCollateral(address asset, address redeemer, uint8 claimIndex, uint8 id)
 
-366:     function _claimRemainingCollateral(address asset, uint256 vault, address shorter, uint8 shortId) private {
+368:     function _claimRemainingCollateral(address asset, uint256 vault, address shorter, uint8 shortId) private {
 
-380:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
+382:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
 
 ```
 
@@ -2132,15 +2306,15 @@ File: contracts/facets/RedemptionFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-20:     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
+21:     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
 
-37:     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
+39:     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
 
-111:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
+113:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
 
-141:     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
+144:     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
 
-194:     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
+198:     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
 
 ```
 
@@ -2236,33 +2410,23 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-13:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+22:     function disburseCollateral(address asset, address shorter, uint88 collateral, uint256 dethYieldRate, uint32 updatedAt)
 
-36:     function checkShortMinErc(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+49:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
 
-```
+72:     function checkShortMinErc(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+102:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
 
-```solidity
-File: contracts/libraries/LibSRRecovery.sol
+124:     function transferShortRecord(address from, address to, uint40 tokenId) internal {
 
-17:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
-
-```
-
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
-
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
-
-14:     function transferShortRecord(address from, address to, uint40 tokenId) internal {
+151:     function updateErcDebt(STypes.ShortRecord storage short, address asset) internal {
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -2293,7 +2457,7 @@ File: contracts/facets/BidOrdersFacet.sol
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-174:         b = previous fixed point (Y)
+176:         b = previous fixed point (Y)
 
 ```
 
@@ -2327,7 +2491,21 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 Be it sanity checks (like checks against `0`-values) or initial setting checks: it's best for Setter functions to have them
 
-*Instances (1)*:
+*Instances (2)*:
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+122:     function _setLiquidationStruct(address asset, address shorter, uint8 id, uint16 shortOrderId)
+             private
+             returns (MTypes.PrimaryLiquidation memory)
+         {
+             LibShortRecord.updateErcDebt(asset, shorter, id);
+             {
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ```solidity
 File: contracts/libraries/LibOracle.sol
@@ -2341,11 +2519,26 @@ File: contracts/libraries/LibOracle.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOracle.sol)
 
-### <a name="NC-13"></a>[NC-13] Incomplete NatSpec: `@param` is missing on actually documented functions
+### <a name="NC-13"></a>[NC-13] Lines are too long
+
+Usually lines in source code are limited to [80](https://softwareengineering.stackexchange.com/questions/148677/why-is-80-characters-the-standard-limit-for-code-width) characters. Today's screens are much larger so it's reasonable to stretch this in some cases. Since the files will most likely reside in GitHub, and GitHub starts using a scroll bar in all cases when the length is over [164](https://github.com/aizatto/character-length) characters, the lines below should be split when they reach that length
+
+*Instances (1)*:
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+140:             m.ethDebt = m.short.ercDebt.mul(m.oraclePrice).mul(m.forcedBidPriceBuffer).mul(1 ether + m.tappFeePct + m.callerFeePct); // ethDebt accounts for forcedBidPriceBuffer and potential fees
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+### <a name="NC-14"></a>[NC-14] Incomplete NatSpec: `@param` is missing on actually documented functions
 
 The following functions are missing `@param` NatSpec comments.
 
-*Instances (3)*:
+*Instances (4)*:
 
 ```solidity
 File: contracts/facets/ExitShortFacet.sol
@@ -2395,20 +2588,51 @@ File: contracts/facets/ExitShortFacet.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
-### <a name="NC-14"></a>[NC-14] Use a `modifier` instead of a `require/if` statement for a special `msg.sender` actor
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+34:     /**
+         * @notice Liquidates short by forcing shorter to place bid on market
+         * @dev Primary liquidation method
+         * @dev Shorter will bear the cost of forcedBid on market
+         *
+         * @param asset The market that will be impacted
+         * @param shorter Shorter getting liquidated
+         * @param id Id of short getting liquidated
+         * @param shortHintArray Array of hintId for the id to start matching against shorts since you can't match a short < oracle price
+         *
+         * @return gasFee Estimated cost of gas for the forcedBid
+         * @return ethFilled Amount of eth filled in forcedBid
+         */
+        function liquidate(address asset, address shorter, uint8 id, uint16[] memory shortHintArray, uint16 shortOrderId)
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+### <a name="NC-15"></a>[NC-15] Use a `modifier` instead of a `require/if` statement for a special `msg.sender` actor
 
 If a function is supposed to be access-controlled, a `modifier` should be used instead of a `require/if` statement for more readability.
 
-*Instances (5)*:
+*Instances (6)*:
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+54:         if (msg.sender == shorter) revert Errors.CannotLiquidateSelf();
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-85:             if (!validRedemptionSR(currentSR, msg.sender, p.shorter, minShortErc)) continue;
+87:             if (!validRedemptionSR(currentSR, msg.sender, p.shorter, minShortErc)) continue;
 
-227:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
+229:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
 
-359:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
+361:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
 
 ```
 
@@ -2424,15 +2648,15 @@ File: contracts/facets/ShortOrdersFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ShortOrdersFacet.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-23:             if (shorter == msg.sender) {
+59:             if (shorter == msg.sender) {
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
-### <a name="NC-15"></a>[NC-15] Consider using named mappings
+### <a name="NC-16"></a>[NC-16] Consider using named mappings
 
 Consider moving to solidity version 0.8.18 or later, and using [named mappings](https://ethereum.stackexchange.com/questions/51629/how-to-name-the-arguments-in-mapping/145555#145555) to make it easier to understand the purpose of each mapping
 
@@ -2469,7 +2693,7 @@ File: contracts/libraries/LibOrders.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
-### <a name="NC-16"></a>[NC-16] Adding a `return` statement when the function defines a named return variable, is redundant
+### <a name="NC-17"></a>[NC-17] Adding a `return` statement when the function defines a named return variable, is redundant
 
 *Instances (46)*:
 
@@ -2976,7 +3200,7 @@ File: contracts/facets/ExitShortFacet.sol
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-380:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
+382:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
              internal
              returns (uint88 redemptionFee)
          {
@@ -3005,7 +3229,7 @@ File: contracts/facets/RedemptionFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-111:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
+113:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
              IBridge bridgeReth = IBridge(rethBridge);
              IBridge bridgeSteth = IBridge(stethBridge);
      
@@ -3033,7 +3257,7 @@ File: contracts/libraries/LibBridgeRouter.sol
                  // Withdrawing less premium LST or premiums are equivalent
                  return 0;
 
-111:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
+113:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
              IBridge bridgeReth = IBridge(rethBridge);
              IBridge bridgeSteth = IBridge(stethBridge);
      
@@ -3051,7 +3275,7 @@ File: contracts/libraries/LibBridgeRouter.sol
                      // Only charge fee if withdrawing rETH
                      return factorReth.div(factorSteth) - 1 ether;
 
-111:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
+113:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
              IBridge bridgeReth = IBridge(rethBridge);
              IBridge bridgeSteth = IBridge(stethBridge);
      
@@ -3644,9 +3868,9 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-13:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+49:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
             internal
             returns (bool isCancelled)
         {
@@ -3662,7 +3886,7 @@ File: contracts/libraries/LibSRMin.sol
                     assert(shortRecord.status != SR.PartialFill);
                     return true;
 
-13:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+49:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
             internal
             returns (bool isCancelled)
         {
@@ -3682,38 +3906,31 @@ File: contracts/libraries/LibSRMin.sol
                     LibOrders.cancelShort(asset, shortOrderId);
                     return true;
 
-```
-
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
-
-```solidity
-File: contracts/libraries/LibSRRecovery.sol
-
-17:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
-            internal
-            view
-            returns (bool recoveryViolation)
-        {
-            AppStorage storage s = appStorage();
-    
-            uint256 recoveryCR = LibAsset.recoveryCR(asset);
-            if (shortRecordCR < recoveryCR) {
-                // Only check asset CR if low enough
-                STypes.Asset storage Asset = s.asset[asset];
-                if (Asset.ercDebt > 0) {
-                    // If Asset.ercDebt == 0 then assetCR is NA
-                    uint256 assetCR = Asset.dethCollateral.div(oraclePrice.mul(Asset.ercDebt));
-                    if (assetCR < recoveryCR) {
-                        // Market is in recovery mode and shortRecord CR too low
-                        return true;
+102:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
+             internal
+             view
+             returns (bool recoveryViolation)
+         {
+             AppStorage storage s = appStorage();
+     
+             uint256 recoveryCR = LibAsset.recoveryCR(asset);
+             if (shortRecordCR < recoveryCR) {
+                 // Only check asset CR if low enough
+                 STypes.Asset storage Asset = s.asset[asset];
+                 if (Asset.ercDebt > 0) {
+                     // If Asset.ercDebt == 0 then assetCR is NA
+                     uint256 assetCR = Asset.dethCollateral.div(oraclePrice.mul(Asset.ercDebt));
+                     if (assetCR < recoveryCR) {
+                         // Market is in recovery mode and shortRecord CR too low
+                         return true;
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
-### <a name="NC-17"></a>[NC-17] `require()` / `revert()` statements should have descriptive reason strings
+### <a name="NC-18"></a>[NC-18] `require()` / `revert()` statements should have descriptive reason strings
 
-*Instances (57)*:
+*Instances (63)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -3767,45 +3984,64 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+54:         if (msg.sender == shorter) revert Errors.CannotLiquidateSelf();
+
+56:         if (shortHintArray.length > 10) revert Errors.TooManyHints();
+
+75:             if (!LibSRUtil.checkRecoveryModeViolation(m.asset, m.cRatio, m.oraclePrice)) revert Errors.SufficientCollateral();
+
+109:             revert Errors.NoSells();
+
+174:                 revert Errors.CannotSocializeDebt();
+
+230:         if (a > type(uint88).max) revert Errors.InvalidAmount();
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-60:         if (proposalInput.length > type(uint8).max) revert Errors.TooManyProposals();
+62:         if (proposalInput.length > type(uint8).max) revert Errors.TooManyProposals();
 
-66:         if (redemptionAmount < minShortErc) revert Errors.RedemptionUnderMinShortErc();
+68:         if (redemptionAmount < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-68:         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
+70:         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
 
-71:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
+73:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
 
-110:                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
+112:                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
 
-141:         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
+143:         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-203:         if (redemptionFee > maxRedemptionFee) revert Errors.RedemptionFeeTooHigh();
+205:         if (redemptionFee > maxRedemptionFee) revert Errors.RedemptionFeeTooHigh();
 
-206:         if (VaultUser.ethEscrowed < redemptionFee) revert Errors.InsufficientETHEscrowed();
+208:         if (VaultUser.ethEscrowed < redemptionFee) revert Errors.InsufficientETHEscrowed();
 
-227:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
+229:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
 
-233:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+235:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-235:         if (LibOrders.getOffsetTime() >= redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasElapsed();
+237:         if (LibOrders.getOffsetTime() >= redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasElapsed();
 
-242:                 revert Errors.CannotDisputeWithRedeemerProposal();
+244:                 revert Errors.CannotDisputeWithRedeemerProposal();
 
-249:         if (!validRedemptionSR(disputeSR, d.redeemer, disputeShorter, minShortErc)) revert Errors.InvalidRedemption();
+251:         if (!validRedemptionSR(disputeSR, d.redeemer, disputeShorter, minShortErc)) revert Errors.InvalidRedemption();
 
-297:             revert Errors.InvalidRedemptionDispute();
+299:             revert Errors.InvalidRedemptionDispute();
 
-312:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+314:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-313:         if (LibOrders.getOffsetTime() < redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasNotElapsed();
+315:         if (LibOrders.getOffsetTime() < redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasNotElapsed();
 
-351:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+353:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-352:         if (redeemerAssetUser.timeToDispute > LibOrders.getOffsetTime()) revert Errors.TimeToDisputeHasNotElapsed();
+354:         if (redeemerAssetUser.timeToDispute > LibOrders.getOffsetTime()) revert Errors.TimeToDisputeHasNotElapsed();
 
-359:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
+361:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
 
 ```
 
@@ -3829,9 +4065,9 @@ File: contracts/facets/ShortOrdersFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-73:                     revert Errors.MustUseExistingBridgeCredit();
+75:                     revert Errors.MustUseExistingBridgeCredit();
 
-103:                     revert Errors.MustUseExistingBridgeCredit();
+105:                     revert Errors.MustUseExistingBridgeCredit();
 
 ```
 
@@ -3872,30 +4108,23 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-21:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
+57:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
 
-48:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
+84:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
 
-59:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
+95:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
 
-62:             revert Errors.CannotLeaveDustAmount();
+98:             revert Errors.CannotLeaveDustAmount();
 
-```
+130:         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
-
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
-
-20:         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
-
-21:         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
+131:         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -3906,11 +4135,11 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/UniswapOracleLibrary.sol)
 
-### <a name="NC-18"></a>[NC-18] Take advantage of Custom Error's return value property
+### <a name="NC-19"></a>[NC-19] Take advantage of Custom Error's return value property
 
 An important feature of Custom Error is that values such as address, tokenID, msg.value can be written inside the () sign, this kind of approach provides a serious advantage in debugging and examining the revert details of dapps such as tenderly.
 
-*Instances (57)*:
+*Instances (63)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -3964,45 +4193,64 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+54:         if (msg.sender == shorter) revert Errors.CannotLiquidateSelf();
+
+56:         if (shortHintArray.length > 10) revert Errors.TooManyHints();
+
+75:             if (!LibSRUtil.checkRecoveryModeViolation(m.asset, m.cRatio, m.oraclePrice)) revert Errors.SufficientCollateral();
+
+109:             revert Errors.NoSells();
+
+174:                 revert Errors.CannotSocializeDebt();
+
+230:         if (a > type(uint88).max) revert Errors.InvalidAmount();
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-60:         if (proposalInput.length > type(uint8).max) revert Errors.TooManyProposals();
+62:         if (proposalInput.length > type(uint8).max) revert Errors.TooManyProposals();
 
-66:         if (redemptionAmount < minShortErc) revert Errors.RedemptionUnderMinShortErc();
+68:         if (redemptionAmount < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-68:         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
+70:         if (redeemerAssetUser.ercEscrowed < redemptionAmount) revert Errors.InsufficientERCEscrowed();
 
-71:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
+73:         if (redeemerAssetUser.SSTORE2Pointer != address(0)) revert Errors.ExistingProposedRedemptions();
 
-110:                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
+112:                 if (shortOrder.shortRecordId != p.shortId || shortOrder.addr != p.shorter) revert Errors.InvalidShortOrder();
 
-141:         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
+143:         if (p.totalAmountProposed < minShortErc) revert Errors.RedemptionUnderMinShortErc();
 
-203:         if (redemptionFee > maxRedemptionFee) revert Errors.RedemptionFeeTooHigh();
+205:         if (redemptionFee > maxRedemptionFee) revert Errors.RedemptionFeeTooHigh();
 
-206:         if (VaultUser.ethEscrowed < redemptionFee) revert Errors.InsufficientETHEscrowed();
+208:         if (VaultUser.ethEscrowed < redemptionFee) revert Errors.InsufficientETHEscrowed();
 
-227:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
+229:         if (redeemer == msg.sender) revert Errors.CannotDisputeYourself();
 
-233:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+235:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-235:         if (LibOrders.getOffsetTime() >= redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasElapsed();
+237:         if (LibOrders.getOffsetTime() >= redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasElapsed();
 
-242:                 revert Errors.CannotDisputeWithRedeemerProposal();
+244:                 revert Errors.CannotDisputeWithRedeemerProposal();
 
-249:         if (!validRedemptionSR(disputeSR, d.redeemer, disputeShorter, minShortErc)) revert Errors.InvalidRedemption();
+251:         if (!validRedemptionSR(disputeSR, d.redeemer, disputeShorter, minShortErc)) revert Errors.InvalidRedemption();
 
-297:             revert Errors.InvalidRedemptionDispute();
+299:             revert Errors.InvalidRedemptionDispute();
 
-312:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+314:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-313:         if (LibOrders.getOffsetTime() < redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasNotElapsed();
+315:         if (LibOrders.getOffsetTime() < redeemerAssetUser.timeToDispute) revert Errors.TimeToDisputeHasNotElapsed();
 
-351:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
+353:         if (redeemerAssetUser.SSTORE2Pointer == address(0)) revert Errors.InvalidRedemption();
 
-352:         if (redeemerAssetUser.timeToDispute > LibOrders.getOffsetTime()) revert Errors.TimeToDisputeHasNotElapsed();
+354:         if (redeemerAssetUser.timeToDispute > LibOrders.getOffsetTime()) revert Errors.TimeToDisputeHasNotElapsed();
 
-359:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
+361:         if (claimProposal.shorter != msg.sender && claimProposal.shortId != id) revert Errors.CanOnlyClaimYourShort();
 
 ```
 
@@ -4026,9 +4274,9 @@ File: contracts/facets/ShortOrdersFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-73:                     revert Errors.MustUseExistingBridgeCredit();
+75:                     revert Errors.MustUseExistingBridgeCredit();
 
-103:                     revert Errors.MustUseExistingBridgeCredit();
+105:                     revert Errors.MustUseExistingBridgeCredit();
 
 ```
 
@@ -4069,30 +4317,23 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-21:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
+57:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
 
-48:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
+84:             if (shortOrder.shortRecordId != shortRecordId || shortOrder.addr != shorter) revert Errors.InvalidShortOrder();
 
-59:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
+95:                 if (shortOrder.ercAmount + shortRecord.ercDebt < minShortErc) revert Errors.CannotLeaveDustAmount();
 
-62:             revert Errors.CannotLeaveDustAmount();
+98:             revert Errors.CannotLeaveDustAmount();
 
-```
+130:         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
-
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
-
-20:         if (short.status == SR.Closed) revert Errors.OriginalShortRecordCancelled();
-
-21:         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
+131:         if (short.ercDebt == 0) revert Errors.OriginalShortRecordRedeemed();
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -4103,11 +4344,11 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/UniswapOracleLibrary.sol)
 
-### <a name="NC-19"></a>[NC-19] Internal and private variables and functions names should begin with an underscore
+### <a name="NC-20"></a>[NC-20] Internal and private variables and functions names should begin with an underscore
 
 According to the Solidity Style Guide, Non-`external` variable and function names should begin with an [underscore](https://docs.soliditylang.org/en/latest/style-guide.html#underscore-prefix-for-non-external-functions-and-variables)
 
-*Instances (62)*:
+*Instances (65)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -4141,11 +4382,20 @@ File: contracts/facets/ExitShortFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+229:     function min88(uint256 a, uint88 b) private pure returns (uint88) {
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-29:     function validRedemptionSR(STypes.ShortRecord storage shortRecord, address proposer, address shorter, uint256 minShortErc)
+31:     function validRedemptionSR(STypes.ShortRecord storage shortRecord, address proposer, address shorter, uint256 minShortErc)
 
-380:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
+382:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
 
 ```
 
@@ -4154,15 +4404,15 @@ File: contracts/facets/RedemptionFacet.sol
 ```solidity
 File: contracts/libraries/LibBridgeRouter.sol
 
-20:     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
+21:     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
 
-37:     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
+39:     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
 
-111:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
+113:     function withdrawalFeePct(uint256 bridgePointer, address rethBridge, address stethBridge) internal view returns (uint256 fee) {
 
-141:     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
+144:     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
 
-194:     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
+198:     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
 
 ```
 
@@ -4278,33 +4528,23 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
-13:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+22:     function disburseCollateral(address asset, address shorter, uint88 collateral, uint256 dethYieldRate, uint32 updatedAt)
 
-36:     function checkShortMinErc(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
+49:     function checkCancelShortOrder(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
 
-```
+72:     function checkShortMinErc(address asset, SR initialStatus, uint16 shortOrderId, uint8 shortRecordId, address shorter)
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
+102:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
 
-```solidity
-File: contracts/libraries/LibSRRecovery.sol
+124:     function transferShortRecord(address from, address to, uint40 tokenId) internal {
 
-17:     function checkRecoveryModeViolation(address asset, uint256 shortRecordCR, uint256 oraclePrice)
-
-```
-
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
-
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
-
-14:     function transferShortRecord(address from, address to, uint40 tokenId) internal {
+151:     function updateErcDebt(STypes.ShortRecord storage short, address asset) internal {
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ```solidity
 File: contracts/libraries/UniswapOracleLibrary.sol
@@ -4317,7 +4557,7 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/UniswapOracleLibrary.sol)
 
-### <a name="NC-20"></a>[NC-20] Constants should be defined rather than using magic numbers
+### <a name="NC-21"></a>[NC-21] Constants should be defined rather than using magic numbers
 
 *Instances (6)*:
 
@@ -4340,7 +4580,7 @@ File: contracts/libraries/LibBytes.sol
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibBytes.sol)
 
-### <a name="NC-21"></a>[NC-21] Variables need not be initialized to zero
+### <a name="NC-22"></a>[NC-22] Variables need not be initialized to zero
 
 The default value for variables is zero, so initializing them to zero is superfluous.
 
@@ -4349,11 +4589,11 @@ The default value for variables is zero, so initializing them to zero is superfl
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-76:         for (uint8 i = 0; i < proposalInput.length; i++) {
+78:         for (uint8 i = 0; i < proposalInput.length; i++) {
 
-240:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+242:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
-319:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
+321:         for (uint256 i = 0; i < decodedProposalData.length; i++) {
 
 ```
 
@@ -4383,18 +4623,18 @@ File: contracts/libraries/LibOrders.sol
 
 | |Issue|Instances|
 |-|:-|:-:|
-| [L-1](#L-1) | Missing checks for `address(0)` when assigning values to address state variables | 3 |
+| [L-1](#L-1) | Missing checks for `address(0)` when assigning values to address state variables | 4 |
 | [L-2](#L-2) | Division by zero not prevented | 4 |
-| [L-3](#L-3) | External call recipient may consume all transaction gas | 1 |
+| [L-3](#L-3) | External call recipient may consume all transaction gas | 4 |
 | [L-4](#L-4) | Signature use at deadlines should be allowed | 4 |
 | [L-5](#L-5) | Loss of precision | 3 |
-| [L-6](#L-6) | Solidity version 0.8.20+ may not work on other chains due to `PUSH0` | 12 |
-| [L-7](#L-7) | Consider using OpenZeppelin's SafeCast library to prevent unexpected overflows when downcasting | 13 |
+| [L-6](#L-6) | Solidity version 0.8.20+ may not work on other chains due to `PUSH0` | 11 |
+| [L-7](#L-7) | Consider using OpenZeppelin's SafeCast library to prevent unexpected overflows when downcasting | 15 |
 | [L-8](#L-8) | Upgradeable contract not initialized | 1 |
 
 ### <a name="L-1"></a>[L-1] Missing checks for `address(0)` when assigning values to address state variables
 
-*Instances (3)*:
+*Instances (4)*:
 
 ```solidity
 File: contracts/facets/BridgeRouterFacet.sol
@@ -4415,6 +4655,15 @@ File: contracts/facets/ExitShortFacet.sol
 ```
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+31:         dusd = _dusd;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ### <a name="L-2"></a>[L-2] Division by zero not prevented
 
@@ -4455,12 +4704,25 @@ File: contracts/libraries/UniswapOracleLibrary.sol
 
 There is no limit specified on the amount of gas used, so the recipient can use up all of the transaction's gas, causing it to revert. Use `addr.call{gas: <amount>}("")` or [this](https://github.com/nomad-xyz/ExcessivelySafeCall) library instead.
 
-*Instances (1)*:
+*Instances (4)*:
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+138:             m.callerFeePct = LibAsset.callerFeePct(m.asset);
+
+140:             m.ethDebt = m.short.ercDebt.mul(m.oraclePrice).mul(m.forcedBidPriceBuffer).mul(1 ether + m.tappFeePct + m.callerFeePct); // ethDebt accounts for forcedBidPriceBuffer and potential fees
+
+180:             m.short.ercDebt = uint88(m.ethDebt.div(_bidPrice.mul(1 ether + m.callerFeePct + m.tappFeePct))); // @dev(safe-cast)
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-288:                 LibOrders.max(LibAsset.callerFeePct(d.asset), (currentProposal.CR - disputeCR).div(currentProposal.CR)), 0.33 ether
+290:                 LibOrders.max(LibAsset.callerFeePct(d.asset), (currentProposal.CR - disputeCR).div(currentProposal.CR)), 0.33 ether
 
 ```
 
@@ -4517,7 +4779,7 @@ File: contracts/libraries/LibOrders.sol
 
 The compiler for Solidity 0.8.20 switches the default target EVM version to [Shanghai](https://blog.soliditylang.org/2023/05/10/solidity-0.8.20-release-announcement/#important-note), which includes the new `PUSH0` op code. This op code may not yet be implemented on all L2s, so deployment on these chains will fail. To work around this issue, use an earlier [EVM](https://docs.soliditylang.org/en/v0.8.20/using-the-compiler.html?ref=zaryabs.com#setting-the-evm-version-to-target) [version](https://book.getfoundry.sh/reference/config/solidity-compiler#evm_version). While the project itself may or may not compile with 0.8.20, other projects with which it integrates, or which extend this project may, and those projects will have problems deploying these contracts/libraries.
 
-*Instances (12)*:
+*Instances (11)*:
 
 ```solidity
 File: contracts/facets/BidOrdersFacet.sol
@@ -4545,6 +4807,15 @@ File: contracts/facets/ExitShortFacet.sol
 ```
 
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/ExitShortFacet.sol)
+
+```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+2: pragma solidity 0.8.21;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
 
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
@@ -4601,37 +4872,19 @@ File: contracts/libraries/LibOrders.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibOrders.sol)
 
 ```solidity
-File: contracts/libraries/LibSRMin.sol
+File: contracts/libraries/LibSRUtil.sol
 
 2: pragma solidity 0.8.21;
 
 ```
 
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRMin.sol)
-
-```solidity
-File: contracts/libraries/LibSRRecovery.sol
-
-2: pragma solidity 0.8.21;
-
-```
-
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRRecovery.sol)
-
-```solidity
-File: contracts/libraries/LibSRTransfer.sol
-
-2: pragma solidity 0.8.21;
-
-```
-
-[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRTransfer.sol)
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/libraries/LibSRUtil.sol)
 
 ### <a name="L-7"></a>[L-7] Consider using OpenZeppelin's SafeCast library to prevent unexpected overflows when downcasting
 
 Downcasting from `uint256`/`int256` in Solidity does not revert on overflow. This can result in undesired exploitation or bugs, since developers usually assume that overflows raise errors. [OpenZeppelin's SafeCast library](https://docs.openzeppelin.com/contracts/3.x/api/utils#SafeCast) restores this intuition by reverting the transaction when such an operation overflows. Using this library eliminates an entire class of bugs, so it's recommended to use it always. Some exceptions are acceptable like with the classic `uint256(uint160(address(variable)))`
 
-*Instances (13)*:
+*Instances (15)*:
 
 ```solidity
 File: contracts/facets/BridgeRouterFacet.sol
@@ -4645,25 +4898,36 @@ File: contracts/facets/BridgeRouterFacet.sol
 [Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/BridgeRouterFacet.sol)
 
 ```solidity
+File: contracts/facets/PrimaryLiquidationFacet.sol
+
+180:             m.short.ercDebt = uint88(m.ethDebt.div(_bidPrice.mul(1 ether + m.callerFeePct + m.tappFeePct))); // @dev(safe-cast)
+
+231:         return a < b ? uint88(a) : b;
+
+```
+
+[Link to code](https://github.com/code-423n4/2024-03-dittoeth/blob/main/contracts/facets/PrimaryLiquidationFacet.sol)
+
+```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-131:                 bytes8(uint64(p.currentCR)),
+133:                 bytes8(uint64(p.currentCR)),
 
-131:                 bytes8(uint64(p.currentCR)),
+133:                 bytes8(uint64(p.currentCR)),
 
-181:             redeemerAssetUser.timeToDispute = protocolTime + uint32((m.mul(p.currentCR - 1.7 ether) + 3 ether) * 1 hours / 1 ether);
+183:             redeemerAssetUser.timeToDispute = protocolTime + uint32((m.mul(p.currentCR - 1.7 ether) + 3 ether) * 1 hours / 1 ether);
 
-185:                 protocolTime + uint32((m.mul(p.currentCR - 1.5 ether) + 1.5 ether) * 1 hours / 1 ether);
+187:                 protocolTime + uint32((m.mul(p.currentCR - 1.5 ether) + 1.5 ether) * 1 hours / 1 ether);
 
-189:                 protocolTime + uint32((m.mul(p.currentCR - 1.3 ether) + 0.75 ether) * 1 hours / 1 ether);
+191:                 protocolTime + uint32((m.mul(p.currentCR - 1.3 ether) + 0.75 ether) * 1 hours / 1 ether);
 
-193:                 protocolTime + uint32((m.mul(p.currentCR - 1.2 ether) + C.ONE_THIRD) * 1 hours / 1 ether);
+195:                 protocolTime + uint32((m.mul(p.currentCR - 1.2 ether) + C.ONE_THIRD) * 1 hours / 1 ether);
 
-196:             redeemerAssetUser.timeToDispute = protocolTime + uint32(m.mul(p.currentCR - 1.1 ether) * 1 hours / 1 ether);
+198:             redeemerAssetUser.timeToDispute = protocolTime + uint32(m.mul(p.currentCR - 1.1 ether) * 1 hours / 1 ether);
 
-397:         Asset.baseRate = uint64(newBaseRate);
+399:         Asset.baseRate = uint64(newBaseRate);
 
-400:         return uint88(redemptionRate.mul(colRedeemed));
+402:         return uint88(redemptionRate.mul(colRedeemed));
 
 ```
 
@@ -4721,7 +4985,7 @@ A malicious owner can keep the fee rate at zero, but if a large value transfer e
 ```solidity
 File: contracts/facets/RedemptionFacet.sol
 
-380:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
+382:     function calculateRedemptionFee(address asset, uint88 colRedeemed, uint88 ercDebtRedeemed)
              internal
              returns (uint88 redemptionFee)
          {

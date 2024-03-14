@@ -34,7 +34,7 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
   - Oracle is very dependent on Chainlink, stale/invalid prices fallback to a Uniswap TWAP. 2 hours staleness means it can be somewhat out of date.
 - Issues related to front-running: can front-run someone's order, liquidation, the chainlink/uniswap oracle update.
 - Bridge credit system:
-  - If user has LST credit but that bridge is empty, LST credit can be redemeed for the other base collateral at 1-1 ratio
+  - If user has LST credit but that bridge is empty, LST credit can be redeemed for the other base collateral at 1-1 ratio
   - In NFT transfer, LST credit is transferred up to the amount of the collateral in the ShortRecord, which includes collateral that comes from bidder
 - There is an edge case where a short meets erc requirements because of ercDebtRate application
 - `disburseCollateral` in `proposeRedemption()` can cause user to lose yield if their SR was recently modified and it’s still below 2.0 CR (modified through order fill, or increase collateral)
@@ -44,7 +44,7 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
   - Redemptions in the correct order
 - Redemptions
   - Proposals are intentionally overly conservative in considering an SR to ineligible (with regards to `minShortErc`) to prevent scenarios of ercDebt under `minShortErc`
-  - There is an issue when `claimRemaningCollateral()` is called on a SR that is included in a proposal and is later correctly disputed.
+  - There is an issue when `claimRemainingCollateral()` is called on a SR that is included in a proposal and is later correctly disputed.
   - Undecided on how to distribute the redemption fee, maybe to dusd holders rather than just the system.
   - Currently allowed to redeem at any CR under 2, even under 1 CR.
 
