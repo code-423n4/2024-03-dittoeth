@@ -201,7 +201,7 @@ Ditto's orderbook acts similar to central limit orderbook with some changes. In 
 
 ### Short Orders
 
-`shortOrders` can only be limit orders. `startingShort` represents the first short order that can be matched. Normally `HEAD.nextId` would the next short order in the mapping, but it's not guranteed that it is matchable since users can still create limit shorts under the oracle price (or they move below oracle once the price updates). Oracle updates from chainlink or elsewhere will cause the `startingShort` to move, which means the system doesn't know when to start matching from without looping through each short, so the system allows a temporary matching backwards.
+`shortOrders` can only be limit orders. `startingShort` represents the first short order that can be matched. Normally `HEAD.nextId` would the next short order in the mapping, but it's not guaranteed that it is matchable since users can still create limit shorts under the oracle price (or they move below oracle once the price updates). Oracle updates from chainlink or elsewhere will cause the `startingShort` to move, which means the system doesn't know when to start matching from without looping through each short, so the system allows a temporary matching backwards.
 
 - `shortOrder` can't match under `oraclePrice`
 - `startingShort` price must be greater than or equal to `oraclePrice`
