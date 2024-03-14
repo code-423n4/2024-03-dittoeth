@@ -17,6 +17,7 @@ library LibBridgeRouter {
     using U256 for uint256;
     using U88 for uint88;
 
+    // Credit user account with dETH and bridge credit if applicable
     function addDeth(uint256 vault, uint256 bridgePointer, uint88 amount) internal {
         AppStorage storage s = appStorage();
         STypes.VaultUser storage VaultUser = s.vaultUser[vault][msg.sender];
@@ -34,6 +35,7 @@ library LibBridgeRouter {
         s.vault[vault].dethTotal += amount;
     }
 
+    // Determine how much dETH is NOT covered by bridge credits during withdrawal
     function assessDeth(uint256 vault, uint256 bridgePointer, uint88 amount, address rethBridge, address stethBridge)
         internal
         returns (uint88)
@@ -138,6 +140,7 @@ library LibBridgeRouter {
         }
     }
 
+    // @dev Only relevant to NFT SR that is being transferred, used to deter workarounds to the bridge credit system
     function transferBridgeCredit(address asset, address from, address to, uint88 collateral) internal {
         AppStorage storage s = appStorage();
 
@@ -191,6 +194,7 @@ library LibBridgeRouter {
         }
     }
 
+    // Update user account upon dETH withdrawal
     function removeDeth(uint256 vault, uint88 amount, uint88 fee) internal {
         AppStorage storage s = appStorage();
         s.vaultUser[vault][msg.sender].ethEscrowed -= (amount + fee);

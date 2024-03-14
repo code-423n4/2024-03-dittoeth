@@ -26,8 +26,7 @@ contract RecoveryMode is OBFixture {
         // @dev TODO: Delete after capital efficiency introduced
         vm.startPrank(owner);
         diamond.setPenaltyCR(asset, 101);
-        diamond.setSecondaryLiquidationCR(asset, 108);
-        diamond.setPrimaryLiquidationCR(asset, 109);
+        diamond.setLiquidationCR(asset, 109);
         diamond.setInitialCR(asset, 110);
         vm.stopPrank();
 

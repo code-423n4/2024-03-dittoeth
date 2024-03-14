@@ -30,8 +30,7 @@ contract OwnerFacet is Modifiers {
     /*
      * @param oracle The oracle for the asset
      * @param initialCR initialCR value of the new market
-     * @param primaryLiquidationCR Liquidation ratio (PenaltyCR) value of the new market
-     * @param secondaryLiquidationCR CRatio threshold for secondary liquidations
+     * @param liquidationCR Liquidation ratio value of the new market
      * @param forcedBidPriceBuffer Liquidation limit value of the new market
      * @param penaltyCR Lowest threshold for shortRecord to not lose collateral during liquidation
      * @param tappFeePct Primary liquidation fee sent to TAPP out of shorter collateral
@@ -40,7 +39,6 @@ contract OwnerFacet is Modifiers {
      * @param minAskEth Minimum ask dust amount
      * @param minShortErc Minimum short record debt amount
      * @param recoveryCR CRatio threshold for recovery mode of the entire market
-     * @param dittoTargetCR Cratio where shorter starts to receive less ditto reward per collateral
     */
 
     function createMarket(address asset, STypes.Asset memory a) external onlyDAO {
@@ -73,8 +71,7 @@ contract OwnerFacet is Modifiers {
 
         // @dev comment with initial values
         _setInitialCR(asset, a.initialCR); // 170 -> 1.7 ether
-        _setPrimaryLiquidationCR(asset, a.primaryLiquidationCR); // 150 -> 1.5 ether
-        _setSecondaryLiquidationCR(asset, a.secondaryLiquidationCR); // 140 -> 1.4 ether
+        _setLiquidationCR(asset, a.liquidationCR); // 150 -> 1.5 ether
         _setForcedBidPriceBuffer(asset, a.forcedBidPriceBuffer); // 110 -> 1.1 ether
         _setPenaltyCR(asset, a.penaltyCR); // 110 -> 1.1 ether
         _setTappFeePct(asset, a.tappFeePct); // 25 -> .025 ether
@@ -83,7 +80,6 @@ contract OwnerFacet is Modifiers {
         _setMinAskEth(asset, a.minAskEth); // 10 -> 0.1 ether
         _setMinShortErc(asset, a.minShortErc); // 2000 -> 2000 ether
         _setRecoveryCR(asset, a.recoveryCR); // 150 -> 1.5 ether
-        _setDittoTargetCR(asset, a.dittoTargetCR); // 20 -> 2.0 ether
 
         // Create TAPP short
         LibShortRecord.createTappSR(asset);
@@ -148,7 +144,7 @@ contract OwnerFacet is Modifiers {
     }
 
     // For Short Record collateral ratios
-    // primaryLiquidationCR > secondaryLiquidationCR > penaltyCR
+    // initialCR > liquidationCR > penaltyCR
     // After initial market creation. Set CRs from smallest to largest to prevent triggering the require checks
 
     function setInitialCR(address asset, uint16 value) external onlyAdminOrDAO {
@@ -156,15 +152,9 @@ contract OwnerFacet is Modifiers {
         emit Events.ChangeMarketSetting(asset);
     }
 
-    function setPrimaryLiquidationCR(address asset, uint16 value) external onlyAdminOrDAO {
-        require(value > s.asset[asset].secondaryLiquidationCR, "below secondary liquidation");
-        _setPrimaryLiquidationCR(asset, value);
-        emit Events.ChangeMarketSetting(asset);
-    }
-
-    function setSecondaryLiquidationCR(address asset, uint16 value) external onlyAdminOrDAO {
-        _setSecondaryLiquidationCR(asset, value);
-        require(LibAsset.secondaryLiquidationCR(asset) > LibAsset.penaltyCR(asset), "below minimum CR");
+    function setLiquidationCR(address asset, uint16 value) external onlyAdminOrDAO {
+        require(value > s.asset[asset].penaltyCR, "below penalty CR");
+        _setLiquidationCR(asset, value);
         emit Events.ChangeMarketSetting(asset);
     }
 
@@ -205,11 +195,6 @@ contract OwnerFacet is Modifiers {
 
     function setRecoveryCR(address asset, uint8 value) external onlyAdminOrDAO {
         _setRecoveryCR(asset, value);
-        emit Events.ChangeMarketSetting(asset);
-    }
-
-    function setDittoTargetCR(address asset, uint8 value) external onlyAdminOrDAO {
-        _setDittoTargetCR(asset, value);
         emit Events.ChangeMarketSetting(asset);
     }
 
@@ -255,17 +240,10 @@ contract OwnerFacet is Modifiers {
         require(LibAsset.initialCR(asset) < C.CRATIO_MAX, "above max CR");
     }
 
-    function _setPrimaryLiquidationCR(address asset, uint16 value) private {
+    function _setLiquidationCR(address asset, uint16 value) private {
         require(value > 100, "below 1.0");
         require(value <= 500, "above 5.0");
-        s.asset[asset].primaryLiquidationCR = value;
-    }
-
-    function _setSecondaryLiquidationCR(address asset, uint16 value) private {
-        require(value > 100, "below 1.0");
-        require(value <= 500, "above 5.0");
-        require(value < s.asset[asset].primaryLiquidationCR, "above primary liquidation");
-        s.asset[asset].secondaryLiquidationCR = value;
+        s.asset[asset].liquidationCR = value;
     }
 
     function _setForcedBidPriceBuffer(address asset, uint8 value) private {
@@ -278,7 +256,7 @@ contract OwnerFacet is Modifiers {
         require(value >= 100, "below 1.0");
         require(value <= 120, "above 1.2");
         s.asset[asset].penaltyCR = value;
-        require(LibAsset.penaltyCR(asset) < LibAsset.secondaryLiquidationCR(asset), "above secondary liquidation");
+        require(LibAsset.penaltyCR(asset) < LibAsset.liquidationCR(asset), "above liquidation CR");
     }
 
     function _setTappFeePct(address asset, uint8 value) private {
@@ -320,10 +298,5 @@ contract OwnerFacet is Modifiers {
         require(value >= 100, "below 1.0");
         require(value <= 200, "above 2.0");
         s.asset[asset].recoveryCR = value;
-    }
-
-    function _setDittoTargetCR(address asset, uint8 value) private {
-        require(value >= 10, "below 1.0");
-        s.asset[asset].dittoTargetCR = value;
     }
 }

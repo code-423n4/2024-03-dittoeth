@@ -32,27 +32,16 @@ library LibAsset {
     // i.e. 120 -> 1.2 ether
     // less than initialCR
     // @dev cRatio that a shortRecord can be liquidated at
-    function primaryLiquidationCR(address asset) internal view returns (uint256) {
+    function liquidationCR(address asset) internal view returns (uint256) {
         AppStorage storage s = appStorage();
-        return (uint256(s.asset[asset].primaryLiquidationCR) * 1 ether) / C.TWO_DECIMAL_PLACES;
-    }
-
-    // default of 1.4 ether, stored in uint16 as 140
-    // range of [1-5],
-    // 2 decimal places, divide by 100
-    // i.e. 120 -> 1.2 ether
-    // @dev cRatio that allows for secondary liquidations to happen
-    // @dev via wallet or ercEscrowed (vault deposited usd)
-    function secondaryLiquidationCR(address asset) internal view returns (uint256) {
-        AppStorage storage s = appStorage();
-        return (uint256(s.asset[asset].secondaryLiquidationCR) * 1 ether) / C.TWO_DECIMAL_PLACES;
+        return (uint256(s.asset[asset].liquidationCR) * 1 ether) / C.TWO_DECIMAL_PLACES;
     }
 
     // default of 1.1 ether, stored in uint8 as 110
     // range of [1-2],
     // 2 decimal places, divide by 100
     // i.e. 120 -> 1.2 ether
-    // less than primaryLiquidationCR
+    // less than liquidationCR
     // @dev buffer/slippage for forcedBid price
     function forcedBidPriceBuffer(address asset) internal view returns (uint256) {
         AppStorage storage s = appStorage();
@@ -126,15 +115,5 @@ library LibAsset {
     function recoveryCR(address asset) internal view returns (uint256) {
         AppStorage storage s = appStorage();
         return (uint256(s.asset[asset].recoveryCR) * 1 ether) / C.TWO_DECIMAL_PLACES;
-    }
-
-    // default of 2.0 ether, stored in uint8 as 20
-    // range of [1-25.6],
-    // 1 decimal places, divide by 10
-    // i.e. 12 -> 1.2 ether
-    // @dev cRatio where shorter starts to lose ditto reward efficiency
-    function dittoTargetCR(address asset) internal view returns (uint256) {
-        AppStorage storage s = appStorage();
-        return (uint256(s.asset[asset].dittoTargetCR) * 1 ether) / C.ONE_DECIMAL_PLACES;
     }
 }

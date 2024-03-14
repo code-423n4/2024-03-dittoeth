@@ -40,8 +40,7 @@ library TestTypes {
         F frozen;
         uint16 orderId;
         uint256 initialCR;
-        uint256 primaryLiquidationCR;
-        uint256 secondaryLiquidationCR;
+        uint256 liquidationCR;
         uint256 forcedBidPriceBuffer;
         uint256 penaltyCR;
         uint256 tappFeePct;
@@ -51,7 +50,6 @@ library TestTypes {
         uint256 minAskEth;
         uint256 minShortErc;
         uint256 recoveryCR;
-        uint256 dittoTargetCR;
         uint8 assetId;
     }
 

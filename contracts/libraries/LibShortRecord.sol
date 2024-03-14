@@ -257,19 +257,6 @@ library LibShortRecord {
         }
     }
 
-    function updateErcDebt(STypes.ShortRecord storage short, address asset) internal {
-        AppStorage storage s = appStorage();
-
-        // Distribute ercDebt
-        uint64 ercDebtRate = s.asset[asset].ercDebtRate;
-        uint88 ercDebt = short.ercDebt.mulU88(ercDebtRate - short.ercDebtRate);
-
-        if (ercDebt > 0) {
-            short.ercDebt += ercDebt;
-            short.ercDebtRate = ercDebtRate;
-        }
-    }
-
     function merge(
         STypes.ShortRecord storage short,
         uint88 ercDebt,
@@ -288,33 +275,6 @@ library LibShortRecord {
         short.dethYieldRate = yield.divU80(short.collateral);
         // Assign updatedAt
         short.updatedAt = creationTime;
-    }
-
-    function disburseCollateral(address asset, address shorter, uint88 collateral, uint256 dethYieldRate, uint32 updatedAt)
-        internal
-    {
-        AppStorage storage s = appStorage();
-
-        STypes.Asset storage Asset = s.asset[asset];
-        uint256 vault = Asset.vault;
-        STypes.Vault storage Vault = s.vault[vault];
-
-        Vault.dethCollateral -= collateral;
-        Asset.dethCollateral -= collateral;
-        // Distribute yield
-        uint88 yield = collateral.mulU88(Vault.dethYieldRate - dethYieldRate);
-        if (yield > 0) {
-            /*
-            @dev If somebody exits a short, gets liquidated, decreases their collateral before YIELD_DELAY_SECONDS duration is up,
-            they lose their yield to the TAPP
-            */
-            bool isNotRecentlyModified = LibOrders.getOffsetTime() - updatedAt > C.YIELD_DELAY_SECONDS;
-            if (isNotRecentlyModified) {
-                s.vaultUser[vault][shorter].ethEscrowed += yield;
-            } else {
-                s.vaultUser[vault][address(this)].ethEscrowed += yield;
-            }
-        }
     }
 
     function burnNFT(uint256 tokenId) internal {

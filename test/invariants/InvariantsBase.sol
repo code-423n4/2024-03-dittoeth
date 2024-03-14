@@ -105,14 +105,14 @@ contract InvariantsBase is Test {
                 currentBid = diamond.getBids(asset)[i];
                 assertTrue(currentBid.orderType == O.LimitBid, "statefulFuzz_sortedBidsHighestToLowest_1");
                 if (i == 0) {
-                    assertEq(currentBid.prevId, C.HEAD, "statefulFuzz_sortedBidsLowestToHighest_2");
+                    assertEq(currentBid.prevId, C.HEAD, "statefulFuzz_sortedBidsHighestToLowest_2");
                 } else {
-                    assertEq(currentBid.prevId, prevBid.id, "statefulFuzz_sortedBidsLowestToHighest_2");
+                    assertEq(currentBid.prevId, prevBid.id, "statefulFuzz_sortedBidsHighestToLowest_2");
                 }
                 if (i == 0) {
-                    assertEq(diamond.getBidOrder(asset, C.HEAD).nextId, currentBid.id, "statefulFuzz_sortedBidsLowestToHighest_3");
+                    assertEq(diamond.getBidOrder(asset, C.HEAD).nextId, currentBid.id, "statefulFuzz_sortedBidsHighestToLowest_3");
                 } else {
-                    assertEq(prevBid.nextId, currentBid.id, "statefulFuzz_sortedBidsLowestToHighest_3");
+                    assertEq(prevBid.nextId, currentBid.id, "statefulFuzz_sortedBidsHighestToLowest_3");
                 }
                 assertTrue(prevBid.price >= currentBid.price, "statefulFuzz_sortedBidsHighestToLowest_4");
                 prevBid = diamond.getBids(asset)[i];

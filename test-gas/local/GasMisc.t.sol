@@ -36,8 +36,7 @@ contract GasCreateOBTest is GasHelper {
         a.vault = uint8(VAULT.ONE);
         a.oracle = _cgldAggregator;
         a.initialCR = 400; // 400 -> 4 ether
-        a.primaryLiquidationCR = 300; // 300 -> 3 ether
-        a.secondaryLiquidationCR = 200; // 200 -> 2 ether
+        a.liquidationCR = 300; // 300 -> 3 ether
         a.forcedBidPriceBuffer = 120; // 12 -> 1.2 ether
         a.penaltyCR = 110; // 110 -> 1.1 ether
         a.tappFeePct = 25; // 25 -> .025 ether
@@ -46,7 +45,6 @@ contract GasCreateOBTest is GasHelper {
         a.minAskEth = 10; // 1 -> .1 ether
         a.minShortErc = 2000; // 2000 -> 2000 ether
         a.recoveryCR = 150; // 150 -> 1.5 ether
-        a.dittoTargetCR = 20; // 20 -> 2.0 ether
 
         address token = _cgld;
 

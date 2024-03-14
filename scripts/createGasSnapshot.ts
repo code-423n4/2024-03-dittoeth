@@ -32,7 +32,7 @@ async function combineGasSnapshots() {
 
   let newGas: any = {};
   let oldGas: any = {};
-  let oldString: any = "";
+  let oldString: any;
   try {
     let file = await fs.readFile(gasPath);
     oldString = file.toString();

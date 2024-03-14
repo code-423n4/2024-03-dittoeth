@@ -9,8 +9,7 @@ import {Modifiers} from "contracts/libraries/AppStorage.sol";
 import {STypes, MTypes, SR} from "contracts/libraries/DataTypes.sol";
 import {LibAsset} from "contracts/libraries/LibAsset.sol";
 import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
-import {LibSRMin} from "contracts/libraries/LibSRMin.sol";
-import {LibSRRecovery} from "contracts/libraries/LibSRRecovery.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 import {LibOrders} from "contracts/libraries/LibOrders.sol";
 import {LibOracle} from "contracts/libraries/LibOracle.sol";
 import {C} from "contracts/libraries/Constants.sol";
@@ -18,6 +17,7 @@ import {C} from "contracts/libraries/Constants.sol";
 // import {console} from "contracts/libraries/console.sol";
 
 contract ShortRecordFacet is Modifiers {
+    using LibSRUtil for STypes.ShortRecord;
     using LibShortRecord for STypes.ShortRecord;
     using U256 for uint256;
     using U80 for uint80;
@@ -94,12 +94,12 @@ contract ShortRecordFacet is Modifiers {
         uint256 cRatio = short.getCollateralRatio(oraclePrice);
         if (cRatio < LibAsset.initialCR(asset)) revert Errors.CRLowerThanMin();
 
-        if (LibSRRecovery.checkRecoveryModeViolation(asset, cRatio, oraclePrice)) revert Errors.BelowRecoveryModeCR();
+        if (LibSRUtil.checkRecoveryModeViolation(asset, cRatio, oraclePrice)) revert Errors.BelowRecoveryModeCR();
 
         uint256 vault = s.asset[asset].vault;
         s.vaultUser[vault][msg.sender].ethEscrowed += amount;
 
-        LibShortRecord.disburseCollateral(asset, msg.sender, amount, short.dethYieldRate, short.updatedAt);
+        LibSRUtil.disburseCollateral(asset, msg.sender, amount, short.dethYieldRate, short.updatedAt);
         emit Events.DecreaseCollateral(asset, msg.sender, id, amount);
     }
 
@@ -155,7 +155,7 @@ contract ShortRecordFacet is Modifiers {
             LibShortRecord.deleteShortRecord(c.asset, msg.sender, _id);
 
             // @dev partialFill shorts must be cancelled in combineShorts regardless of SR/short Order debt levels
-            LibSRMin.checkCancelShortOrder(c.asset, currentStatus, shortOrderIds[i], ids[i], msg.sender);
+            LibSRUtil.checkCancelShortOrder(c.asset, currentStatus, shortOrderIds[i], ids[i], msg.sender);
         }
 
         // Ensure the base shortRecord was not included in the array twice and therefore deleted

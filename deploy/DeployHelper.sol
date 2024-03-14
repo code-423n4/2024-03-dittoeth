@@ -104,8 +104,7 @@ contract DeployHelper is Test {
         IDiamond.setDittoMatchedRate.selector,
         IDiamond.setDittoShorterRate.selector,
         IDiamond.setInitialCR.selector,
-        IDiamond.setPrimaryLiquidationCR.selector,
-        IDiamond.setSecondaryLiquidationCR.selector,
+        IDiamond.setLiquidationCR.selector,
         IDiamond.setForcedBidPriceBuffer.selector,
         IDiamond.setPenaltyCR.selector,
         IDiamond.setTappFeePct.selector,
@@ -117,14 +116,13 @@ contract DeployHelper is Test {
         IDiamond.createVault.selector,
         IDiamond.createMarket.selector,
         IDiamond.setWithdrawalFee.selector,
-        IDiamond.setRecoveryCR.selector,
-        IDiamond.setDittoTargetCR.selector
+        IDiamond.setRecoveryCR.selector
     ];
     bytes4[] internal shortOrdersSelectors = [IDiamond.createLimitShort.selector];
     bytes4[] internal shortRecordSelectors =
         [IDiamond.increaseCollateral.selector, IDiamond.decreaseCollateral.selector, IDiamond.combineShorts.selector];
     bytes4[] internal testSelectors = [
-        ITestFacet.setprimaryLiquidationCRT.selector,
+        ITestFacet.setLiquidationCRT.selector,
         ITestFacet.getAskKey.selector,
         ITestFacet.getBidKey.selector,
         ITestFacet.getBidOrder.selector,
@@ -354,7 +352,14 @@ contract DeployHelper is Test {
         _diamondLoupe = factory.safeCreate2(salt, abi.encodePacked(vm.getCode("DiamondLoupeFacet.sol:DiamondLoupeFacet")));
         _ownerFacet = factory.safeCreate2(salt, abi.encodePacked(vm.getCode("OwnerFacet.sol:OwnerFacet")));
         _viewFacet = factory.safeCreate2(salt, abi.encodePacked(vm.getCode("ViewFacet.sol:ViewFacet"), abi.encode(_dusd)));
-        _yield = factory.safeCreate2(salt, abi.encodePacked(vm.getCode("YieldFacet.sol:YieldFacet"), abi.encode(_ditto, _deth)));
+
+        if (chainId == 31337) {
+            _yield =
+                factory.safeCreate2(salt, abi.encodePacked(vm.getCode("YieldFacet.sol:YieldFacet"), abi.encode(_ditto, 6 ether)));
+        } else {
+            _yield =
+                factory.safeCreate2(salt, abi.encodePacked(vm.getCode("YieldFacet.sol:YieldFacet"), abi.encode(_ditto, 2 ether)));
+        }
         _vaultFacet = factory.safeCreate2(salt, abi.encodePacked(vm.getCode("VaultFacet.sol:VaultFacet"), abi.encode(_deth)));
         _bridgeRouter = factory.safeCreate2(
             salt, abi.encodePacked(vm.getCode("BridgeRouterFacet.sol:BridgeRouterFacet"), abi.encode(_bridgeReth, _bridgeSteth))
@@ -562,8 +567,7 @@ contract DeployHelper is Test {
         a.vault = uint8(VAULT.ONE);
         a.oracle = _ethAggregator;
         a.initialCR = 170; // 170 -> 1.70 ether
-        a.primaryLiquidationCR = 150; // 150 -> 1.5 ether
-        a.secondaryLiquidationCR = 140; // 140 -> 1.4 ether
+        a.liquidationCR = 150; // 150 -> 1.5 ether
         a.forcedBidPriceBuffer = 110; // 110 -> 1.1 ether
         a.penaltyCR = 110; // 110 -> 1.1 ether
         a.tappFeePct = 25; //25 -> .025 ether
@@ -572,7 +576,6 @@ contract DeployHelper is Test {
         a.minAskEth = 10; // 1 -> 0.1 ether
         a.minShortErc = 2000; // 2000 -> 2000 ether
         a.recoveryCR = 150; // 150 -> 1.5 ether
-        a.dittoTargetCR = 20; // 20 -> 2.0 ether
         diamond.createMarket({asset: _dusd, a: a});
 
         if (chainId == 31337) {
@@ -604,14 +607,12 @@ contract DeployHelper is Test {
             assertEq(a.minShortErc, assetStruct.minShortErc);
             assertEq(a.oracle, assetStruct.oracle);
             assertEq(VAULT.ONE, assetStruct.vault);
-            assertEq(a.primaryLiquidationCR, assetStruct.primaryLiquidationCR);
-            assertEq(a.secondaryLiquidationCR, assetStruct.secondaryLiquidationCR);
+            assertEq(a.liquidationCR, assetStruct.liquidationCR);
             assertEq(a.penaltyCR, assetStruct.penaltyCR);
             assertEq(a.forcedBidPriceBuffer, assetStruct.forcedBidPriceBuffer);
             assertEq(a.tappFeePct, assetStruct.tappFeePct);
             assertEq(a.callerFeePct, assetStruct.callerFeePct);
             assertEq(a.recoveryCR, assetStruct.recoveryCR);
-            assertEq(a.dittoTargetCR, assetStruct.dittoTargetCR);
         }
     }
 

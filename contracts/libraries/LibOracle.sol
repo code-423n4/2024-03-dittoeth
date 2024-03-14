@@ -164,7 +164,7 @@ library LibOracle {
         return uint80(s.bids[asset][C.HEAD].ercAmount);
     }
 
-    // @dev allows caller to save gas since reading spot price costs ~16K
+    // @dev Allows caller to save gas since reading spot price costs ~16K
     function getSavedOrSpotOraclePrice(address asset) internal view returns (uint256) {
         if (LibOrders.getOffsetTime() - getTime(asset) < 15 minutes) {
             return getPrice(asset);

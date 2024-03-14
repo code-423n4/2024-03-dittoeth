@@ -12,7 +12,7 @@ import {STypes, MTypes, SR} from "contracts/libraries/DataTypes.sol";
 import {LibAsset} from "contracts/libraries/LibAsset.sol";
 import {LibOrders} from "contracts/libraries/LibOrders.sol";
 import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
-import {LibSRMin} from "contracts/libraries/LibSRMin.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 
 // import {console} from "contracts/libraries/console.sol";
 
@@ -20,7 +20,7 @@ contract ExitShortFacet is Modifiers {
     using U256 for uint256;
     using U80 for uint80;
     using U88 for uint88;
-    using LibShortRecord for STypes.ShortRecord;
+    using LibSRUtil for STypes.ShortRecord;
     using {LibAsset.burnMsgSenderDebt} for address;
 
     address private immutable dusd;
@@ -58,13 +58,13 @@ contract ExitShortFacet is Modifiers {
         if (buybackAmount == ercDebt) {
             uint88 collateral = short.collateral;
             s.vaultUser[Asset.vault][msg.sender].ethEscrowed += collateral;
-            LibShortRecord.disburseCollateral(asset, msg.sender, collateral, short.dethYieldRate, short.updatedAt);
+            LibSRUtil.disburseCollateral(asset, msg.sender, collateral, short.dethYieldRate, short.updatedAt);
             LibShortRecord.deleteShortRecord(asset, msg.sender, id);
         } else {
             short.ercDebt -= buybackAmount;
         }
 
-        LibSRMin.checkShortMinErc({
+        LibSRUtil.checkShortMinErc({
             asset: asset,
             initialStatus: initialStatus,
             shortOrderId: shortOrderId,
@@ -110,14 +110,14 @@ contract ExitShortFacet is Modifiers {
         if (ercDebt == buybackAmount) {
             uint88 collateral = short.collateral;
             s.vaultUser[Asset.vault][msg.sender].ethEscrowed += collateral;
-            LibShortRecord.disburseCollateral(asset, msg.sender, collateral, short.dethYieldRate, short.updatedAt);
+            LibSRUtil.disburseCollateral(asset, msg.sender, collateral, short.dethYieldRate, short.updatedAt);
 
             LibShortRecord.deleteShortRecord(asset, msg.sender, id);
         } else {
             short.ercDebt -= buybackAmount;
         }
 
-        LibSRMin.checkShortMinErc({
+        LibSRUtil.checkShortMinErc({
             asset: asset,
             initialStatus: initialStatus,
             shortOrderId: shortOrderId,
@@ -155,7 +155,7 @@ contract ExitShortFacet is Modifiers {
         STypes.ShortRecord storage short = s.shortRecords[e.asset][msg.sender][id];
 
         // @dev Must prevent forcedBid from exitShort() matching with original shortOrder
-        e.shortOrderIsCancelled = LibSRMin.checkCancelShortOrder({
+        e.shortOrderIsCancelled = LibSRUtil.checkCancelShortOrder({
             asset: asset,
             initialStatus: short.status,
             shortOrderId: shortOrderId,
@@ -193,7 +193,7 @@ contract ExitShortFacet is Modifiers {
         // Refund the rest of the collateral if ercDebt is fully paid back
         if (e.ercDebt == e.ercFilled) {
             // Full Exit
-            LibShortRecord.disburseCollateral(e.asset, msg.sender, e.collateral, short.dethYieldRate, short.updatedAt);
+            LibSRUtil.disburseCollateral(e.asset, msg.sender, e.collateral, short.dethYieldRate, short.updatedAt);
             LibShortRecord.deleteShortRecord(e.asset, msg.sender, id); // prevent reentrancy
         } else {
             short.collateral -= e.ethFilled;
@@ -205,7 +205,7 @@ contract ExitShortFacet is Modifiers {
 
             // @dev collateral already subtracted in exitShort()
             VaultUser.ethEscrowed -= e.collateral - e.ethFilled;
-            LibShortRecord.disburseCollateral(e.asset, msg.sender, e.ethFilled, short.dethYieldRate, short.updatedAt);
+            LibSRUtil.disburseCollateral(e.asset, msg.sender, e.ethFilled, short.dethYieldRate, short.updatedAt);
         }
         emit Events.ExitShort(asset, msg.sender, id, e.ercFilled);
     }

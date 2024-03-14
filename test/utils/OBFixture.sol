@@ -100,9 +100,7 @@ contract OBFixture is DeployHelper, ConstantsTest {
         vm.startPrank(owner);
         diamond.setWithdrawalFee(_bridgeSteth, 1);
         diamond.setInitialCR(asset, 500);
-        diamond.setDittoTargetCR(asset, 60);
-        diamond.setPrimaryLiquidationCR(asset, 400);
-        diamond.setSecondaryLiquidationCR(asset, 150);
+        diamond.setLiquidationCR(asset, 400);
         diamond.setMinAskEth(asset, 1);
         diamond.setMinBidEth(asset, 1);
         diamond.setDittoShorterRate(vault, 100);

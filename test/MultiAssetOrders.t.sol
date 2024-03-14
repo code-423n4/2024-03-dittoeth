@@ -42,8 +42,7 @@ contract MultiAssetOrdersTest is OBFixture {
         a.vault = uint8(VAULT.ONE);
         a.oracle = _cgldAggregator;
         a.initialCR = 400; // 400 -> 4 ether
-        a.primaryLiquidationCR = 300; // 300 -> 3 ether
-        a.secondaryLiquidationCR = 200; // 200 -> 2 ether
+        a.liquidationCR = 300; // 300 -> 3 ether
         a.forcedBidPriceBuffer = 120; // 120 -> 1.2 ether
         a.penaltyCR = 120; // 120 -> 1.2 ether
         a.tappFeePct = 30; // 30 -> .03 ether
@@ -52,7 +51,6 @@ contract MultiAssetOrdersTest is OBFixture {
         a.minAskEth = 10; // 1 -> .1 ether
         a.minShortErc = 10; // 10 -> 10 ether
         a.recoveryCR = 140; // 140 -> 1.4 ether
-        a.dittoTargetCR = 19; // 19 -> 1.9 ether
 
         diamond.createMarket({asset: _cgld, a: a});
 
@@ -115,44 +113,36 @@ contract MultiAssetOrdersTest is OBFixture {
     function test_MultiAssetSettings() public {
         //test dusd ob settings (see OBFixture, createMarket())
         assertEq(diamond.getAssetStruct(asset).initialCR, 500);
-        assertEq(diamond.getAssetStruct(asset).primaryLiquidationCR, 400);
-        assertEq(diamond.getAssetStruct(asset).secondaryLiquidationCR, 150);
+        assertEq(diamond.getAssetStruct(asset).liquidationCR, 400);
         assertEq(diamond.getAssetStruct(asset).forcedBidPriceBuffer, 110);
         assertEq(diamond.getAssetStruct(asset).penaltyCR, 110);
         assertEq(diamond.getAssetStruct(asset).tappFeePct, 25);
         assertEq(diamond.getAssetStruct(asset).callerFeePct, 5);
         assertEq(diamond.getAssetStruct(asset).recoveryCR, 150);
-        assertEq(diamond.getAssetStruct(asset).dittoTargetCR, 60);
 
         assertEq(diamond.getAssetNormalizedStruct(asset).initialCR, 5 ether);
-        assertEq(diamond.getAssetNormalizedStruct(asset).primaryLiquidationCR, 4 ether);
-        assertEq(diamond.getAssetNormalizedStruct(asset).secondaryLiquidationCR, 1.5 ether);
+        assertEq(diamond.getAssetNormalizedStruct(asset).liquidationCR, 4 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).forcedBidPriceBuffer, 1.1 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).penaltyCR, 1.1 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).tappFeePct, 0.025 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).callerFeePct, 0.005 ether);
         assertEq(diamond.getAssetNormalizedStruct(asset).recoveryCR, 1.5 ether);
-        assertEq(diamond.getAssetNormalizedStruct(asset).dittoTargetCR, 6.0 ether);
 
         assertEq(diamond.getAssetStruct(_cgld).initialCR, 400);
-        assertEq(diamond.getAssetStruct(_cgld).primaryLiquidationCR, 300);
-        assertEq(diamond.getAssetStruct(_cgld).secondaryLiquidationCR, 200);
+        assertEq(diamond.getAssetStruct(_cgld).liquidationCR, 300);
         assertEq(diamond.getAssetStruct(_cgld).forcedBidPriceBuffer, 120);
         assertEq(diamond.getAssetStruct(_cgld).penaltyCR, 120);
         assertEq(diamond.getAssetStruct(_cgld).tappFeePct, 30);
         assertEq(diamond.getAssetStruct(_cgld).callerFeePct, 6);
         assertEq(diamond.getAssetStruct(_cgld).recoveryCR, 140);
-        assertEq(diamond.getAssetStruct(_cgld).dittoTargetCR, 19);
 
         assertEq(diamond.getAssetNormalizedStruct(_cgld).initialCR, 4 ether);
-        assertEq(diamond.getAssetNormalizedStruct(_cgld).primaryLiquidationCR, 3 ether);
-        assertEq(diamond.getAssetNormalizedStruct(_cgld).secondaryLiquidationCR, 2 ether);
+        assertEq(diamond.getAssetNormalizedStruct(_cgld).liquidationCR, 3 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).forcedBidPriceBuffer, 1.2 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).penaltyCR, 1.2 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).tappFeePct, 0.03 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).callerFeePct, 0.006 ether);
         assertEq(diamond.getAssetNormalizedStruct(_cgld).recoveryCR, 1.4 ether);
-        assertEq(diamond.getAssetNormalizedStruct(_cgld).dittoTargetCR, 1.9 ether);
     }
 
     function test_RevertYieldDifferentVaults() public {
@@ -169,8 +159,7 @@ contract MultiAssetOrdersTest is OBFixture {
         a.vault = 2;
         a.oracle = _cgldAggregator;
         a.initialCR = 400; // 400 -> 4 ether
-        a.primaryLiquidationCR = 300; // 300 -> 3 ether
-        a.secondaryLiquidationCR = 200; // 200 -> 2 ether
+        a.liquidationCR = 300; // 300 -> 3 ether
         a.forcedBidPriceBuffer = 120; // 120 -> 1.2 ether
         a.penaltyCR = 120; // 120 -> 1.2 ether
         a.tappFeePct = 30; // 30 -> .03 ether
@@ -179,7 +168,6 @@ contract MultiAssetOrdersTest is OBFixture {
         a.minAskEth = 10; // 1 -> .1 ether
         a.minShortErc = 2000; // 2000 -> 2000 ether
         a.recoveryCR = 140; // 140 -> 1.4 ether
-        a.dittoTargetCR = 19; // 19 -> 1.9 ether
 
         diamond.createMarket({asset: _cgld, a: a});
         vm.stopPrank();

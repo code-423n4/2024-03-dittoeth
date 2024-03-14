@@ -26,9 +26,12 @@ contract YieldFacet is Modifiers {
     using LibVault for uint256;
 
     IAsset private immutable DITTO;
+    uint256 private immutable DITTO_TARGET_CR;
 
-    constructor(address _ditto) {
+    // TODO: Remove _dittoTargetCR as a constructor arg and use constant after yield tests are redone
+    constructor(address _ditto, uint256 _dittoTargetCR) {
         DITTO = IAsset(_ditto);
+        DITTO_TARGET_CR = _dittoTargetCR;
     }
 
     /**
@@ -86,7 +89,7 @@ contract YieldFacet is Modifiers {
         // Last saved oracle price
         uint256 savedPrice = LibOracle.getPrice(asset);
         // Maximum CR of shortRecord allowed before loss ditto shorter reward efficiency
-        uint256 dittoTargetCR = LibAsset.dittoTargetCR(asset);
+        uint256 dittoTargetCR = DITTO_TARGET_CR;
         // Retrieve first non-HEAD short
         uint8 id = s.shortRecords[asset][msg.sender][C.HEAD].nextId;
         // Loop through all shorter's shorts of this asset

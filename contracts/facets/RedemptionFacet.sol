@@ -9,6 +9,7 @@ import {Modifiers} from "contracts/libraries/AppStorage.sol";
 import {STypes, MTypes, SR} from "contracts/libraries/DataTypes.sol";
 import {LibAsset} from "contracts/libraries/LibAsset.sol";
 import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 import {LibOracle} from "contracts/libraries/LibOracle.sol";
 import {LibOrders} from "contracts/libraries/LibOrders.sol";
 import {LibBytes} from "contracts/libraries/LibBytes.sol";
@@ -18,6 +19,7 @@ import {SSTORE2} from "solmate/utils/SSTORE2.sol";
 import {console} from "contracts/libraries/console.sol";
 
 contract RedemptionFacet is Modifiers {
+    using LibSRUtil for STypes.ShortRecord;
     using LibShortRecord for STypes.ShortRecord;
     using U256 for uint256;
     using U104 for uint104;
@@ -133,7 +135,7 @@ contract RedemptionFacet is Modifiers {
                 bytes11(p.colRedeemed)
             );
 
-            LibShortRecord.disburseCollateral(p.asset, p.shorter, p.colRedeemed, currentSR.dethYieldRate, currentSR.updatedAt);
+            LibSRUtil.disburseCollateral(p.asset, p.shorter, p.colRedeemed, currentSR.dethYieldRate, currentSR.updatedAt);
             p.redemptionCounter++;
             if (redemptionAmount - p.totalAmountProposed < minShortErc) break;
         }
@@ -371,7 +373,7 @@ contract RedemptionFacet is Modifiers {
             uint88 collateral = shortRecord.collateral;
             s.vaultUser[vault][shorter].ethEscrowed += collateral;
             // @dev Shorter shouldn't lose any unclaimed yield because dispute time > YIELD_DELAY_SECONDS
-            LibShortRecord.disburseCollateral(asset, shorter, collateral, shortRecord.dethYieldRate, shortRecord.updatedAt);
+            LibSRUtil.disburseCollateral(asset, shorter, collateral, shortRecord.dethYieldRate, shortRecord.updatedAt);
             LibShortRecord.deleteShortRecord(asset, shorter, shortId);
         }
     }

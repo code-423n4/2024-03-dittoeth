@@ -28,9 +28,9 @@ contract TestFacet is Modifiers {
         s.asset[asset].frozen = value;
     }
 
-    // @dev same as OwnerFacet.setPrimaryLiquidationCR without requires for testing
-    function setprimaryLiquidationCRT(address asset, uint16 value) external {
-        s.asset[asset].primaryLiquidationCR = value;
+    // @dev same as OwnerFacet.setLiquidationCR without requires for testing
+    function setLiquidationCRT(address asset, uint16 value) external {
+        s.asset[asset].liquidationCR = value;
     }
 
     function getAskKey(address asset, uint16 id) external view returns (uint16 prevId, uint16 nextId) {
@@ -124,8 +124,7 @@ contract TestFacet is Modifiers {
             frozen: s.asset[asset].frozen,
             orderId: s.asset[asset].orderIdCounter,
             initialCR: LibAsset.initialCR(asset),
-            primaryLiquidationCR: LibAsset.primaryLiquidationCR(asset),
-            secondaryLiquidationCR: LibAsset.secondaryLiquidationCR(asset),
+            liquidationCR: LibAsset.liquidationCR(asset),
             forcedBidPriceBuffer: LibAsset.forcedBidPriceBuffer(asset),
             penaltyCR: LibAsset.penaltyCR(asset),
             tappFeePct: LibAsset.tappFeePct(asset),
@@ -135,8 +134,7 @@ contract TestFacet is Modifiers {
             minAskEth: LibAsset.minAskEth(asset),
             minShortErc: LibAsset.minShortErc(asset),
             assetId: s.asset[asset].assetId,
-            recoveryCR: LibAsset.recoveryCR(asset),
-            dittoTargetCR: LibAsset.dittoTargetCR(asset)
+            recoveryCR: LibAsset.recoveryCR(asset)
         });
     }
 

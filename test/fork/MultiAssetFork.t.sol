@@ -47,8 +47,7 @@ contract MultiAssetForkTestHelper is ForkHelper {
         a.vault = uint8(VAULT.ONE);
         a.oracle = _xauAggregator;
         a.initialCR = 400; // 400 -> 4 ether
-        a.primaryLiquidationCR = 350; // 300 -> 3 ether
-        a.secondaryLiquidationCR = 300; // 200 -> 2 ether
+        a.liquidationCR = 350; // 300 -> 3 ether
         a.forcedBidPriceBuffer = 120; // 120 -> 1.2 ether
         a.penaltyCR = 120; // 120 -> 1.2 ether
         a.tappFeePct = 30; // 30 -> .03 ether
@@ -57,7 +56,6 @@ contract MultiAssetForkTestHelper is ForkHelper {
         a.minAskEth = 10; // 1 -> .1 ether
         a.minShortErc = 1; // 1 -> 1 ether
         a.recoveryCR = 140; // 140 -> 1.4 ether
-        a.dittoTargetCR = 19; // 19 -> 1.9 ether
 
         vm.prank(owner);
         diamond.createMarket({asset: _cxau, a: a});

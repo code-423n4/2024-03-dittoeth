@@ -85,8 +85,7 @@ contract ForkHelper is OBFixture {
         diamond.diamondCut(cutBridge, address(0x0), "");
 
         testFacet.setAssetOracle(_dusd, _ethAggregator);
-        diamond.setSecondaryLiquidationCR(_dusd, 140);
-        diamond.setPrimaryLiquidationCR(_dusd, 170);
+        diamond.setLiquidationCR(_dusd, 170);
         diamond.setInitialCR(_dusd, 200);
 
         diamond.setOracleTimeAndPrice(_dusd, uint256(ethAggregator.latestAnswer() * ORACLE_DECIMALS).inv());

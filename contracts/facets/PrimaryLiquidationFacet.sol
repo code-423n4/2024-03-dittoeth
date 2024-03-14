@@ -13,8 +13,7 @@ import {LibAsset} from "contracts/libraries/LibAsset.sol";
 import {LibOrders} from "contracts/libraries/LibOrders.sol";
 import {LibOracle} from "contracts/libraries/LibOracle.sol";
 import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
-import {LibSRRecovery} from "contracts/libraries/LibSRRecovery.sol";
-import {LibSRMin} from "contracts/libraries/LibSRMin.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 import {C} from "contracts/libraries/Constants.sol";
 
 // import {console} from "contracts/libraries/console.sol";
@@ -57,7 +56,7 @@ contract PrimaryLiquidationFacet is Modifiers {
         if (shortHintArray.length > 10) revert Errors.TooManyHints();
 
         // @dev Ensures SR has enough ercDebt/collateral to make caller fee worthwhile
-        LibSRMin.checkCancelShortOrder({
+        LibSRUtil.checkCancelShortOrder({
             asset: asset,
             initialStatus: s.shortRecords[asset][shorter][id].status,
             shortOrderId: shortOrderId,
@@ -71,9 +70,9 @@ contract PrimaryLiquidationFacet is Modifiers {
         MTypes.PrimaryLiquidation memory m = _setLiquidationStruct(asset, shorter, id, shortOrderId);
 
         // @dev Can liquidate as long as CR is low enough
-        if (m.cRatio >= LibAsset.primaryLiquidationCR(m.asset)) {
+        if (m.cRatio >= LibAsset.liquidationCR(m.asset)) {
             // If CR is too high, check for recovery mode and violation to continue liquidation
-            if (!LibSRRecovery.checkRecoveryModeViolation(m.asset, m.cRatio, m.oraclePrice)) revert Errors.SufficientCollateral();
+            if (!LibSRUtil.checkRecoveryModeViolation(m.asset, m.cRatio, m.oraclePrice)) revert Errors.SufficientCollateral();
         }
 
         // revert if no asks, or price too high
@@ -244,7 +243,7 @@ contract PrimaryLiquidationFacet is Modifiers {
 
         if (m.short.ercDebt == m.ercDebtMatched) {
             // Full liquidation
-            LibShortRecord.disburseCollateral(m.asset, m.shorter, m.short.collateral, m.short.dethYieldRate, m.short.updatedAt);
+            LibSRUtil.disburseCollateral(m.asset, m.shorter, m.short.collateral, m.short.dethYieldRate, m.short.updatedAt);
             LibShortRecord.deleteShortRecord(m.asset, m.shorter, m.short.id);
             if (!m.loseCollateral) {
                 m.short.collateral -= decreaseCol;
@@ -258,7 +257,7 @@ contract PrimaryLiquidationFacet is Modifiers {
             s.shortRecords[m.asset][m.shorter][m.short.id] = m.short;
 
             TAPP.ethEscrowed -= m.short.collateral;
-            LibShortRecord.disburseCollateral(m.asset, m.shorter, decreaseCol, m.short.dethYieldRate, m.short.updatedAt);
+            LibSRUtil.disburseCollateral(m.asset, m.shorter, decreaseCol, m.short.dethYieldRate, m.short.updatedAt);
 
             // TAPP absorbs leftover short, unless it already owns the short
             if (m.loseCollateral && m.shorter != address(this)) {
@@ -280,7 +279,7 @@ contract PrimaryLiquidationFacet is Modifiers {
 
         if (m.shorter != address(this)) {
             // Only relevant for non-TAPP SR
-            LibSRMin.checkShortMinErc({
+            LibSRUtil.checkShortMinErc({
                 asset: m.asset,
                 initialStatus: m.short.status,
                 shortOrderId: m.shortOrderId,

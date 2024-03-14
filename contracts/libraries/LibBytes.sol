@@ -7,7 +7,7 @@ import {SSTORE2} from "solmate/utils/SSTORE2.sol";
 // import {console} from "contracts/libraries/console.sol";
 
 library LibBytes {
-    // custom decode since SSTORE.write was written directly in proposeRedemption
+    // Custom decode since SSTORE.write was written directly in proposeRedemption
     function readProposalData(address SSTORE2Pointer, uint8 slateLength) internal view returns (MTypes.ProposalData[] memory) {
         bytes memory slate = SSTORE2.read(SSTORE2Pointer);
         // ProposalData is 51 bytes

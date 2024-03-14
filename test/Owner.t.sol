@@ -100,29 +100,15 @@ contract OwnerTest is OBFixture {
         diamond.setInitialCR(asset, 1500);
     }
 
-    function test_Revert_SetprimaryLiquidationCR() public {
+    function test_Revert_SetLiquidationCR() public {
         vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
-        diamond.setPrimaryLiquidationCR(asset, 100);
+        diamond.setLiquidationCR(asset, 100);
 
         vm.startPrank(owner);
-        vm.expectRevert("below secondary liquidation");
-        diamond.setPrimaryLiquidationCR(asset, 100 - 1);
+        vm.expectRevert("below penalty CR");
+        diamond.setLiquidationCR(asset, 100 - 1);
         vm.expectRevert("above 5.0");
-        diamond.setPrimaryLiquidationCR(asset, 500 + 1);
-    }
-
-    function test_Revert_SetsecondaryLiquidationCR() public {
-        vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
-        diamond.setSecondaryLiquidationCR(asset, 100);
-
-        vm.startPrank(owner);
-        vm.expectRevert("below 1.0");
-        diamond.setSecondaryLiquidationCR(asset, 100 - 1);
-        vm.expectRevert("above 5.0");
-        diamond.setSecondaryLiquidationCR(asset, 500 + 1);
-        diamond.setInitialCR(asset, 800);
-        vm.expectRevert("above 5.0");
-        diamond.setSecondaryLiquidationCR(asset, 500 + 1);
+        diamond.setLiquidationCR(asset, 500 + 1);
     }
 
     function test_Revert_SetforcedBidPriceBuffer() public {
@@ -156,15 +142,6 @@ contract OwnerTest is OBFixture {
         diamond.setRecoveryCR(asset, 100 - 1);
         vm.expectRevert("above 2.0");
         diamond.setRecoveryCR(asset, 200 + 1);
-    }
-
-    function test_Revert_SetDittoTargetCR() public {
-        vm.expectRevert(Errors.NotOwnerOrAdmin.selector);
-        diamond.setDittoTargetCR(asset, 10);
-
-        vm.startPrank(owner);
-        vm.expectRevert("below 1.0");
-        diamond.setDittoTargetCR(asset, 10 - 1);
     }
 
     function test_Revert_SetTappFeePct() public {
@@ -262,18 +239,11 @@ contract OwnerTest is OBFixture {
         assertEq(diamond.getAssetStruct(asset).initialCR, 450);
     }
 
-    function test_SetprimaryLiquidationCR() public {
-        assertEq(diamond.getAssetStruct(asset).primaryLiquidationCR, 400);
+    function test_SetLiquidationCR() public {
+        assertEq(diamond.getAssetStruct(asset).liquidationCR, 400);
         vm.prank(owner);
-        diamond.setPrimaryLiquidationCR(asset, 200);
-        assertEq(diamond.getAssetStruct(asset).primaryLiquidationCR, 200);
-    }
-
-    function test_SetsecondaryLiquidationCR() public {
-        assertEq(diamond.getAssetStruct(asset).secondaryLiquidationCR, 150);
-        vm.prank(owner);
-        diamond.setSecondaryLiquidationCR(asset, 200);
-        assertEq(diamond.getAssetStruct(asset).secondaryLiquidationCR, 200);
+        diamond.setLiquidationCR(asset, 200);
+        assertEq(diamond.getAssetStruct(asset).liquidationCR, 200);
     }
 
     function test_SetforcedBidPriceBuffer() public {
@@ -295,13 +265,6 @@ contract OwnerTest is OBFixture {
         vm.prank(owner);
         diamond.setRecoveryCR(asset, 140);
         assertEq(diamond.getAssetStruct(asset).recoveryCR, 140);
-    }
-
-    function test_SetDittoTargetCR() public {
-        assertEq(diamond.getAssetStruct(asset).dittoTargetCR, 60);
-        vm.prank(owner);
-        diamond.setDittoTargetCR(asset, 20);
-        assertEq(diamond.getAssetStruct(asset).dittoTargetCR, 20);
     }
 
     function test_SetTappFeePct() public {
@@ -368,8 +331,7 @@ contract OwnerTest is OBFixture {
         a.vault = uint8(VAULT.ONE);
         a.oracle = _ethAggregator;
         a.initialCR = 400;
-        a.primaryLiquidationCR = 300;
-        a.secondaryLiquidationCR = 200;
+        a.liquidationCR = 300;
         a.forcedBidPriceBuffer = 120;
         a.penaltyCR = 110;
         a.tappFeePct = 25;
@@ -378,7 +340,6 @@ contract OwnerTest is OBFixture {
         a.minAskEth = 10;
         a.minShortErc = 2000;
         a.recoveryCR = 150;
-        a.dittoTargetCR = 20;
         Asset temp = new Asset(_diamond, "Temp", "TEMP");
 
         assertEq(diamond.getAssets().length, 1);

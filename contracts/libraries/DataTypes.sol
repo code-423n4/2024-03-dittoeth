@@ -101,7 +101,7 @@ library STypes {
         F frozen; // 0 or 1
         uint8 vault;
         // SLOT 2 (Liquidation Parameters)
-        // 64 + 16*3 + 8*12 = 200 (56 unused)
+        // 64*2 + 32 + 16*2 + 8*8 = 256
         uint8 minBidEth; // 10 -> (1 * 10**18 / 10**2) = 0.1 ether
         uint8 minAskEth; // 10 -> (1 * 10**18 / 10**2) = 0.1 ether
         uint16 minShortErc; // 2000 -> (2000 * 10**18) -> 2000 ether
@@ -111,22 +111,15 @@ library STypes {
         uint8 forcedBidPriceBuffer; // 1.1 ether -> [1-2, 2 decimals]
         uint8 assetId;
         uint64 ercDebtRate; // max 18x, socialized penalty rate
-        uint16 primaryLiquidationCR; // 1.5 ether -> [1-5, 2 decimals]
-        uint16 secondaryLiquidationCR; // 1.4 ether -> [1-5, 2 decimals]
-        uint8 fillerT1; // 12 hours -> [1-48 hours, 0 decimals]
-        uint8 fillerT2; // 8 hours -> [1-48 hours, 0 decimals]
-        uint8 fillerT3; // 6 hours -> [1-48 hours, 0 decimals]
+        uint16 liquidationCR; // 1.5 ether -> [1-5, 2 decimals]
         uint8 recoveryCR; // 1.5 ether -> [1-2, 2 decimals]
-        uint8 dittoTargetCR; // 2.0 ether -> [1-25.6, 1 decimals]
-        uint48 filler1; // keep slots distinct
+        //TODO: Make fn and set lastRedemption to ZERO on mainnet remove fn
+        uint32 lastRedemptionTime; //in seconds;
+        uint64 baseRate;
         // SLOT 3 (Chainlink)
         //160 (96 unused)
         address oracle; // for non-usd asset
-        uint96 filler2;
-        // SLOT 4 (Redemption)
-        // 32 + 64 = 96 (160 unused)
-        uint32 lastRedemptionTime; //in seconds;
-        uint64 baseRate;
+        uint96 filler1;
     }
 
     // 3 slots

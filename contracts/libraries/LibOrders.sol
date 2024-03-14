@@ -951,7 +951,7 @@ library LibOrders {
         cancelOrder(s.shorts, asset, id);
     }
 
-    // @dev approximates the match price compared to the oracle price and accounts for any discount by increasing dethTithePercent
+    // Approximates the match price compared to the oracle price and accounts for any discount by increasing dethTithePercent
     function handlePriceDiscount(address asset, uint80 price) internal {
         AppStorage storage s = appStorage();
         uint256 vault = s.asset[asset].vault;

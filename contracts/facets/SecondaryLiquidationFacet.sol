@@ -13,6 +13,7 @@ import {LibAsset} from "contracts/libraries/LibAsset.sol";
 import {LibOracle} from "contracts/libraries/LibOracle.sol";
 import {LibOrders} from "contracts/libraries/LibOrders.sol";
 import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 
 // import {console} from "contracts/libraries/console.sol";
 
@@ -45,7 +46,7 @@ contract SecondaryLiquidationFacet is Modifiers {
         MTypes.SecondaryLiquidation memory m;
         uint256 penaltyCR = LibAsset.penaltyCR(asset);
         uint256 oraclePrice = LibOracle.getSavedOrSpotOraclePrice(asset);
-        uint256 secondaryLiquidationCR = LibAsset.secondaryLiquidationCR(asset);
+        uint256 liquidationCR = LibAsset.liquidationCR(asset);
         uint88 minShortErc = uint88(LibAsset.minShortErc(asset));
 
         uint88 liquidatorCollateral;
@@ -59,7 +60,7 @@ contract SecondaryLiquidationFacet is Modifiers {
 
             // If ineligible, skip to the next shortrecord instead of reverting
             if (
-                m.shorter == msg.sender || m.cRatio > secondaryLiquidationCR || m.short.status == SR.Closed || m.short.ercDebt == 0
+                m.shorter == msg.sender || m.cRatio > liquidationCR || m.short.status == SR.Closed || m.short.ercDebt == 0
                     || (m.shorter != address(this) && liquidateAmountLeft < m.short.ercDebt)
             ) {
                 continue;
@@ -185,7 +186,7 @@ contract SecondaryLiquidationFacet is Modifiers {
             m.liquidatorCollateral = m.short.collateral;
         }
 
-        LibShortRecord.disburseCollateral(m.asset, m.shorter, m.short.collateral, m.short.dethYieldRate, m.short.updatedAt);
+        LibSRUtil.disburseCollateral(m.asset, m.shorter, m.short.collateral, m.short.dethYieldRate, m.short.updatedAt);
         LibShortRecord.deleteShortRecord(m.asset, m.shorter, m.short.id);
     }
 
@@ -202,6 +203,6 @@ contract SecondaryLiquidationFacet is Modifiers {
         // @dev Need to use min if CR < 1
         m.liquidatorCollateral = min88(m.short.ercDebt.mul(m.oraclePrice), m.short.collateral);
         short.collateral -= m.liquidatorCollateral;
-        LibShortRecord.disburseCollateral(m.asset, m.shorter, m.liquidatorCollateral, m.short.dethYieldRate, m.short.updatedAt);
+        LibSRUtil.disburseCollateral(m.asset, m.shorter, m.liquidatorCollateral, m.short.dethYieldRate, m.short.updatedAt);
     }
 }

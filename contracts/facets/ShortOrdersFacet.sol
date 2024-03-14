@@ -10,7 +10,7 @@ import {LibOrders} from "contracts/libraries/LibOrders.sol";
 import {LibAsset} from "contracts/libraries/LibAsset.sol";
 import {LibOracle} from "contracts/libraries/LibOracle.sol";
 import {LibShortRecord} from "contracts/libraries/LibShortRecord.sol";
-import {LibSRRecovery} from "contracts/libraries/LibSRRecovery.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 import {C} from "contracts/libraries/Constants.sol";
 
 // import {console} from "contracts/libraries/console.sol";
@@ -77,7 +77,7 @@ contract ShortOrdersFacet is Modifiers {
         }
 
         p.oraclePrice = LibOracle.getSavedOrSpotOraclePrice(asset);
-        if (LibSRRecovery.checkRecoveryModeViolation(asset, cr, p.oraclePrice)) {
+        if (LibSRUtil.checkRecoveryModeViolation(asset, cr, p.oraclePrice)) {
             revert Errors.BelowRecoveryModeCR();
         }
 

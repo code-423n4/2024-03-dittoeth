@@ -10,7 +10,7 @@ import {Errors} from "contracts/libraries/Errors.sol";
 import {STypes, SR} from "contracts/libraries/DataTypes.sol";
 import {Modifiers} from "contracts/libraries/AppStorage.sol";
 import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
-import {LibSRTransfer} from "contracts/libraries/LibSRTransfer.sol";
+import {LibSRUtil} from "contracts/libraries/LibSRUtil.sol";
 
 // import {console} from "contracts/libraries/console.sol";
 
@@ -139,7 +139,7 @@ contract ERC721Facet is Modifiers, IERC721 {
         if (to == address(0)) revert Errors.ERC721InvalidReceiver(address(0));
 
         // @dev If NFT does not exist, ERC721NonexistentToken() will trigger
-        LibSRTransfer.transferShortRecord(from, to, uint40(tokenId));
+        LibSRUtil.transferShortRecord(from, to, uint40(tokenId));
 
         delete s.getApproved[tokenId];
 

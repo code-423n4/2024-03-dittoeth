@@ -236,7 +236,7 @@ contract YieldTest is OBFixture {
 
     function liquidateAsserts(uint256 order) public {
         changePrank(owner);
-        testFacet.setprimaryLiquidationCRT(asset, 2550);
+        testFacet.setLiquidationCRT(asset, 2550);
         changePrank(receiver);
         // Liquidation Partial
         uint256 tappFee = 0.025 ether;
