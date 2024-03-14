@@ -78,15 +78,15 @@ _See [scope.txt](https://github.com/code-423n4/2024-03-dittoeth//blob/main/scope
 | -------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ---------------------------------------------------------- | -------------------------------------------------------- | ------------------------ |
 | [facets/BidOrdersFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/BidOrdersFacet.sol)                   | 234   | Facet for creating and matching bids                       | dust                                                     |                          |
 | [facets/ShortOrdersFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/ShortOrdersFacet.sol)               | 54    | Facet for creating and matching short orders               | SR created at Order, recoveryMode, minShortErc           |                          |
-| [facets/PrimaryLiquidationFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/PrimaryLiquidationFacet.sol) | 171   | Facet for liquidation using ob                             | minShortErc, remove flagging                             |                          |
+| [facets/PrimaryLiquidationFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/PrimaryLiquidationFacet.sol) | 173   | Facet for liquidation using ob                             | minShortErc, remove flagging, recovery                   |                          |
 | [facets/BridgeRouterFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/BridgeRouterFacet.sol)             | 101   | Facet to handle depositing and withdrawing LSTs            | Credit mechanism for withdraw                            | IBridge                  |
 | [facets/ExitShortFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/ExitShortFacet.sol)                   | 126   | Facet for a shorter to exit their short                    | minShortErc                                              | IDiamond.createForcedBid |
-| [facets/RedemptionFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/RedemptionFacet.sol)                 | 239   | Ability to swap dUSD for ETH, akin to Liquity              | new                                                      |                          |
+| [facets/RedemptionFacet.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/facets/RedemptionFacet.sol)                 | 241   | Ability to swap dUSD for ETH, akin to Liquity              | new                                                      |                          |
 | [libraries/LibBridgeRouter.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibBridgeRouter.sol)           | 151   | Helper library used in BridgeRouterFacet                   | new                                                      | Uniswap                  |
 | [libraries/LibBytes.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibBytes.sol)                         | 35    | Library in RedemptionFacet to save proposals in SSTORE2    | new                                                      |                          |
 | [libraries/LibOracle.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibOracle.sol)                       | 125   | Library to get price with Chainlink + backup               | handle revert                                            | Chainlink/Uniswap        |
 | [libraries/LibOrders.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibOrders.sol)                       | 575   | Library Order Facets to do matching                        | dust, oracle price changes, auto adjust dethTithePercent |                          |
-| [libraries/LibSRRecovery.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibSR.sol)                       | 112   | Library of misc SR fns: recovery CR, minShortErc, transfer | new                                                      |                          |
+| [libraries/LibSRUtil.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/LibSRUtil.sol)                       | 112   | Library of misc SR fns: recovery CR, minShortErc, transfer | new                                                      |                          |
 | [libraries/UniswapOracleLibrary.sol](https://github.com/code-423n4/2024-03-dittoeth//blob/main/contracts/libraries/UniswapOracleLibrary.sol) | 34    | Used to get TWAP from Uniswap                              | didn't audit earlier                                     | Uniswap                  |
 
 ## Out of scope
@@ -101,7 +101,6 @@ _See [scope.txt](https://github.com/code-423n4/2024-03-dittoeth//blob/main/scope
 - `facets/MarketShutdownFacet.sol`
 - `facets/OrdersFacet.sol` (the changes are in LibOrders.sol)
 - `facets/OwnerFacet.sol` (mostly renames, new set functions)
-- `facets/PrimaryLiquidationFacet.sol` (minShortErc, renamed, remove flagging, recoveryMode)
 - `facets/SecondaryLiquidationFacet.sol` (minShortErc, renamed, recoveryMode)
 - `facets/ShortRecordFacet.sol` (minShortErc, recoveryMode)
 - `facets/TWAPFacet.sol`
@@ -237,7 +236,7 @@ Because the Vault mixes rETH/stETH, a credit system is introduced to allow users
 ```
 - If you have a public code repo, please share it here: Previous archive is https://github.com/Cyfrin/2023-09-ditto
 - How many contracts are in scope?: 12
-- Total SLoC for these contracts?: 1957
+- Total SLoC for these contracts?: 1961
 - How many external imports are there?: 8
 - How many separate interfaces and struct definitions are there for the contracts within scope?:  Every contract has a generated interface from a script given use of Diamond. 8 Structs are in contracts/libraries/DataTypes.sol in STypes (Storage Types): Order, ShortRecord, NFT, Asset, Vault, AssetUser, VaultUser, Bridge
 - Does most of your code generally use composition or inheritance?: Composition: mostly Diamond Facets and Libraries
