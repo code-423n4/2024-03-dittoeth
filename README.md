@@ -25,24 +25,28 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 
 > See [known issues from Codehawks](https://github.com/Cyfrin/2023-09-ditto/tree/a93b4276420a092913f43169a353a6198d3c21b9?tab=readme-ov-file#known-considerations-from-previous-stablecoin-codehawk-report)
 
-- Oracle is very dependent on Chainlink, stale/invalid prices fallback to a Uniswap TWAP. 2 hours staleness means it can be somewhat out of date.
 - Issues related to the start/bootstrap of the protocol
   - When there are few ShortRecords or TAPP is low, it's easy to fall into black swan scenario
   - Ditto rewards: first claimer gets 100% of ditto reward, also `dittoShorterRate` can give more/less ditto than expected (see [L-21](https://www.codehawks.com/report/clm871gl00001mp081mzjdlwc#L-21)).
   - Empty order book can lead to issues: matching self can get ditto rewards/yield. Creating a low bid (see [L-16](https://www.codehawks.com/report/clm871gl00001mp081mzjdlwc#L-16)) isn't likely since anyone would want to simply match against it. Creating a high short that eventually matches seems impossible with real orders. Can also prevent creating an order too far away from the oracle.
-- Issues related to front-running: can front-run someone's order, liquidation, the chainlink/uniswap oracle update.
 - Not finished with governance/token setup
+- Issues related to oracles
+  - Oracle is very dependent on Chainlink, stale/invalid prices fallback to a Uniswap TWAP. 2 hours staleness means it can be somewhat out of date.
+- Issues related to front-running: can front-run someone's order, liquidation, the chainlink/uniswap oracle update.
 - Bridge credit system:
   - If user has LST credit but that bridge is empty, LST credit can be redemeed for the other base collateral at 1-1 ratio
   - In NFT transfer, LST credit is transferred up to the amount of the collateral in the ShortRecord, which includes collateral that comes from bidder
+- There is an edge case where a short meets erc requirements because of ercDebtRate application
+- `disburseCollateral` in `proposeRedemption()` can cause user to lose yield if their SR was recently modified and it’s still below 2.0 CR (modified through order fill, or increase collateral)
+- Recovery Mode: currently not checking `recoveryCR` in secondary liquidation unlike primary, may introduce later.
 - Incentives should mitigate actions from bad/lazy actors and promote correct behavior, but they do not guarantee perfect behavior:
   - Primary Liquidation
   - Redemptions in the correct order
-- There is an edge case where a short meets erc requirements because of ercDebtRate application
-- `disburseCollateral` in `proposeRedemption()` can cause user to lose yield if their SR was recently modified and it’s still below 2.0 CR (modified through order fill, or increase collateral)
-- Redemption proposal is intentionally overly conservative in considering SR ineligible (with regards to `minShortErc`) to prevent scenarios of ercDebt under `minShortErc`
-- Recovery Mode: currently not checking `recoveryCR` in secondary liquidation unlike primary, may introduce later.
-- Redemptions: there is an issue when `claimRemaningCollateral()` is called on a SR that is included in a proposal and is later correctly disputed.
+- Redemptions
+  - Proposals are intentionally overly conservative in considering an SR to ineligible (with regards to `minShortErc`) to prevent scenarios of ercDebt under `minShortErc`
+  - There is an issue when `claimRemaningCollateral()` is called on a SR that is included in a proposal and is later correctly disputed.
+  - Undecided on how to distribute the redemption fee, maybe to dusd holders rather than just the system.
+  - Currently allowed to redeem at any CR under 2, even under 1 CR.
 
 # Overview
 
@@ -68,7 +72,7 @@ On the orderbook, bidders and shorters bring ETH, askers can sell their dUSD. Bi
 
 # Scope
 
-*See [scope.txt](https://github.com/code-423n4/2024-03-dittoeth//blob/main/scope.txt)*
+_See [scope.txt](https://github.com/code-423n4/2024-03-dittoeth//blob/main/scope.txt)_
 
 | Contract                                                                                                                                     | nSLOC | Purpose                                                 | Changes                                                       | External Libraries       |
 | -------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------- | ------------------------------------------------------------- | ------------------------ |
@@ -171,8 +175,6 @@ This is large update to the original [codebase](https://github.com/Cyfrin/2023-0
 
 ## Attack ideas (Where to look for bugs)
 
-_List specific areas to address - see [this blog post](https://medium.com/code4rena/the-security-council-elections-within-the-arbitrum-dao-a-comprehensive-guide-aa6d001aae60#9adb) for an example_
-
 - Redemptions, as this is an entirely new concept to the protocol.
 - Anything related to Orderbook matching logic, can get complicated in terms of what was done to save gas
   - The Orderbook only allows matching a Short Order at or above oracle price, unlike bids/asks so that part acts differently than an usual orderbook
@@ -180,6 +182,56 @@ _List specific areas to address - see [this blog post](https://medium.com/code4r
 - Dust amounts: want to prevent small orders on the orderbook to prevent skyrocketing gas costs for large orders that match with multiple limit orders
 - Concept of `minShortErc`: Primary liquidators should always have a large enough incentive to liquidate (`callerFeePct` tied to liquidated collateral) risky debt because every ShortRecord must either contain enough ercDebt or have access to enough ercDebt (through cancelling the associated short order). The one noted exception is listed in known issues (ercDebt requirements met from application of ercDebtRate)
 - Anything related to being able to correctly liquidate/exit ShortRecords that are a certain collateral ratio
+
+## Main invariants
+
+> Describe the project's main invariants (properties that should NEVER EVER be broken).
+
+See [docs](https://dittoeth.com/technical/concepts) for more info.
+
+### Orderbook
+
+Ditto's orderbook acts similar to central limit orderbook with some changes. In order to make the gas costs low, there is a hint system added to enable a user to place an order in the orderbook mapping. Asks/Shorts are both on the "sell" side of the orderbook. Order structs are reused by implementing the orders as a doubly linked-list in a mapping. `HEAD` order is used as a starting point to match against.
+
+- Ask orders get matched before short orders at the same price.
+- Bids sorted high to low
+- Asks/Shorts sorted low to high
+- Only cancelled/matched orders can be reused (Technically: Left of HEAD (`HEAD.prevId`) these are the only possible OrderTypes: `O.Matched`, `O.Cancelled`, `O.Uninitialized`).
+- Since bids/asks/shorts share the same `orderId` counter, every single `orderId` should be unique
+
+### Short Orders
+
+`shortOrders` can only be limit orders. `startingShort` represents the first short order that can be matched. Normally `HEAD.nextId` would the next short order in the mapping, but it's not guranteed that it is matchable since users can still create limit shorts under the oracle price (or they move below oracle once the price updates). Oracle updates from chainlink or elsewhere will cause the `startingShort` to move, which means the system doesn't know when to start matching from without looping through each short, so the system allows a temporary matching backwards.
+
+- `shortOrder` can't match under `oraclePrice`
+- `startingShort` price must be greater than or equal to `oraclePrice`
+- `shortOrder` with a non-zero (ie. positive) `shortRecordId` means that the referenced SR is status partialFill
+
+### ShortRecords
+
+ShortRecords are the Vaults/CDPs/Troves of Ditto. SRs represent a collateral/debt position by a shorter. Each user can have multiple SRs, which are stored under their address as a list.
+
+- The only time `shortRecord` debt can be below `minShortErc` is when it's partially filled and the connected `shortOrder` has enough `ercDebt` to make up the difference to `minShortErc` (Technically: `SR.status` == `PartialFill` && `shortOrder.ercAmount` + `ercDebt` >= `minShortErc`)
+- Similarly, SR can never be `SR.FullyFilled` and be under `minShortErc`
+- `FullyFilled` SR can never have 0 collateral
+- Only SR with status `Closed` can ever be re-used (Technically, only `SR.Closed` on the left (prevId) side of HEAD, with the exception of HEAD itself)
+
+### Redemptions
+
+Allows dUSD holders to get equivalent amount of ETH back, akin to Liquity. However the system doesn't automatically sort the SR's lowest to highest. Instead, users propose a list of SRs (an immutable slate) to redeem against. There is a dispute period to revert any proposal changes and a corresponding penalty against a proposer if incorrect. Proposers can claim the ETH after the time period, and shorters can also claim any remaining collateral afterwards.
+
+- Only the first and last proposal can possibly be partially redeemed
+- Proposal "slates" are sorted least to highest CR
+- All CR in `proposedData` dataTypes should be under 2 CR
+- Check before proposal, the `ercDebt` of SR cannot be zero. After proposal, check it cannot be `SR.Closed`` until claimed
+- If proposal happens, check to see that there is no issues with SSTORE2 (the way it is saved and read)
+- Relationship between proposal and SR's current `collateral` and `ercDebt` amounts. The sum total should always add up to the original amounts (save those amounts)
+
+### BridgeRouter/Bridge
+
+Because the Vault mixes rETH/stETH, a credit system is introduced to allow users to withdraw only what they deposit, anything in excess (due to yield) also checks either LSTs price difference using a TWAP via Uniswap.
+
+- deposit/withdraw gives/removes an appropriate amount of virtual dETH (ETH equivalent), no matter if someone deposits an LST (rETH, stETH), or ETH and accounts for yield that is gained over time.
 
 ## Scoping Details
 
