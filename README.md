@@ -1,6 +1,6 @@
 # DittoETH audit details
 
-- Total Prize Pool: $60,500 in USDC
+- Total Prize Pool: $60,800 in USDC
   - HM awards: $45,750 in USDC
   - Analysis awards: $1,500 in USDC
   - QA awards: $1,250 in USDC
@@ -8,7 +8,7 @@
   - Gas awards: $0 in USDC
   - Judge awards: $6,000 in USDC
   - Lookout awards: $4,000 USDC
-  - Scout awards: $500 in USDC
+  - Scout awards: $800 in USDC
 - Join [C4 Discord](https://discord.gg/code4rena) to register
 - Submit findings [using the C4 form](https://code4rena.com/contests/2024-03-dittoeth/submit)
 - [Read our guidelines for more details](https://docs.code4rena.com/roles/wardens)
@@ -19,7 +19,7 @@
 
 The 4naly3er report can be found [here](https://github.com/code-423n4/2024-03-dittoeth/blob/main/4naly3er-report.md).
 
-Automated findings output for the audit can be found [here](https://github.com/code-423n4/YYYY-MM-contest-candidate/blob/main/bot-report.md) within 24 hours of audit opening.
+Automated findings output for the audit can be found [here](https://github.com/code-423n4/2024-03-dittoeth/blob/main/bot-report.md) within 24 hours of audit opening.
 
 _Note for C4 wardens: Anything included in this `Automated Findings / Publicly Known Issues` section is considered a publicly known issue and is ineligible for awards._
 
