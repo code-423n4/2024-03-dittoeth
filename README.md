@@ -26,22 +26,23 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 > See [known issues from Codehawks](https://github.com/Cyfrin/2023-09-ditto/tree/a93b4276420a092913f43169a353a6198d3c21b9?tab=readme-ov-file#known-considerations-from-previous-stablecoin-codehawk-report)
 
 - Issues related to the start/bootstrap of the protocol
-  - When there are few ShortRecords or TAPP is low, it's easy to fall into black swan scenario
+  - When there are few ShortRecords or TAPP is low, it's easy to fall into a black swan scenario
   - Ditto rewards: first claimer gets 100% of ditto reward, also `dittoShorterRate` can give more/less ditto than expected (see [L-21](https://www.codehawks.com/report/clm871gl00001mp081mzjdlwc#L-21)).
   - Empty order book can lead to issues: matching self can get ditto rewards/yield. Creating a low bid (see [L-16](https://www.codehawks.com/report/clm871gl00001mp081mzjdlwc#L-16)) isn't likely since anyone would want to simply match against it. Creating a high short that eventually matches seems impossible with real orders. Can also prevent creating an order too far away from the oracle.
 - Not finished with governance/token setup
 - Issues related to oracles
   - Oracle is very dependent on Chainlink, stale/invalid prices fallback to a Uniswap TWAP. 2 hours staleness means it can be somewhat out of date.
 - Issues related to front-running: can front-run someone's order, liquidation, the chainlink/uniswap oracle update.
-- Bridge credit system:
+- Bridge credit system (for LST arb, since rETH/stETH is mixed)
   - If user has LST credit but that bridge is empty, LST credit can be redeemed for the other base collateral at 1-1 ratio
-  - In NFT transfer, LST credit is transferred up to the amount of the collateral in the ShortRecord, which includes collateral that comes from bidder
-- There is an edge case where a short meets erc requirements because of ercDebtRate application
+  - In NFT transfer, LST credit is transferred up to the amount of the collateral in the ShortRecord, which includes collateral that comes from bidder, might introduce a fee on minting a NFT
+  - Thus, credits don't prevent arbitrage from either yield profits or trading: credit is only tracked on deposits/withdraw and not at the more granular level of matching trades or how much credit is given for yield from LSTs.
+- There is an edge case where a Short meets `minShortErc` requirements because of `ercDebtRate` application
 - `disburseCollateral` in `proposeRedemption()` can cause user to lose yield if their SR was recently modified and it’s still below 2.0 CR (modified through order fill, or increase collateral)
 - Recovery Mode: currently not checking `recoveryCR` in secondary liquidation unlike primary, may introduce later.
 - Incentives should mitigate actions from bad/lazy actors and promote correct behavior, but they do not guarantee perfect behavior:
-  - Primary Liquidation
-  - Redemptions in the correct order
+  - That Primary Liquidations happen
+  - Redemptions in the exact sorted order
 - Redemptions
   - Proposals are intentionally overly conservative in considering an SR to ineligible (with regards to `minShortErc`) to prevent scenarios of ercDebt under `minShortErc`
   - There is an issue when `claimRemainingCollateral()` is called on a SR that is included in a proposal and is later correctly disputed.
