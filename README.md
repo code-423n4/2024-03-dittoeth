@@ -1,11 +1,9 @@
 # DittoETH audit details
 
 - Total Prize Pool: $60,800 in USDC
-  - HM awards: $45,750 in USDC
+  - HM awards: $47,250 in USDC
   - Analysis awards: $1,500 in USDC
   - QA awards: $1,250 in USDC
-  - Bot Race awards: $1,500 in USDC
-  - Gas awards: $0 in USDC
   - Judge awards: $6,000 in USDC
   - Lookout awards: $4,000 USDC
   - Scout awards: $800 in USDC
